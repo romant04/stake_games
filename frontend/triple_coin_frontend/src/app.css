@@ -1,0 +1,99 @@
+:root {
+  --text: #eaeaea;
+  --text-h: #08060d;
+  --bg: #1b1b1b;
+  --border: #e5e4e7;
+  --code-bg: #f4f3ec;
+  --accent: gold;
+
+  --sans: Roboto, 'Segoe UI', system-ui, sans-serif;
+  --heading: 'Roboto Slab', 'Segoe UI', system-ui, serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font: 18px/145% var(--sans);
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+#app {
+  width: 1126px;
+  max-width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+}
+
+.game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+}
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.head h1 {
+    font-family: var(--heading), serif;
+    font-size: 2.5rem;
+    margin: 0;
+}
+.spin-button {
+    padding: 10px 40px;
+    font-size: 1.25rem;
+    background-color: transparent;
+    border: 1px solid var(--accent);
+    box-shadow: 3px 3px 4px #F5C54266;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+
+    position: relative;
+    overflow: hidden;
+}
+.spin-button:hover {
+    box-shadow: 0 0 14px #F5C542aa, 3px 3px 6px #F5C54255;
+    border-color: #FFD86A;
+    transform: translateY(-2px);
+}
+.spin-button:active {
+    transform: translateY(0px) scale(0.98);
+    box-shadow: 0 0 8px #F5C54266;
+}
+
+.spin-button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+            120deg,
+            transparent,
+            rgba(255, 255, 255, 0.25),
+            transparent
+    );
+    transition: 0.75s;
+}
+
+.spin-button:hover::after {
+    left: 130%;
+}
