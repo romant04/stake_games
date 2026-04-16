@@ -97,3 +97,50 @@ body {
 .spin-button:hover::after {
     left: 130%;
 }
+
+.bet-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.bet-input {
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    width: max-content;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+}
+.bet-input input {
+    text-align: center;
+    padding: 5px;
+    width: 100px;
+    font-size: 1.25rem;
+    background: var(--accent);
+    color: black;
+    border: none;
+    border-radius: 10px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input[type=number] {
+    -moz-appearance:textfield; /* Firefox */
+}
+
+.info {
+    position: absolute;
+    top: 30%;
+    font-size: 2rem;
+    font-weight: bold;
+    pointer-events: none;
+    z-index: 99;
+}
