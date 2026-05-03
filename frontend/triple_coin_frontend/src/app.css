@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 :root {
   --text: #eaeaea;
   --text-h: #08060d;
@@ -30,117 +32,41 @@ body {
   margin: 0 auto;
   text-align: center;
   min-height: 100svh;
-  display: flex;
-  flex-direction: column;
   box-sizing: border-box;
-  align-items: center;
-  justify-content: center;
 }
 
-.game-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 50px;
+.spin {
+  background-color: transparent;
+  box-shadow: 3px 3px 4px #f5c54266;
+  transition: all 0.25s ease;
 }
-.head {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-}
-.head h1 {
-    font-family: var(--heading), serif;
-    font-size: 2.5rem;
-    margin: 0;
-}
-.spin-button {
-    padding: 10px 40px;
-    font-size: 1.25rem;
-    background-color: transparent;
-    border: 1px solid var(--accent);
-    box-shadow: 3px 3px 4px #F5C54266;
-    color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.25s ease;
-
-    position: relative;
-    overflow: hidden;
-}
-.spin-button:hover {
-    box-shadow: 0 0 14px #F5C542aa, 3px 3px 6px #F5C54255;
-    border-color: #FFD86A;
-    transform: translateY(-2px);
+.spin:hover {
+  box-shadow:
+    0 0 14px #f5c542aa,
+    3px 3px 6px #f5c54255;
+  border-color: #ffd86a;
+  transform: translateY(-1px);
 }
 .spin-button:active {
-    transform: translateY(0px) scale(0.98);
-    box-shadow: 0 0 8px #F5C54266;
-}
-
-.spin-button::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -75%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-            120deg,
-            transparent,
-            rgba(255, 255, 255, 0.25),
-            transparent
-    );
-    transition: 0.75s;
-}
-
-.spin-button:hover::after {
-    left: 130%;
-}
-
-.bet-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-.bet-input {
-    padding: 10px;
-    font-size: 1rem;
-    border-radius: 5px;
-    width: max-content;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-}
-.bet-input input {
-    text-align: center;
-    padding: 5px;
-    width: 100px;
-    font-size: 1.25rem;
-    background: var(--accent);
-    color: black;
-    border: none;
-    border-radius: 10px;
-}
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    /* display: none; <- Crashes Chrome on hover */
-    -webkit-appearance: none;
-    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
-}
-
-input[type=number] {
-    -moz-appearance:textfield; /* Firefox */
+  transform: translateY(0px) scale(0.99);
+  box-shadow: 0 0 8px #f5c54266;
 }
 
 .info {
-    position: absolute;
-    top: 30%;
-    font-size: 2rem;
-    font-weight: bold;
-    pointer-events: none;
-    z-index: 99;
+  position: absolute;
+  top: -40%;
+  font-size: 2rem;
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 99;
+}
+
+.bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
 }

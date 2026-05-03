@@ -1,5 +1,5 @@
-import { writable } from "svelte/store";
-import type {Currency} from "stake-engine";
+import { writable } from 'svelte/store';
+import type { Currency } from 'stake-engine';
 
 export const balance = writable<number | null>(null);
 export const currency = writable<Currency | null>(null);

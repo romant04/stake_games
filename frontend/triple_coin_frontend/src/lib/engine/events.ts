@@ -1,25 +1,26 @@
-import { balance, currency, roundActive } from "../stores/game";
+import { balance, currency, roundActive } from '../stores/game';
+import type { Currency } from 'stake-engine';
 
 type Balance = {
-    amount: number;
-    currency: string;
+  amount: number;
+  currency: Currency;
 };
 
 type RoundState = {
-    active: boolean;
+  active: boolean;
 };
 
 export function setupEventListeners() {
-    window.addEventListener("balanceUpdate", (event: Event) => {
-        const e = event as CustomEvent<Balance>;
+  window.addEventListener('balanceUpdate', (event: Event) => {
+    const e = event as CustomEvent<Balance>;
 
-        balance.set(e.detail.amount);
-        currency.set(e.detail.currency);
-    });
+    balance.set(e.detail.amount);
+    currency.set(e.detail.currency);
+  });
 
-    window.addEventListener("roundActive", (event: Event) => {
-        const e = event as CustomEvent<RoundState>;
+  window.addEventListener('roundActive', (event: Event) => {
+    const e = event as CustomEvent<RoundState>;
 
-        roundActive.set(e.detail.active);
-    });
+    roundActive.set(e.detail.active);
+  });
 }

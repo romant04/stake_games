@@ -1,17 +1,17 @@
-import { RGSClient } from "stake-engine";
+import { RGSClient } from 'stake-engine';
 
 let client: ReturnType<typeof RGSClient>;
 
 export function initClient() {
-    if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
 
-    client = RGSClient({
-        url: window.location.href,
-    });
+  client = RGSClient({
+    url: window.location.href,
+  });
 
-    return client;
+  return client;
 }
 
 export function getClient() {
-    return client;
+  return client;
 }
