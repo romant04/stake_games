@@ -19,13 +19,13 @@
   }
 
   function handleBetAmountChange(increment: boolean) {
-    if (increment && betAmount < $balance) {
+    if (increment) {
         const nextBet = $allowedBets.find((b) => b > betAmount);
-        if (nextBet) {
+        if (nextBet && nextBet <= $balance) {
             betAmount = nextBet;
         }
     } else {
-        const prevBet = [...$allowedBets].reverse().find((b) => b < betAmount);
+        const prevBet = [...$allowedBets].reverse().find((b) => b < betAmount && b <= $balance);
         if (prevBet) {
             betAmount = prevBet;
         }
