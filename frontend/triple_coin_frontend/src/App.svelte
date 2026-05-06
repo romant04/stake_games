@@ -11,13 +11,13 @@
   import front from './assets/game/front.png';
   import back from './assets/game/back.png';
   import bg from './assets/bg.png';
+  import { API_MULTIPLIER } from "./constants/api";
 
   let coinResults = $state([
     { index: 0, side: 'H' },
     { index: 1, side: 'H' },
     { index: 2, side: 'H' },
   ]);
-  const API_MULTIPLIER = 1000000;
   let betAmount = $state(10);
   let payout = $state(null);
 

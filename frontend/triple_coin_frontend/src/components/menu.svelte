@@ -4,6 +4,7 @@
   import { slide } from "svelte/transition";
   import Paytable from './paytable.svelte';
   import { allowedBets } from "$lib/stores/game";
+  import {API_MULTIPLIER} from "../constants/api";
 
   let {
     handleSpin,
@@ -19,13 +20,20 @@
   }
 
   function handleBetAmountChange(increment: boolean) {
+    const maxBet = Math.floor($balance / API_MULTIPLIER);
     if (increment) {
         const nextBet = $allowedBets.find((b) => b > betAmount);
-        if (nextBet && nextBet <= $balance) {
+        if (nextBet && nextBet <= maxBet) {
             betAmount = nextBet;
+            return;
+        }
+
+        const biggestBet = [...$allowedBets].reverse().find((b) => b <= maxBet);
+        if (biggestBet) {
+          betAmount = biggestBet;
         }
     } else {
-        const prevBet = [...$allowedBets].reverse().find((b) => b < betAmount && b <= $balance);
+        const prevBet = [...$allowedBets].reverse().find((b) => b < betAmount && b <= maxBet);
         if (prevBet) {
             betAmount = prevBet;
         }

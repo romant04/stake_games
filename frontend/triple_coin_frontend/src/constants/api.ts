@@ -1,0 +1,1 @@
+export const API_MULTIPLIER = 1000000;
