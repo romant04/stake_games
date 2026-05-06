@@ -3,6 +3,7 @@
   import { DisplayAmount } from 'stake-engine';
   import { slide } from "svelte/transition";
   import Paytable from './paytable.svelte';
+  import { allowedBets } from "$lib/stores/game";
 
   let {
     handleSpin,
@@ -19,9 +20,15 @@
 
   function handleBetAmountChange(increment: boolean) {
     if (increment && betAmount < $balance) {
-      betAmount += 10;
+        const nextBet = $allowedBets.find((b) => b > betAmount);
+        if (nextBet) {
+            betAmount = nextBet;
+        }
     } else {
-      betAmount = Math.max(0, betAmount - 10);
+        const prevBet = [...$allowedBets].reverse().find((b) => b < betAmount);
+        if (prevBet) {
+            betAmount = prevBet;
+        }
     }
   }
 </script>

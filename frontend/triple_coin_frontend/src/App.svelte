@@ -3,9 +3,9 @@
   import { initClient } from '$lib/engine/client';
   import { setupEventListeners } from '$lib/engine/events';
   import { authenticate, play, endRound } from '$lib/engine/actions';
-  import { balance, currency, isPlaying, roundActive } from '$lib/stores/game';
-  import { DisplayAmount } from 'stake-engine';
+  import { currency, isPlaying } from '$lib/stores/game';
   import { fly, fade } from 'svelte/transition';
+  import { allowedBets } from "$lib/stores/game";
   import Paytable from './components/paytable.svelte';
   import Menu from './components/menu.svelte';
   import front from './assets/game/front.png';
@@ -20,7 +20,6 @@
   const API_MULTIPLIER = 1000000;
   let betAmount = $state(10);
   let payout = $state(null);
-  let payoutTableOpen = $state(false);
 
   $effect(() => {
     if (payout === null) return;
@@ -91,7 +90,8 @@
 
     // Initial Auth to get player data/balance
     try {
-      await authenticate();
+      const res = await authenticate();
+      $allowedBets = res.config.betLevels.map((level) => level / API_MULTIPLIER);
     } catch (err) {
       alert('Auth failed: ' + err);
     }
