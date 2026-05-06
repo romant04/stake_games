@@ -106,16 +106,7 @@
     <Paytable />
   </div>
 
-  {#if payoutTableOpen}
-    <button
-      class="fixed min-[1101px]:hidden z-50 top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center"
-      onclick={() => (payoutTableOpen = false)}
-    >
-      <Paytable />
-    </button>
-  {/if}
-
-  <h1 class="text-6xl font-bold mt-32">Triple coin</h1>
+  <h1 class="text-6xl font-bold mt-32">Triple Coin Flip</h1>
 
   <div class="coin-row">
     {#if payout !== null}
@@ -143,14 +134,7 @@
     {/each}
   </div>
 
-  <div class="absolute bottom-10 w-[95%] lg:w-3/4">
-    <div class="absolute min-[1101px]:hidden top-0 left-0 -translate-y-3/4">
-      <button
-        class="rounded-full bg-[#0042a2]/70 w-14 h-14 text-2xl font-medium hover:bg-[#0042a2]/90 cursor-pointer"
-        onclick={() => (payoutTableOpen = true)}>i</button
-      >
-    </div>
-
+  <div class="absolute bottom-5 md:bottom-10 w-[95%] lg:w-3/4">
     <Menu bind:betAmount {handleSpin} />
   </div>
 </div>

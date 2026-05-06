@@ -9,9 +9,9 @@
   ];
 </script>
 
-<div class="flex flex-col gap-4">
+<div class="flex flex-col items-center gap-3">
   <h4 class="text-2xl font-bold">Pay Table</h4>
-  <div class="flex flex-col gap-2 bg-[#003075]/80 p-6 rounded-md">
+  <div class="flex flex-col w-max gap-2 bg-[#003075]/80 p-6 rounded-md">
     {#each PAYTABLE as row}
       <div class="flex items-center gap-4">
         <div class="flex gap-1">
