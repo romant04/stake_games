@@ -20,7 +20,7 @@
   }
 
   function handleBetAmountChange(increment: boolean) {
-    const maxBet = Math.floor($balance / API_MULTIPLIER);
+    const maxBet = $balance / API_MULTIPLIER;
     if (increment) {
         const nextBet = $allowedBets.find((b) => b > betAmount);
         if (nextBet && nextBet <= maxBet) {
