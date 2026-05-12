@@ -21,6 +21,7 @@ export function setupEventListeners() {
   window.addEventListener('roundActive', (event: Event) => {
     const e = event as CustomEvent<RoundState>;
 
+    console.log(e);
     roundActive.set(e.detail.active);
   });
 }

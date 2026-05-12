@@ -2,28 +2,29 @@
 
 from game_override import GameStateOverride
 from src.events.events import *
+import random
 
 
 class GameState(GameStateOverride):
     """Handle all game-logic and event updates for a given simulation number."""
 
-    def _get_coin_result(self, sim: int):
-
-        outcome = sim % self.config.total_outcomes
-
+    def _get_coin_result(self):
         coins = []
+        for _ in range(3):
+            x = random.randint(1, 10)
+            if x < 2:
+                coins.append("S")
+            elif x < 6:
+                coins.append("H")
+            else:
+                coins.append("T")
 
-        for i in range(self.config.num_coins):
-            bit = (outcome >> i) & 1
-            coins.append("H" if bit else "T")
+        winning_combination = (3, "S") if coins.count("S") == 3 else (coins.count("H"), "H")
 
-        num_heads = coins.count("H")
-
-        multiplier = self.config.payout_table[num_heads]
+        multiplier = self.config.payout_table.get(winning_combination, 0)
 
         return {
             "coins": coins,
-            "num_heads": num_heads,
             "multiplier": multiplier,
         }
 
@@ -36,10 +37,9 @@ class GameState(GameStateOverride):
             # Generate deterministic coin outcome
             # ------------------------------------------------------------
 
-            result = self._get_coin_result(sim)
+            result = self._get_coin_result()
 
             coins = result["coins"]
-            num_heads = result["num_heads"]
             multiplier = result["multiplier"]
 
             # ------------------------------------------------------------
@@ -66,7 +66,6 @@ class GameState(GameStateOverride):
                     }
                     for i, side in enumerate(coins)
                 ],
-                "numHeads": num_heads,
                 "multiplier": multiplier,
                 # usually sent as cents
                 "totalWin": int(round(win_data["totalWin"] * 100, 0)),

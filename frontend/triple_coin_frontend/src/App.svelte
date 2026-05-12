@@ -3,21 +3,36 @@
   import { initClient } from '$lib/engine/client';
   import { setupEventListeners } from '$lib/engine/events';
   import { authenticate, play, endRound } from '$lib/engine/actions';
-  import { currency, isPlaying } from '$lib/stores/game';
+  import { currency, isPlaying, roundActive } from '$lib/stores/game';
   import { fly, fade } from 'svelte/transition';
-  import { allowedBets } from "$lib/stores/game";
+  import { allowedBets } from '$lib/stores/game';
   import Paytable from './components/paytable.svelte';
   import Menu from './components/menu.svelte';
   import front from './assets/game/front.png';
   import back from './assets/game/back.png';
+  import side from './assets/game/side.png';
   import bg from './assets/bg.png';
-  import { API_MULTIPLIER } from "./constants/api";
+  import { API_MULTIPLIER } from './constants/api';
+
+  function textToImageMapper(text: string) {
+    return {
+      H: front,
+      T: back,
+      S: side,
+    }[text];
+  }
+  const frames = [front, side, back];
 
   let coinResults = $state([
     { index: 0, side: 'H' },
     { index: 1, side: 'H' },
     { index: 2, side: 'H' },
   ]);
+
+  let firstCoin = $state<string>(front);
+  let secondCoin = $state<string>(front);
+  let thirdCoin = $state<string>(front);
+
   let betAmount = $state(10);
   let payout = $state(null);
 
@@ -34,7 +49,7 @@
   });
 
   interface PlayResponseState0 {
-    coins: { index: number; side: 'H' | 'T' }[];
+    coins: { index: number; side: 'H' | 'T' | 'S' }[];
     index: number;
     multiplier: number;
     numberRolled: number;
@@ -49,7 +64,51 @@
 
   type PlayResponseState = [PlayResponseState0, PlayResponseState1];
 
+  function spinCoin(
+    assign: (value: string) => void,
+    result: string,
+    duration: number,
+  ): Promise<void> {
+    return new Promise<void>((resolve) => {
+      let elapsed = 0;
+      let i = 0;
+
+      const interval = setInterval(() => {
+        if (elapsed >= duration) {
+          clearInterval(interval);
+          assign(result);
+          resolve();
+          return;
+        }
+
+        assign(frames[i % frames.length]);
+        i++;
+
+        elapsed += 100;
+      }, 100);
+    });
+  }
+
+  async function spinCoins() {
+    await Promise.all(
+      [firstCoin, secondCoin, thirdCoin].map((_, i) =>
+        spinCoin(
+          (v) => {
+            if (i === 0) firstCoin = v;
+            else if (i === 1) secondCoin = v;
+            else thirdCoin = v;
+          },
+          textToImageMapper(coinResults[i].side),
+          1000 + i * 1000,
+        ),
+      ),
+    );
+  }
+
   async function handleSpin() {
+    if ($roundActive) {
+      await endRound(); // For weird edge case where player exits mid-game
+    }
     isPlaying.set(true);
 
     const start = Date.now();
@@ -63,8 +122,9 @@
       if (res.round.state) {
         const state = res.round.state as PlayResponseState;
         coinResults = state[0].coins;
-        payout = res.round.payout / API_MULTIPLIER;
 
+        await spinCoins();
+        payout = res.round.payout / API_MULTIPLIER;
         if (state[0].totalWin > 0) {
           await endRound();
         }
@@ -91,7 +151,9 @@
     // Initial Auth to get player data/balance
     try {
       const res = await authenticate();
-      $allowedBets = res.config.betLevels.map((level) => level / API_MULTIPLIER);
+      $allowedBets = res.config.betLevels.map(
+        (level) => level / API_MULTIPLIER,
+      );
     } catch (err) {
       alert('Auth failed: ' + err);
     }
@@ -120,21 +182,18 @@
         {$currency}
       </span>
     {/if}
-    {#each coinResults as coin}
-      {console.log('Rendering coin with value:', coin)}
-      <div class="coin" class:flipping={$isPlaying}>
-        {#if coin.side === 'H'}
-          <img src={front} alt="seven" />
-        {:else if coin.side === 'T'}
-          <img src={back} alt="seven" />
-        {:else}
-          <img src={front} alt="" />
-        {/if}
-      </div>
-    {/each}
+    <div class="coin">
+      <img alt="" src={firstCoin} />
+    </div>
+    <div class="coin">
+      <img alt="" src={secondCoin} />
+    </div>
+    <div class="coin">
+      <img alt="" src={thirdCoin} />
+    </div>
   </div>
 
-  <div class="absolute bottom-5 md:bottom-10 w-[95%] lg:w-3/4">
+  <div class="absolute z-40 bottom-5 md:bottom-10 w-[95%] lg:w-3/4">
     <Menu bind:betAmount {handleSpin} />
   </div>
 </div>

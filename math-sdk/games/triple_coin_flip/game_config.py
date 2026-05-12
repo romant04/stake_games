@@ -25,7 +25,7 @@ class GameConfig(Config):
         self.rtp = 0
 
         # Highest possible multiplier
-        self.wincap = 5.0
+        self.wincap = 100.0
 
         self.construct_paths()
 
@@ -38,10 +38,10 @@ class GameConfig(Config):
         # Total possible outcomes
         self.total_outcomes = 2**self.num_coins
         self.payout_table = {
-            0: 0.0,  # TTT
-            1: 0.1,
-            2: 1.15,
-            3: 3.85,
+            (3, "H"): 4,
+            (2, "H"): 1.5,
+            (1, "H"): 0.5,
+            (3, "S"): 50 
         }
 
         # ------------------------------------------------------------------
