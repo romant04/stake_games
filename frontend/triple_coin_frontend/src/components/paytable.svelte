@@ -18,7 +18,7 @@
         <div class="flex gap-1">
           {#each row.combination.split('') as side}
             <img
-              src={side === 'H' ? front : 'T' ? back : sideProfile}
+              src={side === 'H' ? front : side === 'T' ? back : sideProfile}
               alt={side}
               class="w-12 h-12"
             />

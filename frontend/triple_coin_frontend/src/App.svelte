@@ -3,7 +3,12 @@
   import { initClient } from '$lib/engine/client';
   import { setupEventListeners } from '$lib/engine/events';
   import { authenticate, play, endRound } from '$lib/engine/actions';
-  import { currency, isPlaying, roundActive } from '$lib/stores/game';
+  import {
+    currency,
+    gameHistory,
+    isPlaying,
+    roundActive,
+  } from '$lib/stores/game';
   import { fly, fade } from 'svelte/transition';
   import { allowedBets } from '$lib/stores/game';
   import Paytable from './components/paytable.svelte';
@@ -13,6 +18,7 @@
   import side from './assets/game/side.png';
   import bg from './assets/bg.png';
   import { API_MULTIPLIER } from './constants/api';
+  import GameHistory from './components/game-history.svelte';
 
   function textToImageMapper(text: string) {
     return {
@@ -125,6 +131,10 @@
 
         await spinCoins();
         payout = res.round.payout / API_MULTIPLIER;
+        gameHistory.set([
+          ...$gameHistory,
+          state[0].coins.map((c) => c.side).join(''),
+        ]);
         if (state[0].totalWin > 0) {
           await endRound();
         }
@@ -166,6 +176,10 @@
     class="max-[1100px]:hidden absolute top-1/2 -translate-y-1/2 lg:left-2 xl:left-12 2xl:left-36"
   >
     <Paytable />
+  </div>
+
+  <div class="absolute top-12 right-12">
+    <GameHistory />
   </div>
 
   <h1 class="text-6xl font-bold mt-32">Triple Coin Flip</h1>

@@ -6,3 +6,5 @@ export const currency = writable<Currency | null>(null);
 export const roundActive = writable(false);
 export const isPlaying = writable(false);
 export const allowedBets = writable([0]);
+
+export const gameHistory = writable<string[]>([]);
