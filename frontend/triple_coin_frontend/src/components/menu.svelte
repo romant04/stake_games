@@ -9,10 +9,14 @@
   let {
     handleSpin,
     betAmount = $bindable(),
-  }: { handleSpin: () => void; betAmount: number } = $props();
+    isInfoOpen = $bindable(),
+  }: {
+    handleSpin: () => void;
+    betAmount: number;
+    isInfoOpen: boolean;
+  } = $props();
 
   let isMenuOpen = $state(false);
-  let isInfoOpen = $state(false);
 
   function handleInfoOpen() {
     isMenuOpen = false;
@@ -46,27 +50,6 @@
     console.log($roundActive, $isPlaying);
   });
 </script>
-
-{#if isInfoOpen}
-  <button
-    class="flex justify-center items-center fixed top-0 left-0 w-full h-full bg-[#002a67]/70"
-    onclick={() => (isInfoOpen = false)}
-  >
-    <div class="p-10 min-w-1/2 bg-[#002a67]/90">
-      <p class="text-3xl">
-        Triple Coin Flip | <span class="text-gray-200">INFO</span>
-      </p>
-      <div class="py-6">
-        <Paytable />
-      </div>
-      <p class="text-sm text-gray-300 mt-10">
-        <span class="text-white">Details</span>
-        <br />
-        RTP: 95%
-      </p>
-    </div>
-  </button>
-{/if}
 
 <div
   class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-10 items-center"
@@ -110,7 +93,7 @@
   </div>
 
   <div
-    class="bg-gray-900/60 flex flex-col w-48 px-4 py-2 rounded-md justify-self-center"
+    class="bg-gray-900/60 flex flex-col w-48 px-4 py-2 rounded-md items-center justify-self-center"
   >
     <span class="uppercase text-xd text-gray-400">Bet</span>
     <div class="flex justify-between items-center w-full">
