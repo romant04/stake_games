@@ -8,10 +8,12 @@
 
   let {
     handleSpin,
+    lastWin = $bindable(),
     betAmount = $bindable(),
     isInfoOpen = $bindable(),
   }: {
     handleSpin: () => void;
+    lastWin: number;
     betAmount: number;
     isInfoOpen: boolean;
   } = $props();
@@ -52,7 +54,7 @@
 </script>
 
 <div
-  class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-10 items-center"
+  class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-6 xl:px-8 2xl:px-10 items-center"
 >
   {#if isMenuOpen}
     <div
@@ -70,19 +72,32 @@
 
   <div class="flex gap-5 items-center">
     <button
-      class="cursor-pointer bg-gray-800 w-12 h-12 rounded-md flex flex-col gap-2 items-center justify-center"
+      class="cursor-pointer bg-gray-800 w-11 h-11 rounded-md flex flex-col gap-2 items-center justify-center"
       onclick={() => (isMenuOpen = !isMenuOpen)}
     >
       {#each [1, 2, 3] as _}
-        <div class="w-3/4 h-1 bg-gray-100 rounded-full"></div>
+        <div class="w-3/4 h-[3px] bg-gray-100 rounded-full"></div>
       {/each}
     </button>
     <div class="flex flex-col gap-1">
       <span class="text-xs text-gray-400 uppercase">Balance</span>
-      <span class="text-md font-medium"
+      <span class="text-sm font-medium"
         >{$currency}
         {DisplayAmount(
           { amount: $balance, currency: $currency },
+          {
+            removeSymbol: true,
+            decimals: 2,
+          },
+        )}</span
+      >
+    </div>
+    <div class="flex flex-col gap-1">
+      <span class="text-xs text-gray-400 uppercase">Last Win</span>
+      <span class="text-sm font-medium {lastWin > 0 && 'text-green-500'}"
+        >{$currency}
+        {DisplayAmount(
+          { amount: lastWin, currency: $currency },
           {
             removeSymbol: true,
             decimals: 2,

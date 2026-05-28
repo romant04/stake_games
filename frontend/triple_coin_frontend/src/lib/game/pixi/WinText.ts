@@ -16,7 +16,7 @@ export class WinText {
       style: new TextStyle({
         fontFamily: 'Arial',
         fontSize: 24,
-        fill: 0x00df2d,
+        fill: 0x00d12b,
         fontWeight: 'bold',
       }),
     });

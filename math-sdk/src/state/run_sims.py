@@ -143,7 +143,7 @@ def run_multi_process_sims(
     game_id: str,
     betmode: str,
     gamestate: object,
-    num_sims: int = 1000000,
+    num_sims: int = 1_000_000,
     compress: bool = True,
     write_event_list: bool = False,
     profiling: bool = False,

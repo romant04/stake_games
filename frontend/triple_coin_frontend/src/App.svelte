@@ -19,6 +19,7 @@
   let isInfoOpen = $state<boolean>(false);
 
   let betAmount = $state(10);
+  let lastWin = $state(0);
   let coinScene: CoinScene;
 
   interface PlayResponseState0 {
@@ -54,8 +55,9 @@
       const payout = res.round.payout / API_MULTIPLIER;
       await coinScene.playRound(results, payout);
 
-      // ✅ ONLY AFTER animation finishes
+      // ONLY AFTER animation finishes
       gameHistory.set([...$gameHistory, results.join('')]);
+      lastWin = res.round.payout;
 
       if (state[0].totalWin > 0) {
         await endRound();
@@ -75,9 +77,12 @@
     // Initial Auth to get player data/balance
     try {
       const res = await authenticate();
-      $allowedBets = res.config.betLevels.map(
-        (level) => level / API_MULTIPLIER,
-      );
+      const betLevels = [0.5, 1, 2, 5, 10, 20, 30, 40, 50]; // Desired bet levels
+      $allowedBets = res.config.betLevels
+        .map((level) => level / API_MULTIPLIER)
+        .filter(
+          (x) => betLevels.includes(x) || x > betLevels[betLevels.length - 1],
+        );
     } catch (err) {
       alert('Auth failed: ' + err);
     }
@@ -128,9 +133,9 @@
     {/if}
 
     <div
-      class="pointer-events-auto absolute z-40 bottom-5 left-1/2 -translate-x-1/2 md:bottom-10 w-[95%] lg:w-3/4"
+      class="pointer-events-auto absolute z-40 bottom-5 left-1/2 -translate-x-1/2 md:bottom-10 w-[95%] 2xl:w-3/4"
     >
-      <Menu bind:betAmount bind:isInfoOpen {handleSpin} />
+      <Menu bind:betAmount bind:isInfoOpen bind:lastWin {handleSpin} />
     </div>
   </div>
 </div>

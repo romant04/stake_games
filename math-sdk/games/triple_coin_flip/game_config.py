@@ -25,7 +25,7 @@ class GameConfig(Config):
         self.rtp = 0
 
         # Highest possible multiplier
-        self.wincap = 100.0
+        self.wincap = 5000.0
 
         self.construct_paths()
 
@@ -41,7 +41,6 @@ class GameConfig(Config):
             (3, "H"): 4,
             (2, "H"): 1.5,
             (1, "H"): 0.5,
-            (3, "S"): 50 
         }
 
         # ------------------------------------------------------------------
