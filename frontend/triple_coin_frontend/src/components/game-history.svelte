@@ -5,9 +5,6 @@
   import sideProfile from '../assets/game/side.png';
 
   const MAX_HISTORY = 5;
-  $effect(() => {
-    console.log('Game history updated:', $gameHistory);
-  });
 
   function getOpacityFromIndex(index: number, length: number) {
     const realIndex = index + (MAX_HISTORY - length);

@@ -1,9 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { initClient } from '$lib/engine/client';
-  import { setupEventListeners } from '$lib/engine/events';
-  import { authenticate, play, endRound } from '$lib/engine/actions';
   import {
+    balance,
     currency,
     gameHistory,
     isPlaying,
@@ -15,6 +13,13 @@
   import { API_MULTIPLIER } from './constants/api';
   import GameHistory from './components/game-history.svelte';
   import CoinScene from '$lib/game/CoinScene.svelte';
+  import {
+    authenticate,
+    endRound,
+    getBalance,
+    play,
+  } from 'stake-engine-client';
+  import type { Currency } from 'stake-engine';
 
   let isInfoOpen = $state<boolean>(false);
 
@@ -46,8 +51,11 @@
     isPlaying.set(true);
 
     try {
-      const apiBetAmount = betAmount * API_MULTIPLIER;
-      const res = await play(apiBetAmount, 'base');
+      const res = await play({
+        amount: betAmount,
+        mode: 'base',
+      });
+      balance.set(res.balance?.amount);
       const state = res.round.state as PlayResponseState;
 
       const results = state[0].coins.map((c) => c.side);
@@ -62,21 +70,23 @@
       if (state[0].totalWin > 0) {
         await endRound();
       }
+      const updatedBalance = await getBalance();
+      balance.set(updatedBalance.balance?.amount);
     } catch (err) {
       console.error(err);
     } finally {
       isPlaying.set(false);
+      roundActive.set(false);
     }
   }
 
   onMount(async () => {
-    // Initialize SDK and Listeners
-    initClient();
-    setupEventListeners();
-
     // Initial Auth to get player data/balance
     try {
       const res = await authenticate();
+      roundActive.set(res.round?.active || false);
+      currency.set(res.balance?.currency as Currency);
+      balance.set(res.balance?.amount || 0);
       const betLevels = [0.5, 1, 2, 5, 10, 20, 30, 40, 50]; // Desired bet levels
       $allowedBets = res.config.betLevels
         .map((level) => level / API_MULTIPLIER)

@@ -24,7 +24,6 @@ export class CoinManager {
       coin.setPosition(screenWidth / 2 + (i - 1) * 180, screenHeight / 2);
 
       container.addChild(coin.sprite);
-      console.log('coin created', coin);
       this.coins.push(coin);
     }
   }
