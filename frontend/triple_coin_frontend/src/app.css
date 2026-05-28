@@ -27,7 +27,6 @@ body {
 }
 
 .spin {
-  background-color: transparent;
   box-shadow: 3px 3px 4px #f5c54266;
   transition: all 0.25s ease;
 }
@@ -50,4 +49,17 @@ body {
   font-weight: bold;
   pointer-events: none;
   z-index: 99;
+}
+
+.spinning {
+  animation: spinAnimation 500ms linear infinite;
+}
+
+@keyframes spinAnimation {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
 }

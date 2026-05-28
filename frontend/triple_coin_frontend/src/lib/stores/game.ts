@@ -8,3 +8,4 @@ export const isPlaying = writable(false);
 export const allowedBets = writable([0]);
 
 export const gameHistory = writable<string[]>([]);
+export const turboMode = writable(false);

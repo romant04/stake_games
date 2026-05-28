@@ -22,8 +22,8 @@
   }
 </script>
 
-<div class="flex flex-col items-center gap-3 bg-[#003075]/80 p-3 rounded-md">
-  <p class="text-2xl">Last games</p>
+<div class="flex flex-col items-center gap-2 bg-[#003075]/80 p-3 rounded-md">
+  <p class="text-xl mb-2">Last games</p>
   {#if $gameHistory.length > 0}
     {#each $gameHistory.slice(-MAX_HISTORY) as game, index}
       {@const opacityValue = getOpacityFromIndex(
@@ -35,7 +35,7 @@
           <img
             src={side === 'H' ? front : side === 'T' ? back : sideProfile}
             alt={side}
-            class="w-12 h-12 {opacityValue}"
+            class="w-10 h-10 {opacityValue}"
           />
         {/each}
       </div>

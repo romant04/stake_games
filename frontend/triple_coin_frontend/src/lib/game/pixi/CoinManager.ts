@@ -1,5 +1,7 @@
 import { Coin } from './Coin';
 import { Texture, type Ticker } from 'pixi.js';
+import { get } from 'svelte/store';
+import { turboMode } from '../../stores/game';
 
 type Result = 'H' | 'T' | 'S';
 
@@ -44,7 +46,7 @@ export class CoinManager {
     //
     // let them spin
     //
-    await this.wait(1200);
+    await this.wait(get(turboMode) ? 600 : 1200);
 
     //
     // sequential stop
@@ -52,7 +54,7 @@ export class CoinManager {
     for (let i = 0; i < this.coins.length; i++) {
       this.coins[i].stopSpin(results[i]);
 
-      await this.wait(750);
+      await this.wait(get(turboMode) ? 400 : 750);
     }
 
     //

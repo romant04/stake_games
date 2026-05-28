@@ -1,4 +1,6 @@
 import { Sprite, Texture, Ticker } from 'pixi.js';
+import { get } from 'svelte/store';
+import { turboMode } from '../../stores/game';
 
 export class Coin {
   sprite: Sprite;
@@ -45,7 +47,8 @@ export class Coin {
     //
     // frame progression
     //
-    this.elapsed += deltaMS * this.spinSpeed;
+    this.elapsed +=
+      deltaMS * (get(turboMode) ? this.spinSpeed * 1.5 : this.spinSpeed);
 
     //
     // texture animation
@@ -62,7 +65,7 @@ export class Coin {
     // slowdown logic
     //
     if (this.stopRequested) {
-      this.spinSpeed *= 0.985;
+      this.spinSpeed *= get(turboMode) ? 0.75 : 0.985;
 
       //
       // final stop threshold

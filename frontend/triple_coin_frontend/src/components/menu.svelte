@@ -1,10 +1,17 @@
 <script lang="ts">
-  import { balance, currency, isPlaying, roundActive } from '$lib/stores/game';
+  import {
+    balance,
+    currency,
+    isPlaying,
+    roundActive,
+    turboMode,
+  } from '$lib/stores/game';
   import { DisplayAmount } from 'stake-engine';
   import { slide } from 'svelte/transition';
-  import Paytable from './paytable.svelte';
   import { allowedBets } from '$lib/stores/game';
   import { API_MULTIPLIER } from '../constants/api';
+  import Lightning from './icons/lightning.svelte';
+  import Spin from './icons/spin.svelte';
 
   let {
     handleSpin,
@@ -48,10 +55,20 @@
     }
   }
 
-  $effect(() => {
-    console.log($roundActive, $isPlaying);
-  });
+  function handleTurboModeChange() {
+    turboMode.set(!$turboMode);
+  }
+
+  function onKeyDown(e: KeyboardEvent) {
+    if (e.code === 'Space') {
+      if (!$isPlaying) {
+        handleSpin();
+      }
+    }
+  }
 </script>
+
+<svelte:window on:keydown|preventDefault={onKeyDown} />
 
 <div
   class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-6 xl:px-8 2xl:px-10 items-center"
@@ -124,15 +141,26 @@
     </div>
   </div>
 
-  <button
-    class="rounded-full border-2 border-[gold] spin h-20 w-20 bg-[#0042a2]/70 disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer justify-self-end"
-    disabled={$isPlaying}
-    onclick={handleSpin}
-  >
-    {#if $isPlaying}
-      Spinning..
-    {:else}
-      SPIN
-    {/if}
-  </button>
+  <div class="flex gap-4 justify-self-end">
+    <button
+      class="rounded-full text-4xl flex justify-center items-center border-2 border-[gold] spin h-20 w-20 bg-transparent disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer"
+      disabled={$isPlaying}
+      onclick={handleSpin}
+    >
+      {#if $isPlaying}
+        <div class="spinning">
+          <Spin />
+        </div>
+      {:else}
+        <Spin />
+      {/if}
+    </button>
+    <button
+      class={`rounded-full text-2xl flex justify-center items-center border-2 ${$turboMode ? 'bg-[gold] text-black disabled:bg-[gold]' : 'bg-transparent text-white disabled:bg-[#0042a2]/30'} border-[gold] spin h-15 w-15 disabled:cursor-default cursor-pointer`}
+      disabled={$isPlaying}
+      onclick={handleTurboModeChange}
+    >
+      <Lightning />
+    </button>
+  </div>
 </div>
