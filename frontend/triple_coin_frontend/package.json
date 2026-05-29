@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "path": "^0.12.7",
+    "pixi-filters": "^6.1.5",
     "pixi.js": "^8.18.1",
     "stake-engine": "^0.1.32",
     "stake-engine-client": "^1.0.7"
