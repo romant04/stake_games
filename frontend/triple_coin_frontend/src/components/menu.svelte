@@ -3,6 +3,7 @@
     balance,
     currency,
     isPlaying,
+    replayMode,
     roundActive,
     turboMode,
   } from '$lib/stores/game';
@@ -15,11 +16,13 @@
 
   let {
     handleSpin,
+    handleReplay,
     lastWin = $bindable(),
     betAmount = $bindable(),
     isInfoOpen = $bindable(),
   }: {
     handleSpin: () => void;
+    handleReplay: () => void;
     lastWin: number;
     betAmount: number;
     isInfoOpen: boolean;
@@ -59,10 +62,18 @@
     turboMode.set(!$turboMode);
   }
 
+  function handleSpinOrReplay() {
+    if ($replayMode) {
+      handleReplay();
+    } else {
+      handleSpin();
+    }
+  }
+
   function onKeyDown(e: KeyboardEvent) {
     if (e.code === 'Space') {
       if (!$isPlaying) {
-        handleSpin();
+        handleSpinOrReplay();
       }
     }
   }
@@ -131,11 +142,13 @@
     <div class="flex justify-between items-center w-full">
       <button
         class="bg-gray-600/40 px-4 h-8 rounded-md cursor-pointer"
+        disabled={$replayMode !== null}
         onclick={() => handleBetAmountChange(false)}>-</button
       >
       <div>{$currency} {betAmount}</div>
       <button
         class="bg-gray-600/40 px-4 h-8 rounded-md cursor-pointer"
+        disabled={$replayMode !== null}
         onclick={() => handleBetAmountChange(true)}>+</button
       >
     </div>
@@ -145,7 +158,7 @@
     <button
       class="rounded-full text-4xl flex justify-center items-center border-2 border-[gold] spin h-20 w-20 bg-transparent disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer"
       disabled={$isPlaying}
-      onclick={handleSpin}
+      onclick={handleSpinOrReplay}
     >
       {#if $isPlaying}
         <div class="spinning">

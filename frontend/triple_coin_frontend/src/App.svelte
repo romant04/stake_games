@@ -5,6 +5,7 @@
     currency,
     gameHistory,
     isPlaying,
+    replayMode,
     roundActive,
   } from '$lib/stores/game';
   import { allowedBets } from '$lib/stores/game';
@@ -17,9 +18,13 @@
     authenticate,
     endRound,
     getBalance,
+    getReplayUrlParams,
+    isReplayMode,
     play,
+    replay,
   } from 'stake-engine-client';
   import type { Currency } from 'stake-engine';
+  import type { Replay } from './types/replay';
 
   let isInfoOpen = $state<boolean>(false);
 
@@ -43,6 +48,23 @@
 
   type PlayResponseState = [PlayResponseState0, PlayResponseState1];
 
+  async function handleReplay() {
+    isPlaying.set(true);
+
+    try {
+      const results = $replayMode?.state[0].coins.map((x) => x.side);
+      const payout = $replayMode?.state[0].totalWin;
+      await coinScene.playRound(results, payout);
+
+      // ONLY AFTER animation finishes
+      gameHistory.set([results.join('')]);
+      lastWin = payout * API_MULTIPLIER;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      isPlaying.set(false);
+    }
+  }
   async function handleSpin() {
     if ($roundActive) {
       await endRound();
@@ -81,6 +103,22 @@
   }
 
   onMount(async () => {
+    if (isReplayMode()) {
+      const params = getReplayUrlParams();
+      // Get currency from URL params
+      const currencyFromParams = new URLSearchParams(
+        window.location.search,
+      ).get('currency') as Currency;
+      currency.set(currencyFromParams ?? 'USD');
+      const r = (await replay({ ...params })) as Replay;
+      replayMode.set({ ...r, event: params.event });
+      betAmount =
+        r.payoutMultiplier !== 0
+          ? r.state[0].totalWin / r.payoutMultiplier
+          : 10;
+      return;
+    }
+
     // Initial Auth to get player data/balance
     try {
       const res = await authenticate();
@@ -105,9 +143,14 @@
   </div>
 
   <div class="absolute inset-0 z-10">
-    <h1 class="absolute top-[10%] left-1/2 -translate-x-1/2 text-6xl font-bold">
-      Triple Coin Flip
-    </h1>
+    <div
+      class="absolute top-[10%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+    >
+      <h1 class="text-6xl font-bold">Triple Coin Flip</h1>
+      {#if $replayMode}
+        <span class="text-xl">Replay ID: {$replayMode.event}</span>
+      {/if}
+    </div>
 
     <div
       class="max-[1100px]:hidden absolute top-1/2 -translate-y-1/2 lg:left-2 xl:left-12 2xl:left-36"
@@ -145,7 +188,13 @@
     <div
       class="pointer-events-auto absolute z-40 bottom-5 left-1/2 -translate-x-1/2 md:bottom-10 w-[95%] 2xl:w-3/4"
     >
-      <Menu bind:betAmount bind:isInfoOpen bind:lastWin {handleSpin} />
+      <Menu
+        bind:betAmount
+        bind:isInfoOpen
+        bind:lastWin
+        {handleReplay}
+        {handleSpin}
+      />
     </div>
   </div>
 </div>

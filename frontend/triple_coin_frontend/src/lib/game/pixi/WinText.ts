@@ -29,7 +29,7 @@ export class WinText {
   }
 
   show(app: Application, amount: number) {
-    this.text.text = `+${amount} ${get(currency)}`;
+    this.text.text = `+${amount} ${get(currency) ?? ''}`;
 
     const scale = Math.min(app.screen.width, app.screen.height) / 1000;
 
