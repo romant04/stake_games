@@ -39,7 +39,7 @@ class GameConfig(Config):
         self.total_outcomes = 2**self.num_coins
         self.payout_table = {
             (3, "H"): 4,
-            (2, "H"): 1.5,
+            (2, "H"): 2,
             (1, "H"): 0.5,
         }
 
