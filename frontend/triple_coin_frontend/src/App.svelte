@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import {
     balance,
+    bonusGameData,
     currency,
     gameHistory,
     isPlaying,
@@ -56,6 +57,12 @@
       const payout = $replayMode?.state[0].totalWin;
       await coinScene.playRound(results, payout);
 
+      if ($replayMode?.payoutMultiplier > 10) {
+        bonusGameData.set({ results, payout });
+        await coinScene.showChests();
+        return;
+      }
+
       // ONLY AFTER animation finishes
       gameHistory.set([results.join('')]);
       lastWin = payout * API_MULTIPLIER;
@@ -64,6 +71,21 @@
     } finally {
       isPlaying.set(false);
     }
+  }
+
+  async function resetAfterBonus() {
+    await coinScene.hideChests();
+    gameHistory.set([...$gameHistory, $bonusGameData?.results.join('')]);
+    lastWin = $bonusGameData.payout * API_MULTIPLIER;
+    bonusGameData.set(null);
+
+    if ($replayMode) {
+      return;
+    }
+
+    await endRound();
+    const updatedBalance = await getBalance();
+    balance.set(updatedBalance.balance?.amount);
   }
   async function handleSpin() {
     if ($roundActive) {
@@ -84,6 +106,12 @@
 
       const payout = res.round.payout / API_MULTIPLIER;
       await coinScene.playRound(results, payout);
+
+      if (state[0].multiplier > 0) {
+        bonusGameData.set({ results, payout });
+        await coinScene.showChests();
+        return;
+      }
 
       // ONLY AFTER animation finishes
       gameHistory.set([...$gameHistory, results.join('')]);
@@ -139,10 +167,10 @@
 
 <div class="relative w-screen h-dvh overflow-hidden">
   <div class="absolute inset-0">
-    <CoinScene bind:this={coinScene} />
+    <CoinScene bind:this={coinScene} {resetAfterBonus} />
   </div>
 
-  <div class="absolute inset-0 z-10">
+  <div class="absolute inset-0 z-10 pointer-events-none">
     <div
       class="absolute top-[10%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
     >
@@ -164,7 +192,7 @@
 
     {#if isInfoOpen}
       <button
-        class="flex justify-center items-center fixed top-0 left-0 w-full z-50 h-full bg-[#002a67]/70"
+        class="flex justify-center pointer-events-auto items-center fixed top-0 left-0 w-full z-50 h-full bg-[#002a67]/70"
         onclick={() => {
           isInfoOpen = false;
         }}

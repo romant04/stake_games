@@ -7,11 +7,19 @@
   import front from '../../assets/game/front.png';
   import back from '../../assets/game/back.png';
   import side from '../../assets/game/side.png';
+  import chestClosed from '../../assets/game/chest_closed.png';
+  import chestOpened from '../../assets/game/chest_opened.png';
   import { CoinManager } from '$lib/game/pixi/CoinManager';
   import { WinText } from '$lib/game/pixi/WinText';
+  import { Chest } from '$lib/game/pixi/Chest';
+  import { Coin } from '$lib/game/pixi/Coin';
+  import { ChestManager } from '$lib/game/pixi/ChestManager';
+
+  let { resetAfterBonus }: { resetAfterBonus: () => void } = $props();
 
   let wrapper: HTMLDivElement;
   let manager: CoinManager;
+  let chestManager: ChestManager;
   let winText: WinText;
 
   let app: Application;
@@ -41,6 +49,8 @@
       const frontTexture = await Assets.load(front);
       const backTexture = await Assets.load(back);
       const sideTexture = await Assets.load(side);
+      const chestClosedTexture = await Assets.load(chestClosed);
+      const chestOpenedTexture = await Assets.load(chestOpened);
 
       //
       // BACKGROUND
@@ -50,6 +60,14 @@
       background.width = app.screen.width;
       background.height = app.screen.height;
       app.stage.addChild(background);
+
+      chestManager = new ChestManager(chestClosedTexture, chestOpenedTexture);
+      chestManager.create(
+        app.stage,
+        wrapper.clientWidth,
+        wrapper.clientHeight,
+        resetAfterBonus,
+      );
 
       manager = new CoinManager(
         frontTexture,
@@ -106,6 +124,20 @@
     if (payout > 0) {
       winText.show(app, payout);
     }
+  }
+
+  export async function showChests() {
+    setTimeout(() => {
+      manager.hide();
+      chestManager.show();
+    }, 1000);
+  }
+
+  export async function hideChests() {
+    setTimeout(() => {
+      chestManager.hide();
+      manager.show();
+    }, 1000);
   }
 </script>
 

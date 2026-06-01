@@ -64,6 +64,17 @@ export class CoinManager {
     }
   }
 
+  hide() {
+    this.coins.forEach((coin) => {
+      coin.sprite.visible = false;
+    });
+  }
+  show() {
+    this.coins.forEach((coin) => {
+      coin.sprite.visible = true;
+    });
+  }
+
   private wait(ms: number): Promise<void> {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);

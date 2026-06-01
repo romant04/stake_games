@@ -13,7 +13,7 @@ class GameState(GameStateOverride):
         return hashlib.sha256(value.encode()).digest()
 
     def map_payout(self, n: int) -> int:
-        if n < 87:
+        if n < 80:
             return 10
         elif n < 95:
             return 50
@@ -47,7 +47,7 @@ class GameState(GameStateOverride):
             n = get_roll()
             
             if n < 7400:
-                return 0 # 64%
+                return 0 # 74%
             elif n < 9000:
                 return 1 # 16%
             elif n < 9970:
