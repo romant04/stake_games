@@ -33,6 +33,9 @@
   let lastWin = $state(0);
   let coinScene: CoinScene;
 
+  let chestsVisible = $state(false);
+  let chestsOpening = $state(false);
+
   interface PlayResponseState0 {
     coins: { index: number; side: 'H' | 'T' | 'S' }[];
     index: number;
@@ -50,16 +53,29 @@
   type PlayResponseState = [PlayResponseState0, PlayResponseState1];
 
   async function handleReplay() {
+    if ($bonusGameData && chestsVisible && !chestsOpening) {
+      chestsOpening = true;
+      await coinScene.openChests();
+      return;
+    }
+
     isPlaying.set(true);
 
     try {
       const results = $replayMode?.state[0].coins.map((x) => x.side);
-      const payout = $replayMode?.state[0].totalWin;
-      await coinScene.playRound(results, payout);
+      const payout = $replayMode?.payoutMultiplier * betAmount;
+      await coinScene.playRound(
+        results,
+        payout,
+        $replayMode?.payoutMultiplier > 10,
+      );
 
       if ($replayMode?.payoutMultiplier > 10) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
+        setTimeout(() => {
+          chestsVisible = true;
+        }, 1100);
         return;
       }
 
@@ -79,6 +95,8 @@
     lastWin = $bonusGameData.payout * API_MULTIPLIER;
     bonusGameData.set(null);
 
+    chestsVisible = false;
+    chestsOpening = false;
     if ($replayMode) {
       return;
     }
@@ -88,6 +106,14 @@
     balance.set(updatedBalance.balance?.amount);
   }
   async function handleSpin() {
+    if ($bonusGameData && chestsVisible && !chestsOpening) {
+      chestsOpening = true;
+      await coinScene.openChests();
+      return;
+    }
+
+    if ($isPlaying || chestsOpening) return;
+
     if ($roundActive) {
       await endRound();
     }
@@ -105,11 +131,14 @@
       const results = state[0].coins.map((c) => c.side);
 
       const payout = res.round.payout / API_MULTIPLIER;
-      await coinScene.playRound(results, payout);
+      await coinScene.playRound(results, payout, state[0].multiplier > 10);
 
-      if (state[0].multiplier > 0) {
+      if (state[0].multiplier > 10) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
+        setTimeout(() => {
+          chestsVisible = true;
+        }, 1100);
         return;
       }
 
@@ -134,16 +163,12 @@
     if (isReplayMode()) {
       const params = getReplayUrlParams();
       // Get currency from URL params
-      const currencyFromParams = new URLSearchParams(
-        window.location.search,
-      ).get('currency') as Currency;
+      const extraParams = new URLSearchParams(window.location.search);
+      const currencyFromParams = extraParams.get('currency') as Currency;
+      betAmount = Number(extraParams.get('amount')) / API_MULTIPLIER;
       currency.set(currencyFromParams ?? 'USD');
       const r = (await replay({ ...params })) as Replay;
       replayMode.set({ ...r, event: params.event });
-      betAmount =
-        r.payoutMultiplier !== 0
-          ? r.state[0].totalWin / r.payoutMultiplier
-          : 10;
       return;
     }
 

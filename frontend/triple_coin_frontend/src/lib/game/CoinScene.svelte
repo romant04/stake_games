@@ -97,6 +97,7 @@
         background.height = h;
 
         manager.setPositions(w, h);
+        chestManager.setPositions(w, h);
       };
 
       const ro = new ResizeObserver(() => {
@@ -119,9 +120,13 @@
     return () => cleanup();
   });
 
-  export async function playRound(results: string[], payout: number) {
+  export async function playRound(
+    results: string[],
+    payout: number,
+    bonus: boolean,
+  ) {
     await manager.spin(results);
-    if (payout > 0) {
+    if (payout > 0 && !bonus) {
       winText.show(app, payout);
     }
   }
@@ -138,6 +143,10 @@
       chestManager.hide();
       manager.show();
     }, 1000);
+  }
+
+  export async function openChests() {
+    chestManager.openAll();
   }
 </script>
 

@@ -19,12 +19,17 @@ export class ChestManager {
   ) {
     for (let i = 0; i < 3; i++) {
       const chest = new Chest(this.closed, this.opened, resetAfterBonus);
-      chest.sprite.x = screenWidth / 2 + (i - 1) * 180;
-      chest.sprite.y = screenHeight / 2;
+      chest.setPosition(screenWidth / 2 + (i - 1) * 180, screenHeight / 2);
       chest.sprite.visible = false; // start hidden
       container.addChild(chest.sprite);
       this.chests.push(chest);
     }
+  }
+
+  setPositions(screenWidth: number, screenHeight: number) {
+    this.chests.forEach((chest, i) => {
+      chest.setPosition(screenWidth / 2 + (i - 1) * 180, screenHeight / 2);
+    });
   }
 
   hide() {
@@ -41,6 +46,16 @@ export class ChestManager {
       chest.reset();
       chest.sprite.visible = true;
     }
+  }
+
+  openAll() {
+    this.chests
+      .filter((x) => !x.isOpened)
+      .forEach((chest, index) => {
+        setTimeout(() => {
+          chest.open();
+        }, index * 1000); // 0s, 1s, 2s...
+      });
   }
 
   private splitPayout(total: number) {

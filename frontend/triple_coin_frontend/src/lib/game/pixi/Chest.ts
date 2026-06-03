@@ -1,17 +1,27 @@
 import { Sprite, Texture, Text, Ticker } from 'pixi.js';
 import { get } from 'svelte/store';
 import { currency } from '../../stores/game';
+import { GlowFilter } from 'pixi-filters';
 
 export class Chest {
   static openedChestsCount = 0;
   static payouts: number[] = [];
+  static pulseTime = 0;
   sprite: Sprite;
   opened: Texture;
   closed: Texture;
-
+  isOpened = false;
   baseScale: number;
   currentScale: number;
   resetAfterBonus: () => void;
+
+  static {
+    Ticker.shared.add((ticker) => {
+      Chest.pulseTime += ticker.deltaTime * 0.08;
+    });
+  }
+  private readonly pulseUpdate: ((ticker: Ticker) => void) | null = null;
+  private readonly glowFilter: GlowFilter | null = null;
 
   constructor(closed: Texture, opened: Texture, resetAfterBonus: () => void) {
     this.closed = closed;
@@ -29,6 +39,19 @@ export class Chest {
     this.sprite.cursor = 'pointer';
 
     this.sprite.on('pointerdown', () => this.open());
+
+    this.glowFilter = new GlowFilter({
+      distance: 15,
+      outerStrength: 2,
+      color: 0xffffff,
+    });
+    this.sprite.filters = [this.glowFilter];
+
+    this.pulseUpdate = () => {
+      const pulse = (Math.sin(Chest.pulseTime) + 1) / 2;
+      this.glowFilter!.outerStrength = 1 + pulse * 4;
+    };
+    Ticker.shared.add(this.pulseUpdate);
   }
 
   open() {
@@ -36,7 +59,13 @@ export class Chest {
     Chest.openedChestsCount++;
 
     this.sprite.texture = this.opened;
+    this.isOpened = true;
     console.log(`Chest opened! Payout: ${payout}`);
+
+    if (this.sprite.filters.length > 0 && this.pulseUpdate) {
+      Ticker.shared.remove(this.pulseUpdate);
+      this.sprite.filters = [];
+    }
 
     const text = new Text({
       text: `+${payout} ${get(currency) ?? ''}`,
@@ -107,7 +136,15 @@ export class Chest {
     }
   }
 
+  setPosition(x: number, y: number) {
+    this.sprite.x = x;
+    this.sprite.y = y;
+  }
+
   reset() {
     this.sprite.texture = this.closed;
+    this.isOpened = false;
+    this.sprite.filters = [this.glowFilter!];
+    Ticker.shared.add(this.pulseUpdate!);
   }
 }
