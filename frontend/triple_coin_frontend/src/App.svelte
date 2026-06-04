@@ -28,6 +28,8 @@
   import type { Replay } from './types/replay';
 
   let isInfoOpen = $state<boolean>(false);
+  let isAutoplayMenuOpen = $state(false);
+  let selectedAutoplayOption = $state<null | number>(null);
 
   let betAmount = $state(10);
   let lastWin = $state(0);
@@ -238,11 +240,74 @@
       </button>
     {/if}
 
+    {#if isAutoplayMenuOpen}
+      {@const autoplayOptions = [10, 25, 50, 100, 250, 500]}
+      <div
+        class="flex justify-center pointer-events-auto items-center fixed top-0 left-0 w-full z-50 h-full bg-[#002a67]/50"
+      >
+        <div
+          class="p-8 min-w-1/2 bg-[#002a67] rounded-md flex flex-col justify-center items-center"
+        >
+          <p class="text-xl uppercase font-bold">Autoplay settings</p>
+          <div class="flex justify-center items-center gap-10 mt-8">
+            <div class="flex gap-3 items-center">
+              <input
+                type="checkbox"
+                name="turbo"
+                class="w-8 h-8 accent-[gold]"
+              />
+              <label for="turbo">Turbo spin</label>
+            </div>
+            <div class="flex gap-3 items-center">
+              <input
+                type="checkbox"
+                name="stop"
+                class="w-8 h-8 accent-[gold]"
+              />
+              <label for="stop">Autoplay bonus</label>
+            </div>
+          </div>
+
+          <div
+            class="flex flex-col items-center mt-6 xl:max-w-3/4 gap-3 m-auto"
+          >
+            <label class="text-lg" for="count">Number of autospins</label>
+            <div class="flex flex-wrap gap-5 items-center justify-center">
+              {#each autoplayOptions as option}
+                <button
+                  onclick={() => (selectedAutoplayOption = option)}
+                  class="cursor-pointer {selectedAutoplayOption === option
+                    ? 'bg-[gold] text-black'
+                    : 'bg-transparent text-white'} text-lg px-5 py-3 rounded-md spin border-[gold] border-2"
+                  >{option}</button
+                >
+              {/each}
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-2 mt-8 w-full">
+            <button
+              class="bg-[gold] transition-all duration-200 hover:bg-[#ffdf34] text-black font-bold cursor-pointer text-xl py-3 w-full rounded-md"
+              >Start autoplay {selectedAutoplayOption
+                ? `(${selectedAutoplayOption})`
+                : ''}</button
+            >
+            <button
+              onclick={() => (isAutoplayMenuOpen = false)}
+              class="bg-gray-600 transition-all duration-200 hover:bg-[#555b66] text-white font-bold cursor-pointer text-xl py-3 w-full rounded-md"
+              >Cancel</button
+            >
+          </div>
+        </div>
+      </div>
+    {/if}
+
     <div
       class="pointer-events-auto absolute z-40 bottom-5 left-1/2 -translate-x-1/2 md:bottom-10 w-[95%] 2xl:w-3/4"
     >
       <Menu
         bind:betAmount
+        bind:isAutoplayMenuOpen
         bind:isInfoOpen
         bind:lastWin
         {handleReplay}

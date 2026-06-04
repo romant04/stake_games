@@ -6,7 +6,7 @@
   const PAYTABLE = [
     { combination: 'SSS', payout: '10x-500x' },
     { combination: 'HHH', payout: '4x' },
-    { combination: 'HH', payout: '1.5x' },
+    { combination: 'HH', payout: '2x' },
     { combination: 'H', payout: '0.5x' },
   ];
 </script>

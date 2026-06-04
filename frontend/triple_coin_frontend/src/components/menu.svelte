@@ -20,12 +20,14 @@
     lastWin = $bindable(),
     betAmount = $bindable(),
     isInfoOpen = $bindable(),
+    isAutoplayMenuOpen = $bindable(),
   }: {
     handleSpin: () => void;
     handleReplay: () => void;
     lastWin: number;
     betAmount: number;
     isInfoOpen: boolean;
+    isAutoplayMenuOpen: boolean;
   } = $props();
 
   let isMenuOpen = $state(false);
@@ -155,19 +157,26 @@
   </div>
 
   <div class="flex gap-4 justify-self-end">
-    <button
-      class="rounded-full text-4xl flex justify-center items-center border-2 border-[gold] spin h-20 w-20 bg-transparent disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer"
-      disabled={$isPlaying}
-      onclick={handleSpinOrReplay}
-    >
-      {#if $isPlaying}
-        <div class="spinning">
+    <div class="relative">
+      <button
+        class="rounded-full text-4xl flex justify-center items-center border-2 border-[gold] spin h-18 w-18 bg-transparent disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer"
+        disabled={$isPlaying}
+        onclick={handleSpinOrReplay}
+      >
+        {#if $isPlaying}
+          <div class="spinning">
+            <Spin />
+          </div>
+        {:else}
           <Spin />
-        </div>
-      {:else}
-        <Spin />
-      {/if}
-    </button>
+        {/if}
+      </button>
+      <button
+        class="absolute cursor-pointer spin text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] py-1 px-3 border-[1px] border-[gold] rounded-md"
+        onclick={() => (isAutoplayMenuOpen = true)}>Autoplay</button
+      >
+    </div>
+
     <button
       class={`rounded-full text-2xl flex justify-center items-center border-2 ${$turboMode ? 'bg-[gold] text-black disabled:bg-[gold]' : 'bg-transparent text-white disabled:bg-[#0042a2]/30'} border-[gold] spin h-15 w-15 disabled:cursor-default cursor-pointer`}
       disabled={$isPlaying}
