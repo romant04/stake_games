@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type { Currency } from 'stake-engine';
 import type { Replay } from '../../types/replay';
+import type { AutoplayOptions } from '../../types/autoplay';
 
 export const balance = writable<number | null>(null);
 export const currency = writable<Currency | null>(null);
@@ -15,3 +16,6 @@ export const bonusGameData = writable<null | {
   results: string[];
   payout: number;
 }>(null);
+
+export const activeAutoplay = writable<AutoplayOptions | null>(null);
+export const autoplayShouldStop = writable(false);

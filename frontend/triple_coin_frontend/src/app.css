@@ -63,3 +63,19 @@ body {
     transform: rotate(-360deg);
   }
 }
+
+.stopping {
+  animation: stopping 1s ease-in-out infinite;
+}
+
+@keyframes stopping {
+  0%,
+  100% {
+    box-shadow: 0 0 0 gold;
+  }
+  50% {
+    box-shadow:
+            0 0 5px gold,
+            0 0 15px gold;
+  }
+}

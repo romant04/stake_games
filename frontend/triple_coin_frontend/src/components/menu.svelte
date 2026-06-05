@@ -1,5 +1,7 @@
 <script lang="ts">
   import {
+    activeAutoplay,
+    autoplayShouldStop,
     balance,
     currency,
     isPlaying,
@@ -172,9 +174,24 @@
         {/if}
       </button>
       <button
-        class="absolute cursor-pointer spin text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] py-1 px-3 border-[1px] border-[gold] rounded-md"
-        onclick={() => (isAutoplayMenuOpen = true)}>Autoplay</button
+        class="absolute w-max cursor-pointer spin text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] py-1 px-3 border-[1px] border-[gold] rounded-md"
+        class:stopping={$autoplayShouldStop}
+        onclick={() => {
+          if ($activeAutoplay && !$autoplayShouldStop) {
+            autoplayShouldStop.set(true);
+          } else if (!$activeAutoplay) {
+            isAutoplayMenuOpen = true;
+          }
+        }}
       >
+        {#if $activeAutoplay}
+          {$autoplayShouldStop
+            ? 'Stopping...'
+            : `Stop (${$activeAutoplay.spins})`}
+        {:else}
+          Autoplay
+        {/if}
+      </button>
     </div>
 
     <button
