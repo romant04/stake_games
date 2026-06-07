@@ -15,6 +15,7 @@
   import { API_MULTIPLIER } from '../constants/api';
   import Lightning from './icons/lightning.svelte';
   import Spin from './icons/spin.svelte';
+  import { isReplayMode } from 'stake-engine-client';
 
   let {
     handleSpin,
@@ -173,25 +174,27 @@
           <Spin />
         {/if}
       </button>
-      <button
-        class="absolute w-max cursor-pointer spin text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] py-1 px-3 border-[1px] border-[gold] rounded-md"
-        class:stopping={$autoplayShouldStop}
-        onclick={() => {
-          if ($activeAutoplay && !$autoplayShouldStop) {
-            autoplayShouldStop.set(true);
-          } else if (!$activeAutoplay) {
-            isAutoplayMenuOpen = true;
-          }
-        }}
-      >
-        {#if $activeAutoplay}
-          {$autoplayShouldStop
-            ? 'Stopping...'
-            : `Stop (${$activeAutoplay.spins})`}
-        {:else}
-          Autoplay
-        {/if}
-      </button>
+      {#if !isReplayMode()}
+        <button
+          class="absolute w-max cursor-pointer spin text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] py-1 px-3 border-[1px] border-[gold] rounded-md"
+          class:stopping={$autoplayShouldStop}
+          onclick={() => {
+            if ($activeAutoplay && !$autoplayShouldStop) {
+              autoplayShouldStop.set(true);
+            } else if (!$activeAutoplay) {
+              isAutoplayMenuOpen = true;
+            }
+          }}
+        >
+          {#if $activeAutoplay}
+            {$autoplayShouldStop
+              ? 'Stopping...'
+              : `Stop (${$activeAutoplay.spins})`}
+          {:else}
+            Autoplay
+          {/if}
+        </button>
+      {/if}
     </div>
 
     <button

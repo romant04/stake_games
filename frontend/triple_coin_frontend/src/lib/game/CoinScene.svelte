@@ -131,11 +131,14 @@
     }
   }
 
-  export async function showChests() {
-    setTimeout(() => {
-      manager.hide();
-      chestManager.show();
-    }, 1000);
+  export async function showChests(): Promise<void> {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        manager.hide();
+        chestManager.show();
+        resolve();
+      }, 1000);
+    });
   }
 
   export async function hideChests() {

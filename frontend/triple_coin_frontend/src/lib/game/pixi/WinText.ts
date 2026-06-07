@@ -53,11 +53,11 @@ export class WinText {
         this.text.alpha = t;
         this.text.y = app.screen.height / 2 - 100 - (1 - t) * 30;
         this.text.scale.set(0.5 + t * 0.5);
-      } else if (elapsed < 1400) {
+      } else if (elapsed < 700) {
         this.text.alpha = 1;
         this.text.scale.set(1);
-      } else if (elapsed < 1800) {
-        const t = (elapsed - 1400) / 400;
+      } else if (elapsed < 1000) {
+        const t = (elapsed - 700) / 300;
         this.text.alpha = 1 - t;
       } else {
         this.reset();

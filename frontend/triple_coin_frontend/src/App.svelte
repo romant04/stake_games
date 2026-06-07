@@ -1,10 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import {
+    activeAutoplay,
     balance,
     bonusGameData,
     currency,
     gameHistory,
+    isBonusGameActive,
     isPlaying,
     replayMode,
     roundActive,
@@ -27,10 +29,10 @@
   import type { Currency } from 'stake-engine';
   import type { Replay } from './types/replay';
   import AutoplayModal from './components/autoplay-modal.svelte';
+  import { startAutoplay } from './utils/startAutoplay';
 
   let isInfoOpen = $state<boolean>(false);
   let isAutoplayMenuOpen = $state(false);
-  let selectedAutoplayOption = $state<null | number>(null);
 
   let betAmount = $state(10);
   let lastWin = $state(0);
@@ -70,10 +72,10 @@
       await coinScene.playRound(
         results,
         payout,
-        $replayMode?.payoutMultiplier > 10,
+        $replayMode?.payoutMultiplier >= 10,
       );
 
-      if ($replayMode?.payoutMultiplier > 10) {
+      if ($replayMode?.payoutMultiplier >= 10) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
         setTimeout(() => {
@@ -100,6 +102,7 @@
 
     chestsVisible = false;
     chestsOpening = false;
+    $isBonusGameActive = false;
     if ($replayMode) {
       return;
     }
@@ -107,6 +110,10 @@
     await endRound();
     const updatedBalance = await getBalance();
     balance.set(updatedBalance.balance?.amount);
+
+    if ($activeAutoplay?.spins > 0) {
+      await startAutoplay(handleSpin);
+    }
   }
   async function handleSpin() {
     if ($bonusGameData && chestsVisible && !chestsOpening) {
@@ -134,13 +141,13 @@
       const results = state[0].coins.map((c) => c.side);
 
       const payout = res.round.payout / API_MULTIPLIER;
-      await coinScene.playRound(results, payout, state[0].multiplier > 10);
+      await coinScene.playRound(results, payout, state[0].multiplier >= 10);
 
-      if (state[0].multiplier > 10) {
+      if (state[0].multiplier >= 10) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
-        await new Promise((resolve) => setTimeout(resolve, 1100)); // Wait for chests animation to finish
         chestsVisible = true;
+        $isBonusGameActive = true;
         return;
       }
 

@@ -2,9 +2,11 @@
   import {
     activeAutoplay,
     autoplayShouldStop,
+    isBonusGameActive,
     turboMode,
   } from '$lib/stores/game';
   import type { AutoplayOptions } from '../types/autoplay';
+  import { startAutoplay } from '../utils/startAutoplay';
 
   let {
     isAutoplayMenuOpen = $bindable(),
@@ -20,20 +22,6 @@
     autoplayBonus: false,
   });
 
-  async function startAutoplay() {
-    if ($activeAutoplay?.spins === 0 || $autoplayShouldStop) {
-      $autoplayShouldStop = false;
-      $activeAutoplay = null;
-      return;
-    }
-
-    await handleSpin();
-    activeAutoplay.set({
-      ...$activeAutoplay,
-      spins: $activeAutoplay.spins ? $activeAutoplay.spins - 1 : 0,
-    });
-    await startAutoplay();
-  }
   function handleAutoplay() {
     if (autoplayOptions.spins && autoplayOptions.spins > 0) {
       activeAutoplay.set(autoplayOptions);
@@ -41,7 +29,7 @@
       if (autoplayOptions.turboSpins) {
         turboMode.set(true);
       }
-      startAutoplay();
+      startAutoplay(handleSpin);
     }
   }
 </script>

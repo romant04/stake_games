@@ -19,3 +19,4 @@ export const bonusGameData = writable<null | {
 
 export const activeAutoplay = writable<AutoplayOptions | null>(null);
 export const autoplayShouldStop = writable(false);
+export const isBonusGameActive = writable(false);
