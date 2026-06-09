@@ -250,7 +250,7 @@
     {/if}
 
     <div
-      class="pointer-events-auto absolute z-40 bottom-5 left-1/2 -translate-x-1/2 md:bottom-10 w-[95%] 2xl:w-3/4"
+      class="pointer-events-auto absolute z-40 bottom-[2%] left-1/2 -translate-x-1/2 lg:bottom-5 xl:bottom-10 w-[95%] 2xl:w-3/4"
     >
       <Menu
         bind:betAmount

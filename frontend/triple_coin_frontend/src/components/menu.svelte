@@ -87,7 +87,7 @@
 <svelte:window on:keydown|preventDefault={onKeyDown} />
 
 <div
-  class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-6 xl:px-8 2xl:px-10 items-center"
+  class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-4 xl:px-8 2xl:px-10 items-center"
 >
   {#if isMenuOpen}
     <div
@@ -189,7 +189,7 @@
           {#if $activeAutoplay}
             {$autoplayShouldStop
               ? 'Stopping...'
-              : `Stop (${$activeAutoplay.spins})`}
+              : `Stop (${$activeAutoplay.spins >= 0 ? $activeAutoplay.spins : '∞'})`}
           {:else}
             Autoplay
           {/if}
