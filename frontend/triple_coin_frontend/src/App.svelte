@@ -111,7 +111,7 @@
     const updatedBalance = await getBalance();
     balance.set(updatedBalance.balance?.amount);
 
-    if ($activeAutoplay?.spins > 0) {
+    if ($activeAutoplay?.spins !== 0) {
       await startAutoplay(handleSpin);
     }
   }
