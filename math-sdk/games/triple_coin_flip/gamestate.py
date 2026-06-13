@@ -46,10 +46,10 @@ class GameState(GameStateOverride):
         def get_s_count():
             n = get_roll()
             
-            if n < 7400:
-                return 0 # 74%
+            if n < 7200:
+                return 0 # 72%
             elif n < 9000:
-                return 1 # 16%
+                return 1 # 18%
             elif n < 9970:
                 return 2 # 9.7%
             else:
