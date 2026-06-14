@@ -2,6 +2,7 @@ import { Chest } from './Chest';
 import type { Texture } from 'pixi.js';
 import { get } from 'svelte/store';
 import { bonusGameData } from '../../stores/game';
+import { createAppearParticles } from '../utils/appearParticles';
 
 export class ChestManager {
   chests: Chest[] = [];
@@ -38,13 +39,22 @@ export class ChestManager {
     }
   }
 
-  show() {
-    Chest.openedChestsCount = 0;
-    Chest.payouts = this.splitPayout(get(bonusGameData)?.payout || 0);
+  async show(index: number = 0) {
+    if (index === 0) {
+      Chest.openedChestsCount = 0;
+      Chest.payouts = this.splitPayout(get(bonusGameData)?.payout || 0);
+    }
 
-    for (const chest of this.chests) {
-      chest.reset();
-      chest.sprite.visible = true;
+    const chest = this.chests[index];
+    chest.reset();
+    chest.appear();
+
+    if (index < this.chests.length - 1) {
+      return new Promise<void>((resolve) => {
+        setTimeout(() => {
+          this.show(index + 1).then(resolve);
+        }, 500);
+      });
     }
   }
 

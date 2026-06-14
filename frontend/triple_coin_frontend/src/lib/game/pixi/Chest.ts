@@ -1,7 +1,15 @@
-import { Sprite, Texture, Text, Ticker } from 'pixi.js';
+import {
+  Sprite,
+  Texture,
+  Text,
+  Ticker,
+  type Container,
+  Graphics,
+} from 'pixi.js';
 import { get } from 'svelte/store';
 import { currency } from '../../stores/game';
 import { GlowFilter } from 'pixi-filters';
+import { createAppearParticles } from '../utils/appearParticles';
 
 export class Chest {
   static openedChestsCount = 0;
@@ -146,5 +154,30 @@ export class Chest {
     this.isOpened = false;
     this.sprite.filters = [this.glowFilter!];
     Ticker.shared.add(this.pulseUpdate!);
+  }
+
+  appear() {
+    this.sprite.scale.set(0);
+    this.sprite.visible = true;
+
+    const appearTime = 20; // frames
+    let t = 0;
+
+    const update = (ticker: Ticker) => {
+      t += ticker.deltaTime;
+      const progress = Math.min(t / appearTime, 1);
+      const scale = this.baseScale * progress;
+      this.sprite.scale.set(scale);
+
+      if (progress >= 1) {
+        createAppearParticles(
+          this.sprite.x,
+          this.sprite.y,
+          this.sprite.parent!,
+        );
+        Ticker.shared.remove(update);
+      }
+    };
+    Ticker.shared.add(update);
   }
 }

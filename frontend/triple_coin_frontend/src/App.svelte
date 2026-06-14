@@ -31,6 +31,8 @@
   import AutoplayModal from './components/autoplay-modal.svelte';
   import { startAutoplay } from './utils/startAutoplay';
 
+  const BONUS_GAME_THRESHOLD = 10;
+
   let isInfoOpen = $state<boolean>(false);
   let isAutoplayMenuOpen = $state(false);
 
@@ -72,10 +74,10 @@
       await coinScene.playRound(
         results,
         payout,
-        $replayMode?.payoutMultiplier >= 10,
+        $replayMode?.payoutMultiplier >= BONUS_GAME_THRESHOLD,
       );
 
-      if ($replayMode?.payoutMultiplier >= 10) {
+      if ($replayMode?.payoutMultiplier >= BONUS_GAME_THRESHOLD) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
         setTimeout(() => {
@@ -141,9 +143,13 @@
       const results = state[0].coins.map((c) => c.side);
 
       const payout = res.round.payout / API_MULTIPLIER;
-      await coinScene.playRound(results, payout, state[0].multiplier >= 10);
+      await coinScene.playRound(
+        results,
+        payout,
+        state[0].multiplier >= BONUS_GAME_THRESHOLD,
+      );
 
-      if (state[0].multiplier >= 10) {
+      if (state[0].multiplier >= BONUS_GAME_THRESHOLD) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
         chestsVisible = true;
