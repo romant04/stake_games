@@ -1,6 +1,7 @@
 import { Text, TextStyle, Container, type Application } from 'pixi.js';
 import { get } from 'svelte/store';
 import { currency } from '../../stores/game';
+import { getCurrencySymbol } from '../utils/currencySymbols';
 
 export class WinText {
   container: Container;
@@ -29,7 +30,7 @@ export class WinText {
   }
 
   show(app: Application, amount: number) {
-    this.text.text = `+${amount} ${get(currency) ?? ''}`;
+    this.text.text = `+${amount}${getCurrencySymbol(get(currency) as string) ?? ''}`;
 
     const scale = Math.min(app.screen.width, app.screen.height) / 1000;
 

@@ -10,6 +10,7 @@ import { get } from 'svelte/store';
 import { currency } from '../../stores/game';
 import { GlowFilter } from 'pixi-filters';
 import { createAppearParticles } from '../utils/appearParticles';
+import { getCurrencySymbol } from '../utils/currencySymbols';
 
 export class Chest {
   static openedChestsCount = 0;
@@ -76,7 +77,7 @@ export class Chest {
     }
 
     const text = new Text({
-      text: `+${payout} ${get(currency) ?? ''}`,
+      text: `+${payout}${getCurrencySymbol(get(currency) as string) ?? ''}`,
       style: {
         fill: 0xffd700,
         fontSize: 36,

@@ -12,10 +12,13 @@
   import { DisplayAmount } from 'stake-engine';
   import { slide } from 'svelte/transition';
   import { allowedBets } from '$lib/stores/game';
-  import { API_MULTIPLIER } from '../constants/api';
-  import Lightning from './icons/lightning.svelte';
-  import Spin from './icons/spin.svelte';
+  import { API_MULTIPLIER } from '../../constants/api';
+  import Lightning from '../icons/lightning.svelte';
+  import Spin from '../icons/spin.svelte';
   import { isReplayMode } from 'stake-engine-client';
+  import TextBlock from './text-block.svelte';
+  import BetControl from './bet-control.svelte';
+  import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
 
   let {
     handleSpin,
@@ -87,7 +90,7 @@
 <svelte:window on:keydown|preventDefault={onKeyDown} />
 
 <div
-  class="bg-[#003075]/80 w-full h-24 rounded-md grid grid-cols-3 px-4 xl:px-8 2xl:px-10 items-center"
+  class="bg-[#003075]/80 w-full h-22 lg:h-24 rounded-md flex justify-between lg:grid lg:grid-cols-3 px-2 md:px-4 xl:px-8 2xl:px-10 items-center"
 >
   {#if isMenuOpen}
     <div
@@ -103,66 +106,48 @@
     </div>
   {/if}
 
-  <div class="flex gap-5 items-center">
+  <div class="flex gap-3 md:gap-5 items-center">
     <button
-      class="cursor-pointer bg-gray-800 w-11 h-11 rounded-md flex flex-col gap-2 items-center justify-center"
+      class="cursor-pointer bg-gray-800 w-8 h-8 md:w-11 md:h-11 rounded-md flex flex-col gap-[6px] md:gap-2 items-center justify-center"
       onclick={() => (isMenuOpen = !isMenuOpen)}
     >
       {#each [1, 2, 3] as _}
-        <div class="w-3/4 h-[3px] bg-gray-100 rounded-full"></div>
+        <div class="w-3/4 h-[2px] md:h-[3px] bg-gray-100 rounded-full"></div>
       {/each}
     </button>
-    <div class="flex flex-col gap-1">
-      <span class="text-xs text-gray-400 uppercase">Balance</span>
-      <span class="text-sm font-medium"
-        >{$currency}
-        {DisplayAmount(
+    <TextBlock
+      content={`
+        ${DisplayAmount(
           { amount: $balance, currency: $currency },
           {
             removeSymbol: true,
             decimals: 2,
           },
-        )}</span
-      >
-    </div>
-    <div class="flex flex-col gap-1">
-      <span class="text-xs text-gray-400 uppercase">Last Win</span>
-      <span class="text-sm font-medium {lastWin > 0 && 'text-green-500'}"
-        >{$currency}
-        {DisplayAmount(
+        )}${getCurrencySymbol($currency)}`}
+    />
+    <TextBlock
+      content={`
+        ${DisplayAmount(
           { amount: lastWin, currency: $currency },
           {
             removeSymbol: true,
             decimals: 2,
           },
-        )}</span
-      >
-    </div>
+        )}${getCurrencySymbol($currency)}`}
+      {lastWin}
+    />
   </div>
 
   <div
-    class="bg-gray-900/60 flex flex-col w-48 px-4 py-2 rounded-md items-center justify-self-center"
+    class="absolute -top-14 left-1/2 -translate-x-1/2 lg:static lg:left-0 lg:translate-0 lg:top-0"
   >
-    <span class="uppercase text-xd text-gray-400">Bet</span>
-    <div class="flex justify-between items-center w-full">
-      <button
-        class="bg-gray-600/40 px-4 h-8 rounded-md cursor-pointer"
-        disabled={$replayMode !== null}
-        onclick={() => handleBetAmountChange(false)}>-</button
-      >
-      <div>{$currency} {betAmount}</div>
-      <button
-        class="bg-gray-600/40 px-4 h-8 rounded-md cursor-pointer"
-        disabled={$replayMode !== null}
-        onclick={() => handleBetAmountChange(true)}>+</button
-      >
-    </div>
+    <BetControl {betAmount} {handleBetAmountChange} />
   </div>
 
-  <div class="flex gap-4 justify-self-end">
+  <div class="flex gap-2 md:gap-4 justify-self-end">
     <div class="relative">
       <button
-        class="rounded-full text-4xl flex justify-center items-center border-2 border-[gold] spin h-18 w-18 bg-transparent disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer"
+        class="rounded-full text-3xl md:text-4xl flex justify-center items-center border-2 border-[gold] spin w-15 h-15 md:h-18 md:w-18 bg-transparent disabled:bg-[#0042a2]/30 disabled:cursor-default cursor-pointer"
         disabled={$isPlaying}
         onclick={handleSpinOrReplay}
       >
@@ -176,7 +161,7 @@
       </button>
       {#if !isReplayMode()}
         <button
-          class="absolute w-max cursor-pointer spin text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] py-1 px-3 border-[1px] border-[gold] rounded-md"
+          class="absolute w-max cursor-pointer spin text-[12px] md:text-xs -bottom-2 left-1/2 -translate-x-1/2 uppercase bg-[#003075] px-2 md:py-1 md:px-3 border-[1px] border-[gold] rounded-md"
           class:stopping={$autoplayShouldStop}
           onclick={() => {
             if ($activeAutoplay && !$autoplayShouldStop) {
@@ -198,7 +183,7 @@
     </div>
 
     <button
-      class={`rounded-full text-2xl flex justify-center items-center border-2 ${$turboMode ? 'bg-[gold] text-black disabled:bg-[gold]' : 'bg-transparent text-white disabled:bg-[#0042a2]/30'} border-[gold] spin h-15 w-15 disabled:cursor-default cursor-pointer`}
+      class={`rounded-full text-xl md:text-2xl flex justify-center items-center border-2 ${$turboMode ? 'bg-[gold] text-black disabled:bg-[gold]' : 'bg-transparent text-white disabled:bg-[#0042a2]/30'} border-[gold] spin h-11 w-11 md:h-15 md:w-15 disabled:cursor-default cursor-pointer`}
       disabled={$isPlaying}
       onclick={handleTurboModeChange}
     >

@@ -13,7 +13,7 @@
   } from '$lib/stores/game';
   import { allowedBets } from '$lib/stores/game';
   import Paytable from './components/paytable.svelte';
-  import Menu from './components/menu.svelte';
+  import Menu from './components/menu/menu.svelte';
   import { API_MULTIPLIER } from './constants/api';
   import GameHistory from './components/game-history.svelte';
   import CoinScene from '$lib/game/CoinScene.svelte';
@@ -30,6 +30,8 @@
   import type { Replay } from './types/replay';
   import AutoplayModal from './components/autoplay-modal.svelte';
   import { startAutoplay } from './utils/startAutoplay';
+  import InfoModal from './components/info-modal.svelte';
+  import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
 
   const BONUS_GAME_THRESHOLD = 10;
 
@@ -212,6 +214,7 @@
 
   <div class="absolute inset-0 z-10 pointer-events-none">
     <AutoplayModal bind:isAutoplayMenuOpen {handleSpin} />
+    <InfoModal bind:isInfoOpen />
 
     <div
       class="absolute top-[10%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
@@ -232,41 +235,8 @@
       <GameHistory />
     </div>
 
-    {#if isInfoOpen}
-      <button
-        class="flex justify-center pointer-events-auto items-center fixed top-0 left-0 w-full z-50 h-full bg-[#002a67]/70"
-        onclick={() => {
-          isInfoOpen = false;
-        }}
-      >
-        <div class="flex flex-col items-center p-10 min-w-1/2 bg-[#002a67]/90">
-          <p class="text-3xl">
-            Triple Coin Flip | <span class="text-gray-200">INFO</span>
-          </p>
-          <div class="py-6">
-            <Paytable />
-          </div>
-          <p class="text-sm text-gray-300 mt-5">
-            <span class="text-white">Details</span>
-            <br />
-            RTP: 96.06%
-          </p>
-          <p class="max-w-[500px] text-xs mt-3">
-            Malfunction voids all wins and plays. A consistent internet
-            connection is required. In the event of a disconnection, reload the
-            game to finish any uncompleted rounds. The expected return is
-            calculated over many plays. The game display is not representative
-            of any physical device and is for illustrative purposes only.
-            Winnings are settled according to the amount received from the
-            Remote Game Server and not from events within the web browser. TM
-            and © 2026 Stake Engine.
-          </p>
-        </div>
-      </button>
-    {/if}
-
     <div
-      class="pointer-events-auto absolute z-40 bottom-[2%] left-1/2 -translate-x-1/2 lg:bottom-5 xl:bottom-10 w-[95%] 2xl:w-3/4"
+      class="pointer-events-auto absolute z-40 bottom-[1%] md:bottom-[2%] left-1/2 -translate-x-1/2 lg:bottom-5 xl:bottom-10 w-[95%] 2xl:w-3/4"
     >
       <Menu
         bind:betAmount
