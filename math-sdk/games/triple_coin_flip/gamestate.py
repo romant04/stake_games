@@ -13,12 +13,18 @@ class GameState(GameStateOverride):
         return hashlib.sha256(value.encode()).digest()
 
     def map_payout(self, n: int) -> int:
-        if n < 80:
-            return 10
-        elif n < 95:
-            return 50
-        elif n < 98:
-            return 100
+        if n < 7500:
+            return 10  # 75%
+        elif n < 9500:
+            return 15  # 20%
+        elif n < 9800:
+            return 20  # 3%
+        elif n < 9900:
+            return 30  # 1%
+        elif n < 9950:
+            return 50  # 0.5%
+        elif n < 9990:
+            return 100  # 0.4%
         else:
             return 500
 
@@ -45,15 +51,15 @@ class GameState(GameStateOverride):
 
         def get_s_count():
             n = get_roll()
-            
-            if n < 7200:
-                return 0 # 72%
+
+            if n < 6500:
+                return 0  # 65%
             elif n < 9000:
-                return 1 # 18%
-            elif n < 9970:
-                return 2 # 9.7%
+                return 1  # 25%
+            elif n < 9900:
+                return 2  # 9%
             else:
-                return 3 # 0.3%
+                return 3  # 1%
 
         # 3. coin logic
         def roll_coin():
@@ -75,14 +81,11 @@ class GameState(GameStateOverride):
         # 5. payout if all side
         multiplier = None
         if all(c == "S" for c in coins):
-            multiplier = self.map_payout(get_roll(100))
+            multiplier = self.map_payout(get_roll())
         else:
             multiplier = self.config.payout_table.get((coins.count("H"), "H"), 0)
 
-        return {
-            "coins": coins,
-            "multiplier": multiplier
-        }
+        return {"coins": coins, "multiplier": multiplier}
 
     def run_spin(self, sim, simulation_seed=None):
         self.reset_seed(sim)
