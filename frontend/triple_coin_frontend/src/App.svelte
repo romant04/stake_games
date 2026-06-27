@@ -217,25 +217,6 @@
     <InfoModal bind:isInfoOpen />
 
     <div
-      class="absolute top-[10%] left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-    >
-      <h1 class="text-6xl font-bold">Triple Coin Flip</h1>
-      {#if $replayMode}
-        <span class="text-xl">Replay ID: {$replayMode.event}</span>
-      {/if}
-    </div>
-
-    <div
-      class="max-[1100px]:hidden absolute top-1/2 -translate-y-1/2 lg:left-2 xl:left-12 2xl:left-36"
-    >
-      <Paytable />
-    </div>
-
-    <div class="pointer-events-auto absolute top-10 right-10">
-      <GameHistory />
-    </div>
-
-    <div
       class="pointer-events-auto absolute z-40 bottom-[1%] md:bottom-[2%] left-1/2 -translate-x-1/2 lg:bottom-5 xl:bottom-10 w-[95%] 2xl:w-3/4"
     >
       <Menu

@@ -1,154 +1,146 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { Application, Container, Sprite } from 'pixi.js';
+  import { turboMode, bonusGameData, currency } from '$lib/stores/game';
 
-  import { Application, Assets, Sprite } from 'pixi.js';
+  import { CoinManager } from '$lib/game/pixi/managers/CoinManager';
+  import { ChestManager } from '$lib/game/pixi/managers/ChestManager';
+  import { WinText } from '$lib/game/pixi/managers/WinText';
+  import { fitStageToScreen } from '$lib/game/pixi/utils/fitStage';
+  import type { CoinResult } from '$lib/game/pixi/objects/Coin';
+  import { loadAssets } from '$lib/game/pixi/utils/loadAssets';
+  import { UIManager } from '$lib/game/pixi/managers/UIManager';
+  import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
 
-  import bg from '../../assets/bg.png';
-  import front from '../../assets/game/front.png';
-  import back from '../../assets/game/back.png';
-  import side from '../../assets/game/side.png';
-  import chestClosed from '../../assets/game/chest_closed.png';
-  import chestOpened from '../../assets/game/chest_opened.png';
-  import { CoinManager } from '$lib/game/pixi/CoinManager';
-  import { WinText } from '$lib/game/pixi/WinText';
-  import { Chest } from '$lib/game/pixi/Chest';
-  import { Coin } from '$lib/game/pixi/Coin';
-  import { ChestManager } from '$lib/game/pixi/ChestManager';
+  // ---------------------------------------------------------------------------
+  // Props
+  // ---------------------------------------------------------------------------
 
   let { resetAfterBonus }: { resetAfterBonus: () => void } = $props();
 
+  // ---------------------------------------------------------------------------
+  // Internal refs
+  // ---------------------------------------------------------------------------
+
   let wrapper: HTMLDivElement;
-  let manager: CoinManager;
+  let coinManager: CoinManager;
+  let uiManager: UIManager;
   let chestManager: ChestManager;
   let winText: WinText;
 
-  let app: Application;
+  // ---------------------------------------------------------------------------
+  // Mount
+  // ---------------------------------------------------------------------------
 
   onMount(() => {
-    // 1. Create a placeholder for your cleanup function
     let cleanup: () => void = () => {};
 
-    // 2. Put your exact code inside this async block
     (async () => {
-      //
-      // CREATE PIXI APPLICATION
-      //
-      app = new Application();
-
-      await app.init({
-        antialias: true,
-        backgroundAlpha: 0,
-      });
-
+      // -- App ------------------------------------------------------------------
+      const app = new Application();
+      await app.init({ antialias: true, backgroundAlpha: 0 });
       wrapper.appendChild(app.canvas);
 
-      //
-      // LOAD TEXTURES
-      //
-      const bgTexture = await Assets.load(bg);
-      const frontTexture = await Assets.load(front);
-      const backTexture = await Assets.load(back);
-      const sideTexture = await Assets.load(side);
-      const chestClosedTexture = await Assets.load(chestClosed);
-      const chestOpenedTexture = await Assets.load(chestOpened);
+      const backgroundLayer = new Container();
+      const gameLayer = new Container();
+      const UILayer = new Container();
 
-      //
-      // BACKGROUND
-      //
-      const background = new Sprite(bgTexture);
+      app.stage.addChild(backgroundLayer);
+      app.stage.addChild(UILayer);
+      app.stage.addChild(gameLayer);
+
+      const assets = await loadAssets();
+
+      // -- Background (virtual coords) ------------------------------------------
+      const background = new Sprite(assets.bg);
       background.anchor.set(0.5);
-      background.width = app.screen.width;
-      background.height = app.screen.height;
-      app.stage.addChild(background);
+      background.position.set(1920 / 2, 1080 / 2);
+      background.width = 1920;
+      background.height = 1080;
+      backgroundLayer.addChild(background);
 
-      chestManager = new ChestManager(chestClosedTexture, chestOpenedTexture);
-      chestManager.create(
-        app.stage,
-        wrapper.clientWidth,
-        wrapper.clientHeight,
+      // -- Managers -------------------------------------------------------------
+      uiManager = new UIManager(assets);
+      UILayer.addChild(uiManager.container);
+
+      coinManager = new CoinManager(assets, app.ticker);
+      coinManager.create();
+      gameLayer.addChild(coinManager.container);
+
+      chestManager = new ChestManager(
+        assets.chestClosed,
+        assets.chestOpened,
         resetAfterBonus,
       );
-
-      manager = new CoinManager(
-        frontTexture,
-        backTexture,
-        sideTexture,
-        app.ticker,
-      );
-      manager.create(app.stage, wrapper.clientWidth, wrapper.clientHeight);
+      chestManager.create();
+      app.stage.addChild(chestManager.container);
 
       winText = new WinText();
       app.stage.addChild(winText.container);
 
-      //
-      // HANDLE RESIZE
-      //
-      const resize = () => {
-        if (!app || !wrapper) return;
-
-        const w = wrapper.clientWidth;
-        const h = wrapper.clientHeight;
-
-        app.renderer.resize(w, h);
-        background.x = w / 2;
-        background.y = h / 2;
-
-        background.width = w;
-        background.height = h;
-
-        manager.setPositions(w, h);
-        chestManager.setPositions(w, h);
-      };
-
-      const ro = new ResizeObserver(() => {
-        resize();
+      // -- Turbo store subscription ---------------------------------------------
+      // Subscribe once and push the value into managers — no per-frame store reads
+      const unsubTurbo = turboMode.subscribe((val) => {
+        coinManager?.setTurbo(val);
       });
 
+      // -- Resize — only resize the renderer; stage scale handles the rest ------
+      const resize = () => {
+        if (!wrapper) return;
+        const w = wrapper.clientWidth;
+        const h = wrapper.clientHeight;
+        app.renderer.resize(w, h);
+        fitStageToScreen(app);
+      };
+
+      const ro = new ResizeObserver(resize);
       ro.observe(wrapper);
       window.addEventListener('resize', resize);
       resize();
 
-      // 3. Assign your cleanup logic here
+      // -- Cleanup --------------------------------------------------------------
       cleanup = () => {
+        unsubTurbo();
         ro.disconnect();
         window.removeEventListener('resize', resize);
+        coinManager.destroy();
+        chestManager.destroy();
         app.destroy(true);
       };
     })();
 
-    // 4. Return a synchronous function to Svelte
     return () => cleanup();
   });
+
+  // ---------------------------------------------------------------------------
+  // Exported API (called by parent)
+  // ---------------------------------------------------------------------------
 
   export async function playRound(
     results: string[],
     payout: number,
     bonus: boolean,
-  ) {
-    await manager.spin(results);
+  ): Promise<void> {
+    await coinManager.spin(results as CoinResult[]);
     if (payout > 0 && !bonus) {
-      winText.show(app, payout);
+      winText.show(payout, getCurrencySymbol($currency));
     }
   }
 
   export async function showChests(): Promise<void> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        manager.hide();
-        chestManager.show();
-        resolve();
-      }, 1000);
-    });
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+    coinManager.hide();
+    chestManager.show2();
+    await chestManager.show($bonusGameData?.payout ?? 0);
   }
 
-  export async function hideChests() {
-    setTimeout(() => {
-      chestManager.hide();
-      manager.show();
-    }, 1000);
+  export async function hideChests(): Promise<void> {
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+    chestManager.hide();
+    coinManager.show();
   }
 
-  export async function openChests() {
+  export function openChests(): void {
     chestManager.openAll();
   }
 </script>
