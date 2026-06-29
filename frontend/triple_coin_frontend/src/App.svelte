@@ -3,19 +3,18 @@
   import {
     activeAutoplay,
     balance,
+    betAmount,
     bonusGameData,
     currency,
     gameHistory,
     isBonusGameActive,
     isPlaying,
+    lastWin,
     replayMode,
     roundActive,
   } from '$lib/stores/game';
   import { allowedBets } from '$lib/stores/game';
-  import Paytable from './components/paytable.svelte';
-  import Menu from './components/menu/menu.svelte';
   import { API_MULTIPLIER } from './constants/api';
-  import GameHistory from './components/game-history.svelte';
   import CoinScene from '$lib/game/CoinScene.svelte';
   import {
     authenticate,
@@ -31,15 +30,9 @@
   import AutoplayModal from './components/autoplay-modal.svelte';
   import { startAutoplay } from './utils/startAutoplay';
   import InfoModal from './components/info-modal.svelte';
-  import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
 
   const BONUS_GAME_THRESHOLD = 10;
 
-  let isInfoOpen = $state<boolean>(false);
-  let isAutoplayMenuOpen = $state(false);
-
-  let betAmount = $state(10);
-  let lastWin = $state(0);
   let coinScene: CoinScene;
 
   let chestsVisible = $state(false);
@@ -72,7 +65,7 @@
 
     try {
       const results = $replayMode?.state[0].coins.map((x) => x.side);
-      const payout = $replayMode?.payoutMultiplier * betAmount;
+      const payout = $replayMode?.payoutMultiplier * $betAmount;
       await coinScene.playRound(
         results,
         payout,
@@ -90,7 +83,8 @@
 
       // ONLY AFTER animation finishes
       gameHistory.set([results.join('')]);
-      lastWin = payout * API_MULTIPLIER;
+      $lastWin = payout * API_MULTIPLIER;
+      coinScene.rerenderHistory();
     } catch (err) {
       console.error(err);
     } finally {
@@ -101,7 +95,7 @@
   async function resetAfterBonus() {
     await coinScene.hideChests();
     gameHistory.set([...$gameHistory, $bonusGameData?.results.join('')]);
-    lastWin = $bonusGameData.payout * API_MULTIPLIER;
+    $lastWin = $bonusGameData.payout * API_MULTIPLIER;
     bonusGameData.set(null);
 
     chestsVisible = false;
@@ -136,7 +130,7 @@
 
     try {
       const res = await play({
-        amount: betAmount,
+        amount: $betAmount,
         mode: 'base',
       });
       balance.set(res.balance?.amount);
@@ -161,13 +155,14 @@
 
       // ONLY AFTER animation finishes
       gameHistory.set([...$gameHistory, results.join('')]);
-      lastWin = res.round.payout;
+      $lastWin = res.round.payout;
 
       if (state[0].totalWin > 0) {
         await endRound();
       }
       const updatedBalance = await getBalance();
       balance.set(updatedBalance.balance?.amount);
+      coinScene.rerenderHistory();
     } catch (err) {
       console.error(err);
     } finally {
@@ -182,7 +177,7 @@
       // Get currency from URL params
       const extraParams = new URLSearchParams(window.location.search);
       const currencyFromParams = extraParams.get('currency') as Currency;
-      betAmount = Number(extraParams.get('amount')) / API_MULTIPLIER;
+      $betAmount = Number(extraParams.get('amount')) / API_MULTIPLIER;
       currency.set(currencyFromParams ?? 'USD');
       const r = (await replay({ ...params })) as Replay;
       replayMode.set({ ...r, event: params.event });
@@ -209,24 +204,11 @@
 
 <div class="relative w-screen h-dvh overflow-hidden">
   <div class="absolute inset-0">
-    <CoinScene bind:this={coinScene} {resetAfterBonus} />
+    <CoinScene bind:this={coinScene} {handleSpin} {resetAfterBonus} />
   </div>
 
   <div class="absolute inset-0 z-10 pointer-events-none">
-    <AutoplayModal bind:isAutoplayMenuOpen {handleSpin} />
-    <InfoModal bind:isInfoOpen />
-
-    <div
-      class="pointer-events-auto absolute z-40 bottom-[1%] md:bottom-[2%] left-1/2 -translate-x-1/2 lg:bottom-5 xl:bottom-10 w-[95%] 2xl:w-3/4"
-    >
-      <Menu
-        bind:betAmount
-        bind:isAutoplayMenuOpen
-        bind:isInfoOpen
-        bind:lastWin
-        {handleReplay}
-        {handleSpin}
-      />
-    </div>
+    <AutoplayModal {handleSpin} />
+    <InfoModal />
   </div>
 </div>

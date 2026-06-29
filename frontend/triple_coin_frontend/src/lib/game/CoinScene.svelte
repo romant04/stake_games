@@ -16,7 +16,11 @@
   // Props
   // ---------------------------------------------------------------------------
 
-  let { resetAfterBonus }: { resetAfterBonus: () => void } = $props();
+  let {
+    resetAfterBonus,
+    handleSpin,
+  }: { resetAfterBonus: () => void; handleSpin: () => Promise<void> } =
+    $props();
 
   // ---------------------------------------------------------------------------
   // Internal refs
@@ -60,7 +64,7 @@
       backgroundLayer.addChild(background);
 
       // -- Managers -------------------------------------------------------------
-      uiManager = new UIManager(assets);
+      uiManager = new UIManager(assets, handleSpin);
       UILayer.addChild(uiManager.container);
 
       coinManager = new CoinManager(assets, app.ticker);
@@ -90,7 +94,7 @@
         const w = wrapper.clientWidth;
         const h = wrapper.clientHeight;
         app.renderer.resize(w, h);
-        fitStageToScreen(app);
+        fitStageToScreen(app, background);
       };
 
       const ro = new ResizeObserver(resize);
@@ -121,10 +125,20 @@
     payout: number,
     bonus: boolean,
   ): Promise<void> {
+    uiManager.spinButton.disable();
+    uiManager.turboModeButton.disable();
+    uiManager.balance.updateBalance();
     await coinManager.spin(results as CoinResult[]);
     if (payout > 0 && !bonus) {
       winText.show(payout, getCurrencySymbol($currency));
     }
+    uiManager.spinButton.enable();
+    uiManager.turboModeButton.enable();
+  }
+  export function rerenderHistory() {
+    uiManager.gameHistory.update();
+    uiManager.balance.updateBalance();
+    uiManager.lastWin.updateLastWin();
   }
 
   export async function showChests(): Promise<void> {

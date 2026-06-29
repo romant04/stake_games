@@ -12,6 +12,29 @@ import chestClosedSrc from '../../../../assets/game/chest_closed.png';
 import chestOpenedSrc from '../../../../assets/game/chest_opened.png';
 import logoSrc from '../../../../assets/logo.png';
 import winTableSrc from '../../../../assets/win_table.png';
+import spinSrc from '../../../../assets/ui/spin.png';
+import spinHoverSrc from '../../../../assets/ui/spin_hover.png';
+import spinDisabledSrc from '../../../../assets/ui/spin_disabled.png';
+import spinTextSrc from '../../../../assets/ui/spin_text.png';
+
+import frontSrcUI from '../../../../assets/ui/front.png';
+import sideSrcUI from '../../../../assets/ui/side.png';
+import backSrcUI from '../../../../assets/ui/back.png';
+
+import toggleSrc from '../../../../assets/ui/toggle.png';
+import toggleHoverSrc from '../../../../assets/ui/toggle_hover.png';
+import toggleDisabledSrc from '../../../../assets/ui/toggle_disabled.png';
+import toggleActiveSrc from '../../../../assets/ui/toggle_active.png';
+import toggleActiveHoverSrc from '../../../../assets/ui/toggle_active_hover.png';
+import buttonSrc from '../../../../assets/ui/button.png';
+import buttonHoverSrc from '../../../../assets/ui/button_hover.png';
+import buttonDisabledSrc from '../../../../assets/ui/button_disabled.png';
+
+import boltSrc from '../../../../assets/icons/bolt.png';
+import boltFilledSrc from '../../../../assets/icons/bolt_filled.png';
+import plusSrc from '../../../../assets/icons/plus.png';
+import minusSrc from '../../../../assets/icons/minus.png';
+import hamburgerSrc from '../../../../assets/icons/hamburger.png';
 
 const frontModules = import.meta.glob(
   '../../../../assets/game/front/front_*.png',
@@ -48,16 +71,63 @@ const backImagesFlopped = sortedEntries(backModulesFlopped);
 
 // utils/loadAssets.ts
 export async function loadAssets(): Promise<GameAssets> {
-  const [bg, coinsBg, coinSide, chestClosed, chestOpened, logo, winTable] =
-    await Promise.all([
-      Assets.load(bgSrc),
-      Assets.load(coinsBgSrc),
-      Assets.load(sideSrc),
-      Assets.load(chestClosedSrc),
-      Assets.load(chestOpenedSrc),
-      Assets.load(logoSrc),
-      Assets.load(winTableSrc),
-    ]);
+  const [
+    bg,
+    coinsBg,
+    coinSide,
+    chestClosed,
+    chestOpened,
+    logo,
+    winTable,
+    spin,
+    spinHover,
+    spinDisabled,
+    spinText,
+    front,
+    side,
+    back,
+    toggle,
+    toggleHover,
+    toggleDisabled,
+    toggleActive,
+    toggleActiveHover,
+    bolt,
+    boltFilled,
+    button,
+    buttonHover,
+    buttonDisabled,
+    plus,
+    minus,
+    hamburger,
+  ] = await Promise.all([
+    Assets.load(bgSrc),
+    Assets.load(coinsBgSrc),
+    Assets.load(sideSrc),
+    Assets.load(chestClosedSrc),
+    Assets.load(chestOpenedSrc),
+    Assets.load(logoSrc),
+    Assets.load(winTableSrc),
+    Assets.load(spinSrc),
+    Assets.load(spinHoverSrc),
+    Assets.load(spinDisabledSrc),
+    Assets.load(spinTextSrc),
+    Assets.load(frontSrcUI),
+    Assets.load(sideSrcUI),
+    Assets.load(backSrcUI),
+    Assets.load(toggleSrc),
+    Assets.load(toggleHoverSrc),
+    Assets.load(toggleDisabledSrc),
+    Assets.load(toggleActiveSrc),
+    Assets.load(toggleActiveHoverSrc),
+    Assets.load(boltSrc),
+    Assets.load(boltFilledSrc),
+    Assets.load(buttonSrc),
+    Assets.load(buttonHoverSrc),
+    Assets.load(buttonDisabledSrc),
+    Assets.load(plusSrc),
+    Assets.load(minusSrc),
+    Assets.load(hamburgerSrc),
+  ]);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
     await Promise.all([
@@ -79,5 +149,25 @@ export async function loadAssets(): Promise<GameAssets> {
     coinFrontFlopped,
     coinBack,
     coinBackFlopped,
+    spin,
+    spinHover,
+    spinDisabled,
+    spinText,
+    front,
+    side,
+    back,
+    toggle,
+    toggleHover,
+    toggleDisabled,
+    toggleActive,
+    toggleActiveHover,
+    bolt,
+    boltFilled,
+    button,
+    buttonHover,
+    buttonDisabled,
+    plus,
+    minus,
+    hamburger,
   };
 }

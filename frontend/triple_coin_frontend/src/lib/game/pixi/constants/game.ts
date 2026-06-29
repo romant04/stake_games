@@ -44,3 +44,5 @@ export const CHEST_OPEN_STAGGER = 1000;
 
 /** Frames for the appear scale-in animation */
 export const CHEST_APPEAR_FRAMES = 20;
+
+export const MAX_HISTORY = 5;

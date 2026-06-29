@@ -4,6 +4,7 @@ import type { Replay } from '../../types/replay';
 import type { AutoplayOptions } from '../../types/autoplay';
 
 export const balance = writable<number | null>(null);
+export const betAmount = writable<number>(10);
 export const currency = writable<Currency | null>(null);
 export const roundActive = writable(false);
 export const isPlaying = writable(false);
@@ -20,3 +21,7 @@ export const bonusGameData = writable<null | {
 export const activeAutoplay = writable<AutoplayOptions | null>(null);
 export const autoplayShouldStop = writable(false);
 export const isBonusGameActive = writable(false);
+
+export const isGameInfoOpen = writable(false);
+export const isAutoplayOpen = writable(false);
+export const lastWin = writable<number>(0);

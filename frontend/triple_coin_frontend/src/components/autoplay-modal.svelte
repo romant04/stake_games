@@ -1,18 +1,11 @@
 <script lang="ts">
-  import {
-    activeAutoplay,
-    autoplayShouldStop,
-    isBonusGameActive,
-    turboMode,
-  } from '$lib/stores/game';
+  import { activeAutoplay, isAutoplayOpen, turboMode } from '$lib/stores/game';
   import type { AutoplayOptions } from '../types/autoplay';
   import { startAutoplay } from '../utils/startAutoplay';
 
   let {
-    isAutoplayMenuOpen = $bindable(),
     handleSpin,
   }: {
-    isAutoplayMenuOpen: boolean;
     handleSpin: () => Promise<void>;
   } = $props();
 
@@ -25,7 +18,7 @@
   function handleAutoplay() {
     if (autoplayOptions.spins) {
       activeAutoplay.set(autoplayOptions);
-      isAutoplayMenuOpen = false;
+      $isAutoplayOpen = false;
       if (autoplayOptions.turboSpins) {
         turboMode.set(true);
       }
@@ -34,7 +27,7 @@
   }
 </script>
 
-{#if isAutoplayMenuOpen}
+{#if $isAutoplayOpen}
   {@const autoplayValues = [10, 50, 100, 250, 500]}
   <div
     class="flex justify-center pointer-events-auto items-center fixed top-0 left-0 w-full z-50 h-full bg-[#002a67]/50"
@@ -95,7 +88,7 @@
             : ''}</button
         >
         <button
-          onclick={() => (isAutoplayMenuOpen = false)}
+          onclick={() => ($isAutoplayOpen = false)}
           class="bg-gray-600 transition-all duration-200 hover:bg-[#555b66] text-white font-bold cursor-pointer text-xl py-3 w-full rounded-md"
           >Cancel</button
         >

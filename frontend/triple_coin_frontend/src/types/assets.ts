@@ -21,4 +21,34 @@ export interface GameAssets {
   // chests
   chestClosed: Texture;
   chestOpened: Texture;
+
+  // Spin button
+  spin: Texture;
+  spinHover: Texture;
+  spinDisabled: Texture;
+  spinText: Texture;
+
+  // History coins
+  front: Texture;
+  side: Texture;
+  back: Texture;
+
+  // Toggle button
+  toggle: Texture;
+  toggleHover: Texture;
+  toggleDisabled: Texture;
+  toggleActive: Texture;
+  toggleActiveHover: Texture;
+
+  // Icons
+  bolt: Texture;
+  boltFilled: Texture;
+  plus: Texture;
+  minus: Texture;
+  hamburger: Texture;
+
+  // Button
+  button: Texture;
+  buttonHover: Texture;
+  buttonDisabled: Texture;
 }
