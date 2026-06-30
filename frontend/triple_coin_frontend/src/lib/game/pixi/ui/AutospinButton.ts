@@ -6,6 +6,7 @@ export class AutospinButton {
   readonly container: Container;
 
   public button: Container;
+  private readonly text: Text;
   private readonly icon: Sprite;
   private readonly bg: Sprite;
 
@@ -13,6 +14,7 @@ export class AutospinButton {
     private readonly assets: GameAssets,
     position: { x: number; y: number } = { x: CX, y: 0 },
     private readonly iconTexture: Texture,
+    private readonly label: string,
     private readonly action: (() => void) | null = null,
   ) {
     this.container = new Container();
@@ -34,10 +36,10 @@ export class AutospinButton {
     this.icon.anchor.set(0.5);
     this.icon.width = 40;
     this.icon.height = 40;
-    this.icon.position.set(-80, 0);
+    this.icon.position.set(label.length > 10 ? -100 : -80, 0);
 
-    const text = new Text({
-      text: `AUTOSPIN`,
+    this.text = new Text({
+      text: label,
       style: new TextStyle({
         fontFamily: 'Merriweather',
         fontSize: 24,
@@ -45,10 +47,10 @@ export class AutospinButton {
         fontWeight: 'bold',
       }),
     });
-    text.anchor.set(0, 0.5);
-    text.position.set(-45, 0);
+    this.text.anchor.set(0, 0.5);
+    this.text.position.set(label.length > 10 ? -75 : -45, 0);
 
-    textIconContainer.addChild(this.icon, text);
+    textIconContainer.addChild(this.icon, this.text);
     this.button.addChild(this.bg, textIconContainer);
     this.container.addChild(this.button);
 

@@ -5,6 +5,7 @@ import { GameHistory } from '../ui/GameHistory';
 import { SpinButton } from '../ui/SpinButton';
 import { ToggleButton } from '../ui/ToggleButton';
 import {
+  autoplayShouldStop,
   isAutoplayOpen,
   isGameInfoOpen,
   turboMode,
@@ -15,6 +16,7 @@ import { BetAmountSelector } from '../ui/BetAmountSelector';
 import { SmallButton } from '../ui/SmallButton';
 import { AutospinButton } from '../ui/AutospinButton';
 import { LastWin } from '../ui/LastWin';
+import { AutoplayMenu } from '../ui/AutoplayMenu';
 
 export class UIManager {
   readonly container: Container;
@@ -25,28 +27,32 @@ export class UIManager {
   public readonly balance: BalanceText;
   public readonly lastWin: LastWin;
 
+  private readonly autospinButton: AutospinButton;
+  private readonly stopAutospinButton: AutospinButton;
+
   constructor(
     private readonly assets: GameAssets,
     private readonly handleSpin: () => void,
+    private readonly showAutoplayMenu: () => void,
   ) {
     this.container = new Container();
 
     this.balance = new BalanceText();
     this.balance.container.position.set(
-      VIRTUAL_WIDTH * 0.125,
+      VIRTUAL_WIDTH * 0.132,
       VIRTUAL_HEIGHT * 0.9,
     );
     this.container.addChild(this.balance.container);
     this.lastWin = new LastWin();
     this.lastWin.container.position.set(
-      VIRTUAL_WIDTH * 0.865,
+      VIRTUAL_WIDTH * 0.85,
       VIRTUAL_HEIGHT * 0.9,
     );
     this.container.addChild(this.lastWin.container);
 
     const burgerMenu = new SmallButton(
       assets,
-      { x: VIRTUAL_WIDTH * 0.02, y: VIRTUAL_HEIGHT * 0.9 },
+      { x: VIRTUAL_WIDTH * 0.045, y: VIRTUAL_HEIGHT * 0.9 },
       assets.hamburger,
       () => {
         isGameInfoOpen.set(!get(isGameInfoOpen));
@@ -61,15 +67,28 @@ export class UIManager {
     );
     this.container.addChild(balanceSelector.container);
 
-    const autospinButton = new AutospinButton(
+    this.autospinButton = new AutospinButton(
       assets,
       { x: VIRTUAL_WIDTH * 0.7, y: VIRTUAL_HEIGHT * 0.9 },
       assets.hamburger,
+      'AUTOSPIN',
       () => {
-        isAutoplayOpen.set(!get(isAutoplayOpen));
+        this.showAutoplayMenu();
       },
     );
-    this.container.addChild(autospinButton.container);
+    this.container.addChild(this.autospinButton.container);
+    this.stopAutospinButton = new AutospinButton(
+      assets,
+      { x: VIRTUAL_WIDTH * 0.7, y: VIRTUAL_HEIGHT * 0.9 },
+      assets.close,
+      'STOP AUTOSPIN',
+      () => {
+        autoplayShouldStop.set(true);
+        this.changeAutoplayButtonState(false);
+      },
+    );
+    this.stopAutospinButton.container.visible = false;
+    this.container.addChild(this.stopAutospinButton.container);
 
     const winTable = new Sprite(assets.winTable);
     winTable.anchor.set(0.5);
@@ -97,7 +116,7 @@ export class UIManager {
 
     this.turboModeButton = new ToggleButton(
       assets,
-      { x: VIRTUAL_WIDTH * 0.98, y: VIRTUAL_HEIGHT * 0.9 },
+      { x: VIRTUAL_WIDTH * 0.95, y: VIRTUAL_HEIGHT * 0.9 },
       assets.bolt,
       assets.boltFilled,
       () => {
@@ -108,9 +127,19 @@ export class UIManager {
 
     this.gameHistory = new GameHistory(assets);
     this.gameHistory.container.position.set(
-      VIRTUAL_WIDTH * 0.95,
+      VIRTUAL_WIDTH * 0.9,
       VIRTUAL_HEIGHT * 0.05,
     );
     this.container.addChild(this.gameHistory.container);
+  }
+
+  public changeAutoplayButtonState(isAutoplayActive: boolean) {
+    if (isAutoplayActive) {
+      this.autospinButton.container.visible = false;
+      this.stopAutospinButton.container.visible = true;
+    } else {
+      this.autospinButton.container.visible = true;
+      this.stopAutospinButton.container.visible = false;
+    }
   }
 }

@@ -30,11 +30,24 @@ import buttonSrc from '../../../../assets/ui/button.png';
 import buttonHoverSrc from '../../../../assets/ui/button_hover.png';
 import buttonDisabledSrc from '../../../../assets/ui/button_disabled.png';
 
+import autospinModalBgSrc from '../../../../assets/ui/autospin/autospin_bg.png';
+import checkboxSrc from '../../../../assets/ui/autospin/checkbox.png';
+import checkboxHoverSrc from '../../../../assets/ui/autospin/checkbox_hover.png';
+import checkboxActiveSrc from '../../../../assets/ui/autospin/checkbox_active.png';
+import checkboxActiveHoverSrc from '../../../../assets/ui/autospin/checkbox_active_hover.png';
+import selectionButtonSrc from '../../../../assets/ui/autospin/selection_button.png';
+import selectionButtonHoverSrc from '../../../../assets/ui/autospin/selection_button_hover.png';
+import selectionButtonActiveSrc from '../../../../assets/ui/autospin/selection_button_active.png';
+import selectionButtonActiveHoverSrc from '../../../../assets/ui/autospin/selection_button_active_hover.png';
+import startAutospinSrc from '../../../../assets/ui/autospin/start_autospin.png';
+import startAutospinHoverSrc from '../../../../assets/ui/autospin/start_autospin_hover.png';
+
 import boltSrc from '../../../../assets/icons/bolt.png';
 import boltFilledSrc from '../../../../assets/icons/bolt_filled.png';
 import plusSrc from '../../../../assets/icons/plus.png';
 import minusSrc from '../../../../assets/icons/minus.png';
 import hamburgerSrc from '../../../../assets/icons/hamburger.png';
+import closeSrc from '../../../../assets/icons/close.png';
 
 const frontModules = import.meta.glob(
   '../../../../assets/game/front/front_*.png',
@@ -99,6 +112,18 @@ export async function loadAssets(): Promise<GameAssets> {
     plus,
     minus,
     hamburger,
+    autospinModalBg,
+    close,
+    checkbox,
+    checkboxHover,
+    checkboxActive,
+    checkboxActiveHover,
+    selectionButton,
+    selectionButtonHover,
+    selectionButtonActive,
+    selectionButtonActiveHover,
+    startAutospin,
+    startAutospinHover,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(coinsBgSrc),
@@ -127,6 +152,18 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(plusSrc),
     Assets.load(minusSrc),
     Assets.load(hamburgerSrc),
+    Assets.load(autospinModalBgSrc),
+    Assets.load(closeSrc),
+    Assets.load(checkboxSrc),
+    Assets.load(checkboxHoverSrc),
+    Assets.load(checkboxActiveSrc),
+    Assets.load(checkboxActiveHoverSrc),
+    Assets.load(selectionButtonSrc),
+    Assets.load(selectionButtonHoverSrc),
+    Assets.load(selectionButtonActiveSrc),
+    Assets.load(selectionButtonActiveHoverSrc),
+    Assets.load(startAutospinSrc),
+    Assets.load(startAutospinHoverSrc),
   ]);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
@@ -169,5 +206,17 @@ export async function loadAssets(): Promise<GameAssets> {
     plus,
     minus,
     hamburger,
+    autospinModalBg,
+    close,
+    checkbox,
+    checkboxHover,
+    checkboxActive,
+    checkboxActiveHover,
+    selectionButton,
+    selectionButtonHover,
+    selectionButtonActive,
+    selectionButtonActiveHover,
+    startAutospin,
+    startAutospinHover,
   };
 }

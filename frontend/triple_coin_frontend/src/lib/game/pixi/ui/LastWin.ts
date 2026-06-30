@@ -16,10 +16,10 @@ export class LastWin {
       text: 'LAST WIN',
       style: new TextStyle({
         fontFamily: 'Merriweather',
-        fontSize: 24,
+        fontSize: 20,
         fill: 0xece7c4,
         fontWeight: 'bold',
-        padding: 8,
+        padding: 10,
 
         stroke: {
           color: 0x3c0e00,
@@ -35,7 +35,7 @@ export class LastWin {
       text: `${get(currency)} ${formatNumber((get(lastWin) as number) / API_MULTIPLIER)}`,
       style: new TextStyle({
         fontFamily: 'Merriweather',
-        fontSize: 28,
+        fontSize: 24,
         fill: 0xe1b314,
         fontWeight: 'bold',
         trim: false,

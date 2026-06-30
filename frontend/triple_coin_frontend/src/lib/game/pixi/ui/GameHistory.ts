@@ -45,9 +45,6 @@ export class GameHistory {
 
         const record = new HistoryRecord(values, assets, opacityValue);
         record.container.position.set(0, this.container.children.length * 80);
-        console.log(
-          `Adding game history record: ${game} with opacity ${opacityValue}`,
-        );
       });
   }
 
@@ -62,9 +59,6 @@ export class GameHistory {
 
         const record = new HistoryRecord(values, this.assets, opacityValue);
         record.container.position.set(0, this.container.children.length * 80);
-        console.log(
-          `Adding game history record: ${game} with opacity ${opacityValue}`,
-        );
         this.container.addChild(record.container);
       });
   }

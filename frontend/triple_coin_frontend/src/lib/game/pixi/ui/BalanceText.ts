@@ -16,7 +16,7 @@ export class BalanceText {
       text: 'BALANCE',
       style: new TextStyle({
         fontFamily: 'Merriweather',
-        fontSize: 24,
+        fontSize: 20,
         fill: 0xece7c4,
         fontWeight: 'bold',
 
@@ -34,7 +34,7 @@ export class BalanceText {
       text: `${get(currency)} ${formatNumber((get(balance) as number) / API_MULTIPLIER)}`,
       style: new TextStyle({
         fontFamily: 'Merriweather',
-        fontSize: 28,
+        fontSize: 24,
         fill: 0xe1b314,
         fontWeight: 'bold',
 

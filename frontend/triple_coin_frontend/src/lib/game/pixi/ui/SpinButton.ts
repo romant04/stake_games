@@ -7,6 +7,7 @@ export class SpinButton {
 
   public button: Container;
   private readonly bg: Sprite;
+  private readonly text: Sprite;
 
   public constructor(
     private readonly assets: GameAssets,
@@ -24,11 +25,11 @@ export class SpinButton {
     this.bg.width = 400;
     this.bg.height = 160;
 
-    const text = new Sprite(assets.spinText);
-    text.anchor.set(0.5);
-    text.position.set(0, 5);
+    this.text = new Sprite(assets.spinText);
+    this.text.anchor.set(0.5);
+    this.text.position.set(0, 5);
 
-    this.button.addChild(this.bg, text);
+    this.button.addChild(this.bg, this.text);
     this.container.addChild(this.button);
 
     this.button.on('pointerdown', () => {
@@ -56,9 +57,11 @@ export class SpinButton {
   public disable() {
     this.button.eventMode = 'none';
     this.bg.texture = this.assets.spinDisabled;
+    this.text.alpha = 0.5;
   }
   public enable() {
     this.button.eventMode = 'static';
     this.bg.texture = this.assets.spin;
+    this.text.alpha = 1;
   }
 }

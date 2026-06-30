@@ -46,9 +46,23 @@ export interface GameAssets {
   plus: Texture;
   minus: Texture;
   hamburger: Texture;
+  close: Texture;
 
   // Button
   button: Texture;
   buttonHover: Texture;
   buttonDisabled: Texture;
+
+  // Autospin modal
+  autospinModalBg: Texture;
+  checkbox: Texture;
+  checkboxHover: Texture;
+  checkboxActive: Texture;
+  checkboxActiveHover: Texture;
+  selectionButton: Texture;
+  selectionButtonHover: Texture;
+  selectionButtonActive: Texture;
+  selectionButtonActiveHover: Texture;
+  startAutospin: Texture;
+  startAutospinHover: Texture;
 }

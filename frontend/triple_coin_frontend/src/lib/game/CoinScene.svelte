@@ -1,7 +1,12 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Application, Container, Sprite } from 'pixi.js';
-  import { turboMode, bonusGameData, currency } from '$lib/stores/game';
+  import {
+    turboMode,
+    bonusGameData,
+    currency,
+    activeAutoplay,
+  } from '$lib/stores/game';
 
   import { CoinManager } from '$lib/game/pixi/managers/CoinManager';
   import { ChestManager } from '$lib/game/pixi/managers/ChestManager';
@@ -11,6 +16,8 @@
   import { loadAssets } from '$lib/game/pixi/utils/loadAssets';
   import { UIManager } from '$lib/game/pixi/managers/UIManager';
   import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
+  import { AutoplayMenu } from '$lib/game/pixi/ui/AutoplayMenu';
+  import { get } from 'svelte/store';
 
   // ---------------------------------------------------------------------------
   // Props
@@ -41,17 +48,28 @@
 
     (async () => {
       // -- App ------------------------------------------------------------------
+      await document.fonts.load('700 28px Merriweather');
+      await document.fonts.load('700 24px Merriweather');
+      await document.fonts.load('700 20px Merriweather');
+
       const app = new Application();
-      await app.init({ antialias: true, backgroundAlpha: 0 });
+      await app.init({
+        antialias: true,
+        backgroundAlpha: 0,
+        autoDensity: true,
+        resolution: window.devicePixelRatio,
+      });
       wrapper.appendChild(app.canvas);
 
       const backgroundLayer = new Container();
       const gameLayer = new Container();
       const UILayer = new Container();
+      const overlay = new Container();
 
       app.stage.addChild(backgroundLayer);
       app.stage.addChild(UILayer);
       app.stage.addChild(gameLayer);
+      app.stage.addChild(overlay);
 
       const assets = await loadAssets();
 
@@ -63,8 +81,17 @@
       background.height = 1080;
       backgroundLayer.addChild(background);
 
+      const autoplayMenu = new AutoplayMenu(
+        assets,
+        handleSpin,
+        initiateAutoplay,
+      );
+      overlay.addChild(autoplayMenu.container);
+
       // -- Managers -------------------------------------------------------------
-      uiManager = new UIManager(assets, handleSpin);
+      uiManager = new UIManager(assets, handleSpin, () => {
+        autoplayMenu.container.visible = true;
+      });
       UILayer.addChild(uiManager.container);
 
       coinManager = new CoinManager(assets, app.ticker);
@@ -94,7 +121,7 @@
         const w = wrapper.clientWidth;
         const h = wrapper.clientHeight;
         app.renderer.resize(w, h);
-        fitStageToScreen(app, background);
+        fitStageToScreen(app, background, autoplayMenu);
       };
 
       const ro = new ResizeObserver(resize);
@@ -116,10 +143,20 @@
     return () => cleanup();
   });
 
+  function initiateAutoplay() {
+    if (
+      get(turboMode) === true &&
+      uiManager.turboModeButton.state !== 'active'
+    ) {
+      uiManager.turboModeButton.toggleActive();
+    }
+
+    uiManager.changeAutoplayButtonState(true);
+  }
+
   // ---------------------------------------------------------------------------
   // Exported API (called by parent)
   // ---------------------------------------------------------------------------
-
   export async function playRound(
     results: string[],
     payout: number,
@@ -139,6 +176,10 @@
     uiManager.gameHistory.update();
     uiManager.balance.updateBalance();
     uiManager.lastWin.updateLastWin();
+
+    if (get(activeAutoplay) === null) {
+      uiManager.changeAutoplayButtonState(false);
+    }
   }
 
   export async function showChests(): Promise<void> {

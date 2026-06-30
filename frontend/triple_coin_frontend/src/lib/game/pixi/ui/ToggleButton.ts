@@ -6,11 +6,10 @@ export class ToggleButton {
   readonly container: Container;
 
   public button: Container;
+  public state: 'active' | 'inactive' = 'inactive';
   private readonly icon: Sprite;
   private readonly bg: Sprite;
-
   private lastTexture: Texture | null = null;
-  private state: 'active' | 'inactive' = 'inactive';
 
   public constructor(
     private readonly assets: GameAssets,

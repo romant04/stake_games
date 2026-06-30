@@ -1,5 +1,6 @@
 import { VIRTUAL_WIDTH, VIRTUAL_HEIGHT } from '../constants/layout';
 import type { Application, Container, Sprite } from 'pixi.js';
+import type { AutoplayMenu } from '../ui/AutoplayMenu';
 
 /**
  * Scales `app.stage` uniformly so the virtual 1920×1080 canvas fits inside
@@ -7,11 +8,10 @@ import type { Application, Container, Sprite } from 'pixi.js';
  *
  * Call this once on mount and again inside every ResizeObserver callback.
  */
-// fitStage.ts
 export function fitStageToScreen(
   app: Application,
   background?: Sprite,
-  rigidContainers?: { container: Container; minScale: number }[],
+  autoplayMenu?: AutoplayMenu,
 ): void {
   const realW = app.renderer.width;
   const realH = app.renderer.height;
@@ -22,20 +22,23 @@ export function fitStageToScreen(
   app.stage.x = (realW - VIRTUAL_WIDTH * scale) / 2;
   app.stage.y = (realH - VIRTUAL_HEIGHT * scale) / 2;
 
+  const visibleVirtualW = realW / scale;
+  const visibleVirtualH = realH / scale;
+
   if (background) {
-    background.width = realW / scale;
-    background.height = realH / scale;
+    background.width = visibleVirtualW;
+    background.height = visibleVirtualH;
     background.position.set(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2);
   }
 
-  // Each rigid container counteracts the stage scale partially
-  rigidContainers?.forEach(({ container, minScale }) => {
-    console.log(scale, minScale);
-    if (scale < minScale) {
-      // Stage is scaling down past our minimum — push back
-      container.scale.set(minScale / scale);
-    } else {
-      container.scale.set(1);
-    }
-  });
+  if (autoplayMenu && autoplayMenu.dimBackground) {
+    const padding = 64;
+
+    autoplayMenu.dimBackground.width = visibleVirtualW + padding * 2;
+    autoplayMenu.dimBackground.height = visibleVirtualH + padding * 2;
+
+    const startX = (VIRTUAL_WIDTH - visibleVirtualW) / 2;
+    const startY = (VIRTUAL_HEIGHT - visibleVirtualH) / 2;
+    autoplayMenu.dimBackground.position.set(startX - padding, startY - padding);
+  }
 }

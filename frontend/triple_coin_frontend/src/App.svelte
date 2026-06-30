@@ -34,6 +34,7 @@
   const BONUS_GAME_THRESHOLD = 10;
 
   let coinScene: CoinScene;
+  let ready = $state(false);
 
   let chestsVisible = $state(false);
   let chestsOpening = $state(false);
@@ -172,6 +173,9 @@
   }
 
   onMount(async () => {
+    await document.fonts.ready;
+    ready = true;
+
     if (isReplayMode()) {
       const params = getReplayUrlParams();
       // Get currency from URL params
@@ -203,9 +207,11 @@
 </script>
 
 <div class="relative w-screen h-dvh overflow-hidden">
-  <div class="absolute inset-0">
-    <CoinScene bind:this={coinScene} {handleSpin} {resetAfterBonus} />
-  </div>
+  {#if ready}
+    <div class="absolute inset-0">
+      <CoinScene bind:this={coinScene} {handleSpin} {resetAfterBonus} />
+    </div>
+  {/if}
 
   <div class="absolute inset-0 z-10 pointer-events-none">
     <AutoplayModal {handleSpin} />
