@@ -11,6 +11,7 @@ import type { AutoplayMenu } from '../ui/AutoplayMenu';
 export function fitStageToScreen(
   app: Application,
   background?: Sprite,
+  fog?: Sprite,
   autoplayMenu?: AutoplayMenu,
 ): void {
   const realW = app.renderer.width;
@@ -40,5 +41,13 @@ export function fitStageToScreen(
     const startX = (VIRTUAL_WIDTH - visibleVirtualW) / 2;
     const startY = (VIRTUAL_HEIGHT - visibleVirtualH) / 2;
     autoplayMenu.dimBackground.position.set(startX - padding, startY - padding);
+  }
+
+  if (fog) {
+    // Position to the bottom and span the whole screen
+    fog.width = visibleVirtualW * 2;
+    fog.height = visibleVirtualH;
+    fog.anchor.set(0.5, 0);
+    fog.position.set(VIRTUAL_WIDTH / 2, 50);
   }
 }

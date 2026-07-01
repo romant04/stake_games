@@ -103,12 +103,14 @@
     chestsOpening = false;
     $isBonusGameActive = false;
     if ($replayMode) {
+      coinScene.rerenderHistory();
       return;
     }
 
     await endRound();
     const updatedBalance = await getBalance();
     balance.set(updatedBalance.balance?.amount);
+    coinScene.rerenderHistory();
 
     if ($activeAutoplay?.spins !== 0) {
       await startAutoplay(handleSpin);
@@ -209,7 +211,12 @@
 <div class="relative w-screen h-dvh overflow-hidden">
   {#if ready}
     <div class="absolute inset-0">
-      <CoinScene bind:this={coinScene} {handleSpin} {resetAfterBonus} />
+      <CoinScene
+        bind:this={coinScene}
+        {handleSpin}
+        {handleReplay}
+        {resetAfterBonus}
+      />
     </div>
   {/if}
 

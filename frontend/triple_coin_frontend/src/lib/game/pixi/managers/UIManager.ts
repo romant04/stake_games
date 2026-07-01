@@ -6,7 +6,6 @@ import { SpinButton } from '../ui/SpinButton';
 import { ToggleButton } from '../ui/ToggleButton';
 import {
   autoplayShouldStop,
-  isAutoplayOpen,
   isGameInfoOpen,
   turboMode,
 } from '../../../stores/game';
@@ -16,7 +15,7 @@ import { BetAmountSelector } from '../ui/BetAmountSelector';
 import { SmallButton } from '../ui/SmallButton';
 import { AutospinButton } from '../ui/AutospinButton';
 import { LastWin } from '../ui/LastWin';
-import { AutoplayMenu } from '../ui/AutoplayMenu';
+import { BonusHeadline } from '../ui/BonusHeadline';
 
 export class UIManager {
   readonly container: Container;
@@ -26,16 +25,22 @@ export class UIManager {
   public readonly turboModeButton: ToggleButton;
   public readonly balance: BalanceText;
   public readonly lastWin: LastWin;
-
+  public readonly fog: Sprite;
   private readonly autospinButton: AutospinButton;
   private readonly stopAutospinButton: AutospinButton;
+  private readonly bonusHeadline: BonusHeadline;
 
   constructor(
     private readonly assets: GameAssets,
-    private readonly handleSpin: () => void,
+    private readonly handleSpin: () => Promise<void>,
+    private readonly handleReplay: () => Promise<void>,
     private readonly showAutoplayMenu: () => void,
   ) {
     this.container = new Container();
+
+    this.fog = new Sprite(assets.fog);
+    this.fog.visible = false;
+    this.container.addChild(this.fog);
 
     this.balance = new BalanceText();
     this.balance.container.position.set(
@@ -90,14 +95,7 @@ export class UIManager {
     this.stopAutospinButton.container.visible = false;
     this.container.addChild(this.stopAutospinButton.container);
 
-    const winTable = new Sprite(assets.winTable);
-    winTable.anchor.set(0.5);
-    winTable.position.set(VIRTUAL_WIDTH * 0.175, CY + 20);
-    winTable.width = 600;
-    winTable.height = 850;
-    this.container.addChild(winTable);
-
-    this.spinButton = new SpinButton(assets, handleSpin);
+    this.spinButton = new SpinButton(assets, handleSpin, handleReplay);
     this.spinButton.container.position.set(0, VIRTUAL_HEIGHT * 0.9);
     this.container.addChild(this.spinButton.container);
     window.addEventListener('keydown', (e) => {
@@ -131,6 +129,10 @@ export class UIManager {
       VIRTUAL_HEIGHT * 0.05,
     );
     this.container.addChild(this.gameHistory.container);
+
+    // BONUS GAME UI
+    this.bonusHeadline = new BonusHeadline(assets);
+    this.container.addChild(this.bonusHeadline.container);
   }
 
   public changeAutoplayButtonState(isAutoplayActive: boolean) {
@@ -141,5 +143,14 @@ export class UIManager {
       this.autospinButton.container.visible = true;
       this.stopAutospinButton.container.visible = false;
     }
+  }
+
+  public showBonusGameUI() {
+    this.bonusHeadline.container.visible = true;
+    this.fog.visible = true;
+  }
+  public hideBonusGameUI() {
+    this.bonusHeadline.container.visible = false;
+    this.fog.visible = false;
   }
 }

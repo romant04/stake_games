@@ -1,6 +1,8 @@
 import { Container, Sprite } from 'pixi.js';
 import { CX, VIRTUAL_HEIGHT } from '../constants/layout';
 import type { GameAssets } from '../../../../types/assets';
+import { replayMode } from '../../../stores/game';
+import { get } from 'svelte/store';
 
 export class SpinButton {
   readonly container: Container;
@@ -11,7 +13,8 @@ export class SpinButton {
 
   public constructor(
     private readonly assets: GameAssets,
-    private readonly handleSpin: () => void,
+    private readonly handleSpin: () => Promise<void>,
+    private readonly handleReplay: () => Promise<void>,
   ) {
     this.container = new Container();
 
@@ -51,7 +54,11 @@ export class SpinButton {
   }
 
   public press() {
-    this.handleSpin();
+    if (get(replayMode)) {
+      void this.handleReplay();
+    } else {
+      void this.handleSpin();
+    }
   }
 
   public disable() {

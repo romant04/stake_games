@@ -26,8 +26,12 @@
   let {
     resetAfterBonus,
     handleSpin,
-  }: { resetAfterBonus: () => void; handleSpin: () => Promise<void> } =
-    $props();
+    handleReplay,
+  }: {
+    resetAfterBonus: () => void;
+    handleSpin: () => Promise<void>;
+    handleReplay: () => Promise<void>;
+  } = $props();
 
   // ---------------------------------------------------------------------------
   // Internal refs
@@ -67,8 +71,8 @@
       const overlay = new Container();
 
       app.stage.addChild(backgroundLayer);
-      app.stage.addChild(UILayer);
       app.stage.addChild(gameLayer);
+      app.stage.addChild(UILayer);
       app.stage.addChild(overlay);
 
       const assets = await loadAssets();
@@ -89,7 +93,7 @@
       overlay.addChild(autoplayMenu.container);
 
       // -- Managers -------------------------------------------------------------
-      uiManager = new UIManager(assets, handleSpin, () => {
+      uiManager = new UIManager(assets, handleSpin, handleReplay, () => {
         autoplayMenu.container.visible = true;
       });
       UILayer.addChild(uiManager.container);
@@ -98,11 +102,7 @@
       coinManager.create();
       gameLayer.addChild(coinManager.container);
 
-      chestManager = new ChestManager(
-        assets.chestClosed,
-        assets.chestOpened,
-        resetAfterBonus,
-      );
+      chestManager = new ChestManager(assets, resetAfterBonus);
       chestManager.create();
       app.stage.addChild(chestManager.container);
 
@@ -121,7 +121,7 @@
         const w = wrapper.clientWidth;
         const h = wrapper.clientHeight;
         app.renderer.resize(w, h);
-        fitStageToScreen(app, background, autoplayMenu);
+        fitStageToScreen(app, background, uiManager.fog, autoplayMenu);
       };
 
       const ro = new ResizeObserver(resize);
@@ -185,6 +185,7 @@
   export async function showChests(): Promise<void> {
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     coinManager.hide();
+    uiManager.showBonusGameUI();
     chestManager.show2();
     await chestManager.show($bonusGameData?.payout ?? 0);
   }
@@ -192,6 +193,7 @@
   export async function hideChests(): Promise<void> {
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     chestManager.hide();
+    uiManager.hideBonusGameUI();
     coinManager.show();
   }
 

@@ -8,7 +8,7 @@ export const COIN_SPACING = 240;
 export const CHEST_SIZE = 150;
 
 /** Horizontal gap between chest centres */
-export const CHEST_SPACING = 180;
+export const CHEST_SPACING = 450;
 
 // ---------------------------------------------------------------------------
 // Coin spin timing (all values in milliseconds unless noted)

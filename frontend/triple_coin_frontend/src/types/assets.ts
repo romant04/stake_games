@@ -18,10 +18,6 @@ export interface GameAssets {
   coinBackFlopped: Texture[];
   coinSide: Texture;
 
-  // chests
-  chestClosed: Texture;
-  chestOpened: Texture;
-
   // Spin button
   spin: Texture;
   spinHover: Texture;
@@ -65,4 +61,15 @@ export interface GameAssets {
   selectionButtonActiveHover: Texture;
   startAutospin: Texture;
   startAutospinHover: Texture;
+
+  // Bonus game assets
+  chestClosed: Texture;
+  chestOpened1: Texture;
+  chestOpened2: Texture;
+  chestOpened3: Texture;
+  chestOpened4: Texture;
+  chestLabel: Texture;
+  pedestal: Texture;
+  fog: Texture;
+  bonusHeadline: Texture;
 }

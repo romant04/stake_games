@@ -8,8 +8,6 @@ import { Assets } from 'pixi.js';
 import bgSrc from '../../../../assets/bg.png';
 import sideSrc from '../../../../assets/game/side.png';
 import coinsBgSrc from '../../../../assets/game/coins_bg.png';
-import chestClosedSrc from '../../../../assets/game/chest_closed.png';
-import chestOpenedSrc from '../../../../assets/game/chest_opened.png';
 import logoSrc from '../../../../assets/logo.png';
 import winTableSrc from '../../../../assets/win_table.png';
 import spinSrc from '../../../../assets/ui/spin.png';
@@ -48,6 +46,16 @@ import plusSrc from '../../../../assets/icons/plus.png';
 import minusSrc from '../../../../assets/icons/minus.png';
 import hamburgerSrc from '../../../../assets/icons/hamburger.png';
 import closeSrc from '../../../../assets/icons/close.png';
+
+import chestClosedSrc from '../../../../assets/game/bonus/chest_closed.png';
+import chestOpened1Src from '../../../../assets/game/bonus/chest_opened_1.png';
+import chestOpened2Src from '../../../../assets/game/bonus/chest_opened_2.png';
+import chestOpened3Src from '../../../../assets/game/bonus/chest_opened_3.png';
+import chestOpened4Src from '../../../../assets/game/bonus/chest_opened_4.png';
+import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
+import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
+import fogSrc from '../../../../assets/game/bonus/fog.png';
+import pedestalSrc from '../../../../assets/game/bonus/pedestal.png';
 
 const frontModules = import.meta.glob(
   '../../../../assets/game/front/front_*.png',
@@ -88,8 +96,6 @@ export async function loadAssets(): Promise<GameAssets> {
     bg,
     coinsBg,
     coinSide,
-    chestClosed,
-    chestOpened,
     logo,
     winTable,
     spin,
@@ -124,12 +130,19 @@ export async function loadAssets(): Promise<GameAssets> {
     selectionButtonActiveHover,
     startAutospin,
     startAutospinHover,
+    chestClosed,
+    chestOpened1,
+    chestOpened2,
+    chestOpened3,
+    chestOpened4,
+    bonusHeadline,
+    chestLabel,
+    fog,
+    pedestal,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(coinsBgSrc),
     Assets.load(sideSrc),
-    Assets.load(chestClosedSrc),
-    Assets.load(chestOpenedSrc),
     Assets.load(logoSrc),
     Assets.load(winTableSrc),
     Assets.load(spinSrc),
@@ -164,6 +177,15 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(selectionButtonActiveHoverSrc),
     Assets.load(startAutospinSrc),
     Assets.load(startAutospinHoverSrc),
+    Assets.load(chestClosedSrc),
+    Assets.load(chestOpened1Src),
+    Assets.load(chestOpened2Src),
+    Assets.load(chestOpened3Src),
+    Assets.load(chestOpened4Src),
+    Assets.load(bonusHeadlineSrc),
+    Assets.load(chestLabelSrc),
+    Assets.load(fogSrc),
+    Assets.load(pedestalSrc),
   ]);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
@@ -180,8 +202,6 @@ export async function loadAssets(): Promise<GameAssets> {
     winTable,
     coinsBg,
     coinSide,
-    chestClosed,
-    chestOpened,
     coinFront,
     coinFrontFlopped,
     coinBack,
@@ -218,5 +238,14 @@ export async function loadAssets(): Promise<GameAssets> {
     selectionButtonActiveHover,
     startAutospin,
     startAutospinHover,
+    chestClosed,
+    chestOpened1,
+    chestOpened2,
+    chestOpened3,
+    chestOpened4,
+    bonusHeadline,
+    chestLabel,
+    fog,
+    pedestal,
   };
 }

@@ -31,6 +31,13 @@ export class CoinManager {
   ) {
     this.container = new Container();
 
+    const winTable = new Sprite(assets.winTable);
+    winTable.anchor.set(0.5);
+    winTable.position.set(VIRTUAL_WIDTH * 0.175, CY + 20);
+    winTable.width = 600;
+    winTable.height = 850;
+    this.container.addChild(winTable);
+
     const coinsBackground = new Sprite(assets.coinsBg);
     coinsBackground.anchor.set(0.5);
     coinsBackground.position.set(CX, CY);

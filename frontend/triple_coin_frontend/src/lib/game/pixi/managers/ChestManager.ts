@@ -1,5 +1,4 @@
-import { Container, type Texture } from 'pixi.js';
-import { Chest } from '../objects/Chest';
+import { Container } from 'pixi.js';
 import {
   CHEST_APPEAR_STAGGER,
   CHEST_OPEN_STAGGER,
@@ -7,6 +6,8 @@ import {
 } from '../constants/game';
 import { CX, CY } from '../constants/layout';
 import { wait } from '../utils/wait';
+import type { GameAssets } from '../../../../types/assets';
+import { ChestItem } from '../objects/ChestItem';
 
 /**
  * Manages the three bonus-round chests.
@@ -17,15 +18,14 @@ import { wait } from '../utils/wait';
 export class ChestManager {
   readonly container: Container;
 
-  private chests: Chest[] = [];
+  private chests: ChestItem[] = [];
   private payouts: number[] = [];
   private openedCount = 0;
 
   private readonly onBonusComplete: () => void;
 
   constructor(
-    private readonly closedTexture: Texture,
-    private readonly openedTexture: Texture,
+    private readonly assets: GameAssets,
     /** Called once all three chests have been opened. */
     onBonusComplete: () => void,
   ) {
@@ -38,15 +38,18 @@ export class ChestManager {
   // ---------------------------------------------------------------------------
 
   create(): void {
-    this.destroyChests();
+    // this.destroyChests();
 
     for (let i = 0; i < 3; i++) {
-      const chest = new Chest(this.closedTexture, this.openedTexture, (event) =>
+      const chest = new ChestItem(this.assets, (event) =>
         this.handleChestOpen(event),
       );
-      chest.setPosition(CX + (i - 1) * CHEST_SPACING, CY);
-      chest.sprite.visible = false;
-      this.container.addChild(chest.sprite);
+      chest.container.position.set(
+        CX + (i - 1) * CHEST_SPACING,
+        i === 1 ? CY + 50 : CY + 200,
+      );
+      chest.container.visible = false;
+      this.container.addChild(chest.container);
       this.chests.push(chest);
     }
   }
@@ -65,15 +68,16 @@ export class ChestManager {
 
     for (const [i, chest] of this.chests.entries()) {
       chest.reset();
+      chest.payout = this.payouts[i];
       // Don't await — fire-and-forget so the stagger is just a setTimeout gap
-      chest.appear();
-      if (i < this.chests.length - 1) {
-        await wait(CHEST_APPEAR_STAGGER);
-      }
+      chest.container.visible = true;
     }
   }
 
   hide(): void {
+    for (const [i, chest] of this.chests.entries()) {
+      chest.reset();
+    }
     this.container.visible = false;
   }
 
@@ -84,7 +88,7 @@ export class ChestManager {
   /** Force-open any chests the player hasn't clicked yet. */
   openAll(): void {
     this.chests
-      .filter((c) => !c.isOpened)
+      .filter((c) => !c.chest.isOpened)
       .forEach((chest, i) => {
         const globalIndex = this.chests.indexOf(chest);
         setTimeout(() => {
@@ -117,12 +121,12 @@ export class ChestManager {
   }
 
   /**
-   * Splits `total` into three amounts where each is between 20 % and 60 %
+   * Splits `total` into three amounts where each is between 0% and 80%
    * of the total, and all three sum exactly to `total`.
    */
   private splitPayout(total: number): number[] {
-    const min = Math.floor(total * 0.2);
-    const max = Math.floor(total * 0.6);
+    const min = Math.floor(0);
+    const max = Math.floor(total * 0.8);
 
     let a = min + Math.floor(Math.random() * (max - min));
     let b = min + Math.floor(Math.random() * (max - min));
@@ -142,7 +146,7 @@ export class ChestManager {
   }
 
   private destroyChests(): void {
-    this.chests.forEach((c) => c.destroy());
+    this.chests.forEach((c) => c.chest.destroy());
     this.chests = [];
     this.container.removeChildren();
   }
