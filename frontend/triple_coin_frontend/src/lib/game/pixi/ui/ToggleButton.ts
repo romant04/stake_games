@@ -94,12 +94,14 @@ export class ToggleButton {
   }
 
   public toggleActive() {
+    this.state = 'active';
     this.bg.texture = this.assets.toggleActive;
     this.icon.texture = this.activeIconTexture || this.iconTexture;
 
     this.lastTexture = this.bg.texture;
   }
   public toggleInactive() {
+    this.state = 'inactive';
     this.bg.texture = this.assets.toggle;
     this.icon.texture = this.iconTexture;
 
