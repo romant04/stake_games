@@ -3,6 +3,7 @@ import type { Texture } from 'pixi.js';
 export interface GameAssets {
   // background
   bg: Texture;
+  bgMobile: Texture;
   coinsBg: Texture;
 
   // Logo

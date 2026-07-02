@@ -121,7 +121,22 @@
         const w = wrapper.clientWidth;
         const h = wrapper.clientHeight;
         app.renderer.resize(w, h);
-        fitStageToScreen(app, background, uiManager.fog, autoplayMenu);
+
+        const orientation = w > h ? 'landscape' : 'portrait';
+
+        fitStageToScreen(
+          app,
+          orientation,
+          background,
+          uiManager.fog,
+          autoplayMenu,
+        );
+
+        if (orientation === 'landscape') {
+          background.texture = assets.bg;
+        } else {
+          background.texture = assets.bgMobile;
+        }
       };
 
       const ro = new ResizeObserver(resize);

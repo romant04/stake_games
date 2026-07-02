@@ -1,6 +1,6 @@
 import { Container, Sprite, Text, TextStyle, type Texture } from 'pixi.js';
-import { CX } from '../constants/layout';
 import type { GameAssets } from '../../../../types/assets';
+import { Layout } from '../constants/layout';
 
 export class AutospinButton {
   readonly container: Container;
@@ -12,7 +12,7 @@ export class AutospinButton {
 
   public constructor(
     private readonly assets: GameAssets,
-    position: { x: number; y: number } = { x: CX, y: 0 },
+    position: { x: number; y: number } = { x: Layout.CX, y: 0 },
     private readonly iconTexture: Texture,
     private readonly label: string,
     private readonly action: (() => void) | null = null,

@@ -1,5 +1,5 @@
 import { Text, TextStyle, Container, Ticker } from 'pixi.js';
-import { CX, CY } from '../constants/layout';
+import { Layout } from '../constants/layout';
 
 /**
  * Floating win-amount text that animates in, holds, then fades out.
@@ -19,7 +19,7 @@ export class WinText {
     this.text = new Text({
       text: '',
       style: new TextStyle({
-        fontFamily: 'Arial',
+        fontFamily: 'Merriweather',
         fontSize: 86,
         fill: 0xffffff,
         fontWeight: 'bold',
@@ -48,7 +48,7 @@ export class WinText {
 
     this.text.text = label ? `+${amount}${label} ` : `+${amount}`;
     const yOffset = 140;
-    this.text.position.set(CX, CY + yOffset);
+    this.text.position.set(Layout.CX, Layout.CY + yOffset);
     this.text.alpha = 0;
     this.text.scale.set(0.5);
 
@@ -60,7 +60,7 @@ export class WinText {
       if (elapsed < 400) {
         const t = elapsed / 400;
         this.text.alpha = t;
-        this.text.y = CY + yOffset - (1 - t) * 30;
+        this.text.y = Layout.CY + yOffset - (1 - t) * 30;
         this.text.scale.set(0.5 + t * 0.5);
       } else if (elapsed < 700) {
         this.text.alpha = 1;

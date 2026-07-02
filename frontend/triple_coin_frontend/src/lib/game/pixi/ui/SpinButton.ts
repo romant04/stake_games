@@ -1,8 +1,8 @@
 import { Container, Sprite } from 'pixi.js';
-import { CX, VIRTUAL_HEIGHT } from '../constants/layout';
 import type { GameAssets } from '../../../../types/assets';
 import { replayMode } from '../../../stores/game';
 import { get } from 'svelte/store';
+import { Layout } from '../constants/layout';
 
 export class SpinButton {
   readonly container: Container;
@@ -19,7 +19,7 @@ export class SpinButton {
     this.container = new Container();
 
     this.button = new Container();
-    this.button.position.set(CX, 0);
+    this.button.position.set(Layout.CX, 0);
     this.button.eventMode = 'static';
     this.button.cursor = 'pointer';
 

@@ -1,6 +1,5 @@
-import { Container, Sprite, Text, TextStyle } from 'pixi.js';
+import { Container, Sprite } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
-import { CX, CY, VIRTUAL_HEIGHT, VIRTUAL_WIDTH } from '../constants/layout';
 import { GameHistory } from '../ui/GameHistory';
 import { SpinButton } from '../ui/SpinButton';
 import { ToggleButton } from '../ui/ToggleButton';
@@ -16,6 +15,7 @@ import { SmallButton } from '../ui/SmallButton';
 import { AutospinButton } from '../ui/AutospinButton';
 import { LastWin } from '../ui/LastWin';
 import { BonusHeadline } from '../ui/BonusHeadline';
+import { Layout } from '../constants/layout';
 
 export class UIManager {
   readonly container: Container;
@@ -44,20 +44,20 @@ export class UIManager {
 
     this.balance = new BalanceText();
     this.balance.container.position.set(
-      VIRTUAL_WIDTH * 0.132,
-      VIRTUAL_HEIGHT * 0.9,
+      Layout.VIRTUAL_WIDTH * 0.132,
+      Layout.VIRTUAL_HEIGHT * 0.9,
     );
     this.container.addChild(this.balance.container);
     this.lastWin = new LastWin();
     this.lastWin.container.position.set(
-      VIRTUAL_WIDTH * 0.85,
-      VIRTUAL_HEIGHT * 0.9,
+      Layout.VIRTUAL_WIDTH * 0.85,
+      Layout.VIRTUAL_HEIGHT * 0.9,
     );
     this.container.addChild(this.lastWin.container);
 
     const burgerMenu = new SmallButton(
       assets,
-      { x: VIRTUAL_WIDTH * 0.045, y: VIRTUAL_HEIGHT * 0.9 },
+      { x: Layout.VIRTUAL_WIDTH * 0.045, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.hamburger,
       () => {
         isGameInfoOpen.set(!get(isGameInfoOpen));
@@ -67,14 +67,14 @@ export class UIManager {
 
     const balanceSelector = new BetAmountSelector(assets);
     balanceSelector.container.position.set(
-      VIRTUAL_WIDTH * 0.285,
-      VIRTUAL_HEIGHT * 0.9,
+      Layout.VIRTUAL_WIDTH * 0.285,
+      Layout.VIRTUAL_HEIGHT * 0.9,
     );
     this.container.addChild(balanceSelector.container);
 
     this.autospinButton = new AutospinButton(
       assets,
-      { x: VIRTUAL_WIDTH * 0.7, y: VIRTUAL_HEIGHT * 0.9 },
+      { x: Layout.VIRTUAL_WIDTH * 0.7, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.hamburger,
       'AUTOSPIN',
       () => {
@@ -84,7 +84,7 @@ export class UIManager {
     this.container.addChild(this.autospinButton.container);
     this.stopAutospinButton = new AutospinButton(
       assets,
-      { x: VIRTUAL_WIDTH * 0.7, y: VIRTUAL_HEIGHT * 0.9 },
+      { x: Layout.VIRTUAL_WIDTH * 0.7, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.close,
       'STOP AUTOSPIN',
       () => {
@@ -96,7 +96,7 @@ export class UIManager {
     this.container.addChild(this.stopAutospinButton.container);
 
     this.spinButton = new SpinButton(assets, handleSpin, handleReplay);
-    this.spinButton.container.position.set(0, VIRTUAL_HEIGHT * 0.9);
+    this.spinButton.container.position.set(0, Layout.VIRTUAL_HEIGHT * 0.9);
     this.container.addChild(this.spinButton.container);
     window.addEventListener('keydown', (e) => {
       if (e.code !== 'Space' || e.repeat) return;
@@ -114,7 +114,7 @@ export class UIManager {
 
     this.turboModeButton = new ToggleButton(
       assets,
-      { x: VIRTUAL_WIDTH * 0.95, y: VIRTUAL_HEIGHT * 0.9 },
+      { x: Layout.VIRTUAL_WIDTH * 0.95, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.bolt,
       assets.boltFilled,
       () => {
@@ -125,8 +125,8 @@ export class UIManager {
 
     this.gameHistory = new GameHistory(assets);
     this.gameHistory.container.position.set(
-      VIRTUAL_WIDTH * 0.9,
-      VIRTUAL_HEIGHT * 0.05,
+      Layout.VIRTUAL_WIDTH * 0.9,
+      Layout.VIRTUAL_HEIGHT * 0.05,
     );
     this.container.addChild(this.gameHistory.container);
 

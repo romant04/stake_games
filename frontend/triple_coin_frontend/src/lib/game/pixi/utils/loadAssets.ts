@@ -6,6 +6,7 @@ import { Assets } from 'pixi.js';
 // ---------------------------------------------------------------------------
 
 import bgSrc from '../../../../assets/bg.png';
+import bgMobileSrc from '../../../../assets/bg_mobile.png';
 import sideSrc from '../../../../assets/game/side.png';
 import coinsBgSrc from '../../../../assets/game/coins_bg.png';
 import logoSrc from '../../../../assets/logo.png';
@@ -95,6 +96,7 @@ const backImagesFlopped = sortedEntries(backModulesFlopped);
 export async function loadAssets(): Promise<GameAssets> {
   const [
     bg,
+    bgMobile,
     coinsBg,
     coinSide,
     logo,
@@ -143,6 +145,7 @@ export async function loadAssets(): Promise<GameAssets> {
     openAll,
   ] = await Promise.all([
     Assets.load(bgSrc),
+    Assets.load(bgMobileSrc),
     Assets.load(coinsBgSrc),
     Assets.load(sideSrc),
     Assets.load(logoSrc),
@@ -201,6 +204,7 @@ export async function loadAssets(): Promise<GameAssets> {
 
   return {
     bg,
+    bgMobile,
     logo,
     winTable,
     coinsBg,

@@ -1,13 +1,8 @@
 import { Container } from 'pixi.js';
-import {
-  CHEST_APPEAR_STAGGER,
-  CHEST_OPEN_STAGGER,
-  CHEST_SPACING,
-} from '../constants/game';
-import { CX, CY } from '../constants/layout';
-import { wait } from '../utils/wait';
+import { CHEST_OPEN_STAGGER, CHEST_SPACING } from '../constants/game';
 import type { GameAssets } from '../../../../types/assets';
 import { ChestItem } from '../objects/ChestItem';
+import { Layout } from '../constants/layout';
 
 /**
  * Manages the three bonus-round chests.
@@ -45,8 +40,8 @@ export class ChestManager {
         this.handleChestOpen(event),
       );
       chest.container.position.set(
-        CX + (i - 1) * CHEST_SPACING,
-        i === 1 ? CY + 50 : CY + 200,
+        Layout.CX + (i - 1) * CHEST_SPACING,
+        i === 1 ? Layout.CY + 50 : Layout.CY + 200,
       );
       chest.container.visible = false;
       this.container.addChild(chest.container);

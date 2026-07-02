@@ -1,6 +1,6 @@
-import { VIRTUAL_WIDTH, VIRTUAL_HEIGHT } from '../constants/layout';
 import type { Application, Container, Sprite } from 'pixi.js';
 import type { AutoplayMenu } from '../ui/AutoplayMenu';
+import { Layout, VIRTUAL_SIZES } from '../constants/layout';
 
 /**
  * Scales `app.stage` uniformly so the virtual 1920×1080 canvas fits inside
@@ -10,10 +10,15 @@ import type { AutoplayMenu } from '../ui/AutoplayMenu';
  */
 export function fitStageToScreen(
   app: Application,
+  orientation: 'landscape' | 'portrait',
   background?: Sprite,
   fog?: Sprite,
   autoplayMenu?: AutoplayMenu,
 ): void {
+  Layout.setOrientation(orientation);
+  const { width: VIRTUAL_WIDTH, height: VIRTUAL_HEIGHT } =
+    VIRTUAL_SIZES[orientation];
+
   const realW = app.renderer.width;
   const realH = app.renderer.height;
 

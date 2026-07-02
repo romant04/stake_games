@@ -1,22 +1,12 @@
-import { Container, Graphics, Sprite, Text, TextStyle, Texture } from 'pixi.js';
+import { Container, Sprite, Text, TextStyle, Texture } from 'pixi.js';
 import { BlurFilter } from 'pixi.js';
-import { CX, CY } from '../constants/layout';
 import type { GameAssets } from '../../../../types/assets';
-import { get } from 'svelte/store';
-import {
-  activeAutoplay,
-  balance,
-  currency,
-  isAutoplayOpen,
-  turboMode,
-} from '../../../stores/game';
-import { formatNumber } from '../../utils/formatNumber';
-import { API_MULTIPLIER } from '../../../../constants/api';
+import { activeAutoplay, turboMode } from '../../../stores/game';
 import { SmallButton } from './SmallButton';
 import { Checkbox } from './Checkbox';
-import { SelectionButton } from './SelectionButton';
 import { AutospinCountSelector } from './AutospinCountSelector';
 import { startAutoplay } from '../../../../utils/startAutoplay';
+import { Layout } from '../constants/layout';
 
 export class AutoplayMenu {
   readonly container: Container;
@@ -50,7 +40,7 @@ export class AutoplayMenu {
     this.container.addChild(overlay);
 
     const menuContainer = new Container();
-    menuContainer.position.set(CX, CY);
+    menuContainer.position.set(Layout.CX, Layout.CY);
     this.container.addChild(menuContainer);
 
     const menuBackground = new Sprite(assets.autospinModalBg);

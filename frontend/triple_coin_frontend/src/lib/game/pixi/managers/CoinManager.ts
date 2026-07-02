@@ -9,9 +9,9 @@ import {
   STOP_DELAY_NORMAL,
   STOP_DELAY_TURBO,
 } from '../constants/game';
-import { CX, CY, VIRTUAL_WIDTH } from '../constants/layout';
 import { wait } from '../utils/wait';
 import type { GameAssets } from '../../../../types/assets';
+import { Layout } from '../constants/layout';
 
 /**
  * Manages the three spinning coins.
@@ -33,21 +33,21 @@ export class CoinManager {
 
     const winTable = new Sprite(assets.winTable);
     winTable.anchor.set(0.5);
-    winTable.position.set(VIRTUAL_WIDTH * 0.175, CY + 20);
+    winTable.position.set(Layout.VIRTUAL_WIDTH * 0.175, Layout.CY + 20);
     winTable.width = 600;
     winTable.height = 850;
     this.container.addChild(winTable);
 
     const coinsBackground = new Sprite(assets.coinsBg);
     coinsBackground.anchor.set(0.5);
-    coinsBackground.position.set(CX, CY);
-    coinsBackground.width = VIRTUAL_WIDTH / 2;
+    coinsBackground.position.set(Layout.CX, Layout.CY);
+    coinsBackground.width = Layout.VIRTUAL_WIDTH / 2;
     coinsBackground.height = 450;
     this.container.addChild(coinsBackground);
 
     const logo = new Sprite(assets.logo);
     logo.anchor.set(0.5);
-    logo.position.set(CX, CY - 270);
+    logo.position.set(Layout.CX, Layout.CY - 270);
     logo.width = 630;
     logo.height = 360;
     this.container.addChild(logo);
@@ -73,7 +73,7 @@ export class CoinManager {
         this.assets.coinSide,
         this.ticker,
       );
-      coin.setPosition(CX + (i - 1) * COIN_SPACING, CY);
+      coin.setPosition(Layout.CX + (i - 1) * COIN_SPACING, Layout.CY);
       coin.setTurbo(this.turbo);
       this.container.addChild(coin.sprite);
       this.coins.push(coin);
