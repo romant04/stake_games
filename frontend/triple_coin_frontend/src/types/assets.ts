@@ -72,4 +72,5 @@ export interface GameAssets {
   pedestal: Texture;
   fog: Texture;
   bonusHeadline: Texture;
+  openAll: Texture;
 }

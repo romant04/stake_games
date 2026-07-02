@@ -153,4 +153,12 @@ export class UIManager {
     this.bonusHeadline.container.visible = false;
     this.fog.visible = false;
   }
+
+  public updateSpinButtonText(isBonus: boolean) {
+    if (isBonus) {
+      this.spinButton.text.texture = this.assets.openAll;
+    } else {
+      this.spinButton.text.texture = this.assets.spinText;
+    }
+  }
 }

@@ -9,6 +9,7 @@ export class ChestItem {
 
   public readonly chest: Chest;
   public payout: number = 0;
+  public payoutPercentage: number = 0;
   private readonly labelText: Text;
 
   public constructor(
@@ -62,16 +63,24 @@ export class ChestItem {
     this.chest.sprite.texture = this.assets.chestClosed;
     this.labelText.text = 'OPEN';
     this.payout = 0;
+    this.payoutPercentage = 0;
   }
 
   public open(isLast: boolean, payout?: number): void {
     if (this.chest.isOpened) return;
     this.chest.isOpened = true;
     this.labelText.text =
-      payout?.toString() ?? this.payout.toString() + ' ' + get(currency);
+      (payout?.toString() ?? this.payout.toString()) + ' ' + get(currency);
 
-    // TODO: Change sprite based on payout
-    this.chest.sprite.texture = this.assets.chestOpened2;
+    if (this.payoutPercentage <= 10) {
+      this.chest.sprite.texture = this.assets.chestOpened1;
+    } else if (this.payoutPercentage <= 30) {
+      this.chest.sprite.texture = this.assets.chestOpened2;
+    } else if (this.payoutPercentage <= 60) {
+      this.chest.sprite.texture = this.assets.chestOpened3;
+    } else {
+      this.chest.sprite.texture = this.assets.chestOpened4;
+    }
 
     this.onOpen({ payout: payout ?? this.payout, isLast });
   }

@@ -8,8 +8,8 @@ export class SpinButton {
   readonly container: Container;
 
   public button: Container;
+  public readonly text: Sprite;
   private readonly bg: Sprite;
-  private readonly text: Sprite;
 
   public constructor(
     private readonly assets: GameAssets,

@@ -69,6 +69,7 @@ export class ChestManager {
     for (const [i, chest] of this.chests.entries()) {
       chest.reset();
       chest.payout = this.payouts[i];
+      chest.payoutPercentage = Math.round((chest.payout / totalPayout) * 100);
       // Don't await — fire-and-forget so the stagger is just a setTimeout gap
       chest.container.visible = true;
     }

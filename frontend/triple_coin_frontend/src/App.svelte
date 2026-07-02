@@ -76,9 +76,7 @@
       if ($replayMode?.payoutMultiplier >= BONUS_GAME_THRESHOLD) {
         bonusGameData.set({ results, payout });
         await coinScene.showChests();
-        setTimeout(() => {
-          chestsVisible = true;
-        }, 1100);
+        chestsVisible = true;
         return;
       }
 

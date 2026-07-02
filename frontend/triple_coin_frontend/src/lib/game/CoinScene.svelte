@@ -169,7 +169,11 @@
     if (payout > 0 && !bonus) {
       winText.show(payout, getCurrencySymbol($currency));
     }
-    uiManager.spinButton.enable();
+
+    if (!get(bonusGameData)) {
+      uiManager.spinButton.enable();
+    }
+
     uiManager.turboModeButton.enable();
   }
   export function rerenderHistory() {
@@ -183,11 +187,14 @@
   }
 
   export async function showChests(): Promise<void> {
+    uiManager.spinButton.disable();
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     coinManager.hide();
     uiManager.showBonusGameUI();
     chestManager.show2();
     await chestManager.show($bonusGameData?.payout ?? 0);
+    uiManager.spinButton.enable();
+    uiManager.updateSpinButtonText(true);
   }
 
   export async function hideChests(): Promise<void> {
@@ -195,9 +202,12 @@
     chestManager.hide();
     uiManager.hideBonusGameUI();
     coinManager.show();
+    uiManager.spinButton.enable();
+    uiManager.updateSpinButtonText(false);
   }
 
   export function openChests(): void {
+    uiManager.spinButton.disable();
     chestManager.openAll();
   }
 </script>

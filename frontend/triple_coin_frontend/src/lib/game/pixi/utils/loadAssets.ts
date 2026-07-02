@@ -56,6 +56,7 @@ import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
 import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
 import fogSrc from '../../../../assets/game/bonus/fog.png';
 import pedestalSrc from '../../../../assets/game/bonus/pedestal.png';
+import openAllSrc from '../../../../assets/game/bonus/open_all.png';
 
 const frontModules = import.meta.glob(
   '../../../../assets/game/front/front_*.png',
@@ -139,6 +140,7 @@ export async function loadAssets(): Promise<GameAssets> {
     chestLabel,
     fog,
     pedestal,
+    openAll,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(coinsBgSrc),
@@ -186,6 +188,7 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(chestLabelSrc),
     Assets.load(fogSrc),
     Assets.load(pedestalSrc),
+    Assets.load(openAllSrc),
   ]);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
@@ -247,5 +250,6 @@ export async function loadAssets(): Promise<GameAssets> {
     chestLabel,
     fog,
     pedestal,
+    openAll,
   };
 }
