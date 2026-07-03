@@ -204,7 +204,7 @@
   export async function showChests(): Promise<void> {
     uiManager.spinButton.disable();
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
-    coinManager.hide();
+    await coinManager.hide();
     uiManager.showBonusGameUI();
     chestManager.show2();
     await chestManager.show($bonusGameData?.payout ?? 0);

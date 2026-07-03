@@ -41,7 +41,7 @@ export class ChestManager {
       );
       chest.container.position.set(
         Layout.CX + (i - 1) * CHEST_SPACING,
-        i === 1 ? Layout.CY + 50 : Layout.CY + 200,
+        i === 1 ? Layout.CY + 100 : Layout.CY + 200,
       );
       chest.container.visible = false;
       this.container.addChild(chest.container);

@@ -17,27 +17,27 @@ export class ChestItem {
     private readonly onOpen: (event: ChestOpenEvent) => void,
   ) {
     this.container = new Container();
-    this.container.eventMode = 'static';
+    this.container.eventMode = 'static'; // TODO: This should not include the pedestal
     this.container.cursor = 'pointer';
 
     const pedestal = new Sprite(assets.pedestal);
     pedestal.anchor.set(0.5);
     pedestal.position.set(0, 100);
-    pedestal.width = 420;
-    pedestal.height = 277;
+    pedestal.width = 460;
+    pedestal.height = 420;
     this.container.addChild(pedestal);
 
     this.chest = new Chest(assets, onOpen);
-    this.chest.setPosition(0, -20);
-    this.chest.sprite.width = 310;
-    this.chest.sprite.height = 270;
+    this.chest.setPosition(-8, -70);
+    this.chest.sprite.width = 395;
+    this.chest.sprite.height = 375;
     this.container.addChild(this.chest.sprite);
 
     const label = new Sprite(assets.chestLabel);
     label.anchor.set(0.5);
-    label.position.set(-15, 20);
-    label.width = 150;
-    label.height = 50;
+    label.position.set(-35, 0);
+    label.width = 180;
+    label.height = 60;
     this.container.addChild(label);
 
     this.labelText = new Text({
@@ -50,7 +50,7 @@ export class ChestItem {
       }),
     });
     this.labelText.anchor.set(0.5);
-    this.labelText.position.set(-15, 20);
+    this.labelText.position.set(-35, 0);
     this.container.addChild(this.labelText);
 
     this.container.on('pointertap', () => {

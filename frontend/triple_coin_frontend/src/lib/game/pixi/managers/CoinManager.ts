@@ -12,6 +12,7 @@ import {
 import { wait } from '../utils/wait';
 import type { GameAssets } from '../../../../types/assets';
 import { Layout } from '../constants/layout';
+import { animateX, animateY } from '../../utils/animateXandY';
 
 /**
  * Manages the three spinning coins.
@@ -24,6 +25,8 @@ export class CoinManager {
 
   private coins: Coin[] = [];
   private turbo = false;
+  private readonly coinsContainer: Container;
+  private readonly winTable: Sprite;
 
   constructor(
     private readonly assets: GameAssets,
@@ -31,19 +34,22 @@ export class CoinManager {
   ) {
     this.container = new Container();
 
-    const winTable = new Sprite(assets.winTable);
-    winTable.anchor.set(0.5);
-    winTable.position.set(Layout.VIRTUAL_WIDTH * 0.175, Layout.CY + 20);
-    winTable.width = 600;
-    winTable.height = 850;
-    this.container.addChild(winTable);
+    this.winTable = new Sprite(assets.winTable);
+    this.winTable.anchor.set(0.5);
+    this.winTable.position.set(Layout.VIRTUAL_WIDTH * 0.175, Layout.CY + 20);
+    this.winTable.width = 600;
+    this.winTable.height = 850;
+    this.container.addChild(this.winTable);
 
+    this.coinsContainer = new Container();
+    this.coinsContainer.position.set(Layout.CX, Layout.CY);
+    this.container.addChild(this.coinsContainer);
     const coinsBackground = new Sprite(assets.coinsBg);
     coinsBackground.anchor.set(0.5);
-    coinsBackground.position.set(Layout.CX, Layout.CY);
+    coinsBackground.position.set(0, 0);
     coinsBackground.width = Layout.VIRTUAL_WIDTH / 2;
     coinsBackground.height = 450;
-    this.container.addChild(coinsBackground);
+    this.coinsContainer.addChild(coinsBackground);
 
     const logo = new Sprite(assets.logo);
     logo.anchor.set(0.5);
@@ -73,9 +79,9 @@ export class CoinManager {
         this.assets.coinSide,
         this.ticker,
       );
-      coin.setPosition(Layout.CX + (i - 1) * COIN_SPACING, Layout.CY);
+      coin.setPosition((i - 1) * COIN_SPACING, 0);
       coin.setTurbo(this.turbo);
-      this.container.addChild(coin.sprite);
+      this.coinsContainer.addChild(coin.sprite);
       this.coins.push(coin);
     }
   }
@@ -109,11 +115,29 @@ export class CoinManager {
     }
   }
 
-  show(): void {
+  async show(): Promise<void> {
     this.container.visible = true;
+
+    this.coinsContainer.y = -Layout.CY;
+    this.winTable.x = -Layout.VIRTUAL_WIDTH * 0.175 - 80;
+    void animateY(this.ticker, this.coinsContainer, Layout.CY, 1000);
+    await animateX(
+      this.ticker,
+      this.winTable,
+      Layout.VIRTUAL_WIDTH * 0.175,
+      1000,
+    );
   }
 
-  hide(): void {
+  async hide(): Promise<void> {
+    void animateY(this.ticker, this.coinsContainer, -Layout.CY, 1000);
+    await animateX(
+      this.ticker,
+      this.winTable,
+      -Layout.VIRTUAL_WIDTH * 0.175 - 80,
+      1000,
+    );
+
     this.container.visible = false;
   }
 
