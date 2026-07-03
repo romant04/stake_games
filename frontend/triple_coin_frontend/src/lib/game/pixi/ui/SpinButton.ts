@@ -19,7 +19,6 @@ export class SpinButton {
     this.container = new Container();
 
     this.button = new Container();
-    this.button.position.set(Layout.CX, 0);
     this.button.eventMode = 'static';
     this.button.cursor = 'pointer';
 

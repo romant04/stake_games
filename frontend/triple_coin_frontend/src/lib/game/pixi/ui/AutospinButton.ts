@@ -12,7 +12,6 @@ export class AutospinButton {
 
   public constructor(
     private readonly assets: GameAssets,
-    position: { x: number; y: number } = { x: Layout.CX, y: 0 },
     private readonly iconTexture: Texture,
     private readonly label: string,
     private readonly action: (() => void) | null = null,
@@ -20,7 +19,6 @@ export class AutospinButton {
     this.container = new Container();
 
     this.button = new Container();
-    this.button.position.set(position.x, position.y);
     this.button.eventMode = 'static';
     this.button.cursor = 'pointer';
 

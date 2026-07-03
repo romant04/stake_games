@@ -29,6 +29,8 @@ export class UIManager {
   private readonly autospinButton: AutospinButton;
   private readonly stopAutospinButton: AutospinButton;
   private readonly bonusHeadline: BonusHeadline;
+  private readonly burgerMenu: SmallButton;
+  private readonly betSelector: BetAmountSelector;
 
   constructor(
     private readonly assets: GameAssets,
@@ -55,36 +57,37 @@ export class UIManager {
     );
     this.container.addChild(this.lastWin.container);
 
-    const burgerMenu = new SmallButton(
-      assets,
-      { x: Layout.VIRTUAL_WIDTH * 0.045, y: Layout.VIRTUAL_HEIGHT * 0.9 },
-      assets.hamburger,
-      () => {
-        isGameInfoOpen.set(!get(isGameInfoOpen));
-      },
+    this.burgerMenu = new SmallButton(assets, assets.hamburger, () => {
+      isGameInfoOpen.set(!get(isGameInfoOpen));
+    });
+    this.burgerMenu.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.045,
+      Layout.VIRTUAL_HEIGHT * 0.9,
     );
-    this.container.addChild(burgerMenu.container);
+    this.container.addChild(this.burgerMenu.container);
 
-    const balanceSelector = new BetAmountSelector(assets);
-    balanceSelector.container.position.set(
+    this.betSelector = new BetAmountSelector(assets);
+    this.betSelector.container.position.set(
       Layout.VIRTUAL_WIDTH * 0.285,
       Layout.VIRTUAL_HEIGHT * 0.9,
     );
-    this.container.addChild(balanceSelector.container);
+    this.container.addChild(this.betSelector.container);
 
     this.autospinButton = new AutospinButton(
       assets,
-      { x: Layout.VIRTUAL_WIDTH * 0.7, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.hamburger,
       'AUTOSPIN',
       () => {
         this.showAutoplayMenu();
       },
     );
+    this.autospinButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.7,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
     this.container.addChild(this.autospinButton.container);
     this.stopAutospinButton = new AutospinButton(
       assets,
-      { x: Layout.VIRTUAL_WIDTH * 0.7, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.close,
       'STOP AUTOSPIN',
       () => {
@@ -92,11 +95,18 @@ export class UIManager {
         this.changeAutoplayButtonState(false);
       },
     );
+    this.stopAutospinButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.7,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
     this.stopAutospinButton.container.visible = false;
     this.container.addChild(this.stopAutospinButton.container);
 
     this.spinButton = new SpinButton(assets, handleSpin, handleReplay);
-    this.spinButton.container.position.set(0, Layout.VIRTUAL_HEIGHT * 0.9);
+    this.spinButton.container.position.set(
+      Layout.CX,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
     this.container.addChild(this.spinButton.container);
     window.addEventListener('keydown', (e) => {
       if (e.code !== 'Space' || e.repeat) return;
@@ -114,13 +124,17 @@ export class UIManager {
 
     this.turboModeButton = new ToggleButton(
       assets,
-      { x: Layout.VIRTUAL_WIDTH * 0.95, y: Layout.VIRTUAL_HEIGHT * 0.9 },
       assets.bolt,
       assets.boltFilled,
       () => {
         turboMode.set(!get(turboMode));
       },
     );
+    this.turboModeButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.95,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+
     this.container.addChild(this.turboModeButton.container);
 
     this.gameHistory = new GameHistory(assets);
@@ -160,5 +174,85 @@ export class UIManager {
     } else {
       this.spinButton.text.texture = this.assets.spinText;
     }
+  }
+
+  public onOrientationChange(orientation: 'landscape' | 'portrait') {
+    if (orientation === 'portrait') {
+      this.rerenderToPortrait();
+    } else {
+      this.rerenderToLandscape();
+    }
+  }
+
+  private rerenderToPortrait() {
+    this.spinButton.container.position.set(
+      Layout.CX,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.balance.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.275,
+      Layout.VIRTUAL_HEIGHT * 0.96,
+    );
+    this.lastWin.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.725,
+      Layout.VIRTUAL_HEIGHT * 0.96,
+    );
+    this.turboModeButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.95,
+      Layout.VIRTUAL_HEIGHT * 0.96,
+    );
+    this.burgerMenu.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.025,
+      Layout.VIRTUAL_HEIGHT * 0.96,
+    );
+    this.betSelector.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.138,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+
+    this.stopAutospinButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.85,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.autospinButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.85,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+  }
+
+  private rerenderToLandscape() {
+    this.spinButton.container.position.set(
+      Layout.CX,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.balance.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.132,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.lastWin.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.85,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.turboModeButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.95,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.burgerMenu.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.045,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.betSelector.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.285,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+
+    this.stopAutospinButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.7,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+    this.autospinButton.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.7,
+      Layout.VIRTUAL_HEIGHT * 0.9,
+    );
   }
 }

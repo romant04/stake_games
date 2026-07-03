@@ -26,20 +26,16 @@ export class BetAmountSelector {
     bg.height = 80;
     this.container.addChild(bg);
 
-    const plusButton = new SmallButton(
-      assets,
-      { x: 120, y: 0 },
-      assets.plus,
-      () => this.increaseBet(),
+    const plusButton = new SmallButton(assets, assets.plus, () =>
+      this.increaseBet(),
     );
+    plusButton.container.position.set(120, 0);
     this.container.addChild(plusButton.container);
 
-    const minusButton = new SmallButton(
-      assets,
-      { x: -120, y: 0 },
-      assets.minus,
-      () => this.decreaseBet(),
+    const minusButton = new SmallButton(assets, assets.minus, () =>
+      this.decreaseBet(),
     );
+    minusButton.container.position.set(-120, 0);
     this.container.addChild(minusButton.container);
 
     const betHeadline = new Text({

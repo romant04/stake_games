@@ -46,7 +46,7 @@
   // ---------------------------------------------------------------------------
   // Mount
   // ---------------------------------------------------------------------------
-
+  let activeOrientation: 'landscape' | 'portrait' = 'landscape';
   onMount(() => {
     let cleanup: () => void = () => {};
 
@@ -136,6 +136,11 @@
           background.texture = assets.bg;
         } else {
           background.texture = assets.bgMobile;
+        }
+
+        if (orientation !== activeOrientation) {
+          activeOrientation = orientation;
+          uiManager.onOrientationChange(orientation);
         }
       };
 
