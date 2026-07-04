@@ -27,6 +27,7 @@ export class CoinManager {
   private turbo = false;
   private readonly coinsContainer: Container;
   private readonly winTable: Sprite;
+  private readonly logo: Sprite;
 
   constructor(
     private readonly assets: GameAssets,
@@ -36,7 +37,7 @@ export class CoinManager {
 
     this.winTable = new Sprite(assets.winTable);
     this.winTable.anchor.set(0.5);
-    this.winTable.position.set(Layout.VIRTUAL_WIDTH * 0.175, Layout.CY + 20);
+    this.winTable.position.set(Layout.VIRTUAL_WIDTH * 0.165, Layout.CY + 20);
     this.winTable.width = 600;
     this.winTable.height = 850;
     this.container.addChild(this.winTable);
@@ -47,16 +48,16 @@ export class CoinManager {
     const coinsBackground = new Sprite(assets.coinsBg);
     coinsBackground.anchor.set(0.5);
     coinsBackground.position.set(0, 0);
-    coinsBackground.width = Layout.VIRTUAL_WIDTH / 2;
-    coinsBackground.height = 450;
+    coinsBackground.width = 1000;
+    coinsBackground.height = 472;
     this.coinsContainer.addChild(coinsBackground);
 
-    const logo = new Sprite(assets.logo);
-    logo.anchor.set(0.5);
-    logo.position.set(Layout.CX, Layout.CY - 270);
-    logo.width = 630;
-    logo.height = 360;
-    this.container.addChild(logo);
+    this.logo = new Sprite(assets.logo);
+    this.logo.anchor.set(0.5);
+    this.logo.position.set(Layout.CX, Layout.CY - 270);
+    this.logo.width = 630;
+    this.logo.height = 360;
+    this.container.addChild(this.logo);
   }
 
   // ---------------------------------------------------------------------------
@@ -151,8 +152,27 @@ export class CoinManager {
   // Private
   // ---------------------------------------------------------------------------
 
+  public onOrientationChange(orientation: 'landscape' | 'portrait') {
+    if (orientation === 'portrait') {
+      this.rerenderToPortrait();
+    } else {
+      this.rerenderToLandscape();
+    }
+  }
+
   private destroyCoins(): void {
     this.coins.forEach((c) => c.destroy());
     this.coins = [];
+  }
+
+  private rerenderToPortrait() {
+    this.coinsContainer.position.set(Layout.CX, 675);
+    this.logo.position.set(Layout.CX, 375);
+    this.winTable.position.set(Layout.VIRTUAL_WIDTH * 0.275, Layout.CY + 350);
+  }
+  private rerenderToLandscape() {
+    this.coinsContainer.position.set(Layout.CX, Layout.CY);
+    this.logo.position.set(Layout.CX, Layout.CY - 270);
+    this.winTable.position.set(Layout.VIRTUAL_WIDTH * 0.165, Layout.CY + 20);
   }
 }

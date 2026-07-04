@@ -149,6 +149,7 @@
         if (orientation !== activeOrientation) {
           activeOrientation = orientation;
           uiManager.onOrientationChange(orientation);
+          coinManager.onOrientationChange(orientation);
         }
       };
 
