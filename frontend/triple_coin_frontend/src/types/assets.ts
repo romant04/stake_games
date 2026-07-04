@@ -65,10 +65,23 @@ export interface GameAssets {
 
   // Bonus game assets
   chestClosed: Texture;
-  chestOpened1: Texture;
-  chestOpened2: Texture;
-  chestOpened3: Texture;
-  chestOpened4: Texture;
+
+  chest1Opened1: Texture;
+  chest1Opened2: Texture;
+  chest1Opened3: Texture;
+
+  chest2Opened1: Texture;
+  chest2Opened2: Texture;
+  chest2Opened3: Texture;
+
+  chest3Opened1: Texture;
+  chest3Opened2: Texture;
+  chest3Opened3: Texture;
+
+  chest4Opened1: Texture;
+  chest4Opened2: Texture;
+  chest4Opened3: Texture;
+
   chestLabel: Texture;
   pedestal: Texture;
   fog: Texture;

@@ -1,4 +1,4 @@
-import { Container, Sprite } from 'pixi.js';
+import { Container, Sprite, type Ticker } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 import { GameHistory } from '../ui/GameHistory';
 import { SpinButton } from '../ui/SpinButton';
@@ -16,6 +16,7 @@ import { AutospinButton } from '../ui/AutospinButton';
 import { LastWin } from '../ui/LastWin';
 import { BonusHeadline } from '../ui/BonusHeadline';
 import { Layout } from '../constants/layout';
+import { animateAlpha } from '../../utils/animateXandY';
 
 export class UIManager {
   readonly container: Container;
@@ -34,6 +35,7 @@ export class UIManager {
 
   constructor(
     private readonly assets: GameAssets,
+    private readonly ticker: Ticker,
     private readonly handleSpin: () => Promise<void>,
     private readonly handleReplay: () => Promise<void>,
     private readonly showAutoplayMenu: () => void,
@@ -159,12 +161,16 @@ export class UIManager {
     }
   }
 
-  public showBonusGameUI() {
+  public async showBonusGameUI() {
     this.bonusHeadline.container.visible = true;
     this.fog.visible = true;
+    this.fog.alpha = 0;
+    await animateAlpha(this.ticker, this.fog, 1, 500);
   }
-  public hideBonusGameUI() {
+  public async hideBonusGameUI() {
     this.bonusHeadline.container.visible = false;
+
+    await animateAlpha(this.ticker, this.fog, 0, 500);
     this.fog.visible = false;
   }
 
@@ -182,6 +188,7 @@ export class UIManager {
     } else {
       this.rerenderToLandscape();
     }
+    this.gameHistory.rerenderRecords(orientation);
   }
 
   private rerenderToPortrait() {
@@ -218,6 +225,11 @@ export class UIManager {
       Layout.VIRTUAL_WIDTH * 0.85,
       Layout.VIRTUAL_HEIGHT * 0.9,
     );
+
+    this.gameHistory.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.025,
+      Layout.VIRTUAL_HEIGHT * 0.05,
+    );
   }
 
   private rerenderToLandscape() {
@@ -253,6 +265,11 @@ export class UIManager {
     this.autospinButton.container.position.set(
       Layout.VIRTUAL_WIDTH * 0.7,
       Layout.VIRTUAL_HEIGHT * 0.9,
+    );
+
+    this.gameHistory.container.position.set(
+      Layout.VIRTUAL_WIDTH * 0.9,
+      Layout.VIRTUAL_HEIGHT * 0.05,
     );
   }
 }

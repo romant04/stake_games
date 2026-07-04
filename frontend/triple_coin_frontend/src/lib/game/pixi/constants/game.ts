@@ -16,15 +16,15 @@ export const CHEST_SPACING = 380;
 export const SPIN_SPEED_NORMAL = 16;
 export const SPIN_SPEED_TURBO = 24;
 
-export const SPIN_DURATION_NORMAL = 1600;
-export const SPIN_DURATION_TURBO = 600;
+export const SPIN_DURATION_NORMAL = 1000;
+export const SPIN_DURATION_TURBO = 400;
 
 export const STOP_DELAY_NORMAL = 750;
 export const STOP_DELAY_TURBO = 400;
 
 /** Deceleration factor per frame — lower = faster stop */
-export const DECEL_NORMAL = 0.97;
-export const DECEL_TURBO = 0.92;
+export const DECEL_NORMAL = 0.95;
+export const DECEL_TURBO = 0.875;
 
 export const MIN_STOP_SPEED_NORMAL = 5;
 export const MIN_STOP_SPEED_TURBO = 10;

@@ -1,6 +1,4 @@
-import { Sprite, Texture, Text, Ticker, type Container } from 'pixi.js';
-import { GlowFilter } from 'pixi-filters';
-import { CHEST_APPEAR_FRAMES, CHEST_SIZE } from '../constants/game';
+import { AnimatedSprite } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 
 export interface ChestOpenEvent {
@@ -17,7 +15,7 @@ export interface ChestOpenEvent {
  * Call `destroy()` to clean up ticker listeners before removing from the stage.
  */
 export class Chest {
-  readonly sprite: Sprite;
+  readonly sprite: AnimatedSprite;
   isOpened = false;
   private readonly onOpen: (event: ChestOpenEvent) => void;
 
@@ -28,7 +26,7 @@ export class Chest {
   ) {
     this.onOpen = onOpen;
 
-    this.sprite = new Sprite(assets.chestClosed);
+    this.sprite = new AnimatedSprite([assets.chestClosed]);
     this.sprite.anchor.set(0.5);
   }
 

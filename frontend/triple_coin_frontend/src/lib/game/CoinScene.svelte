@@ -93,16 +93,22 @@
       overlay.addChild(autoplayMenu.container);
 
       // -- Managers -------------------------------------------------------------
-      uiManager = new UIManager(assets, handleSpin, handleReplay, () => {
-        autoplayMenu.container.visible = true;
-      });
+      uiManager = new UIManager(
+        assets,
+        app.ticker,
+        handleSpin,
+        handleReplay,
+        () => {
+          autoplayMenu.container.visible = true;
+        },
+      );
       UILayer.addChild(uiManager.container);
 
       coinManager = new CoinManager(assets, app.ticker);
       coinManager.create();
       gameLayer.addChild(coinManager.container);
 
-      chestManager = new ChestManager(assets, resetAfterBonus);
+      chestManager = new ChestManager(assets, app.ticker, resetAfterBonus);
       chestManager.create();
       app.stage.addChild(chestManager.container);
 
@@ -210,7 +216,7 @@
     uiManager.spinButton.disable();
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     await coinManager.hide();
-    uiManager.showBonusGameUI();
+    await uiManager.showBonusGameUI();
     chestManager.show2();
     await chestManager.show($bonusGameData?.payout ?? 0);
     uiManager.spinButton.enable();
@@ -220,8 +226,8 @@
   export async function hideChests(): Promise<void> {
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     chestManager.hide();
-    uiManager.hideBonusGameUI();
-    coinManager.show();
+    await uiManager.hideBonusGameUI();
+    await coinManager.show();
     uiManager.spinButton.enable();
     uiManager.updateSpinButtonText(false);
   }

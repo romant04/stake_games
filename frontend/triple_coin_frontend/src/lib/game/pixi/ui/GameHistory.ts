@@ -22,7 +22,7 @@ class HistoryRecord {
             : assets.side;
       const sprite = new Sprite(texture);
       sprite.anchor.set(0.5);
-      sprite.position.set(index * 70, 0);
+      sprite.position.set(index * 65, 0);
       sprite.width = value === 'S' ? 8 : 60;
       sprite.height = 60;
       sprite.alpha = this.opacity;
@@ -34,32 +34,53 @@ class HistoryRecord {
 export class GameHistory {
   readonly container: Container;
 
+  private readonly records: HistoryRecord[] = [];
+  private lastOrientation: 'landscape' | 'portrait' = 'landscape';
+
   constructor(private readonly assets: GameAssets) {
     this.container = new Container();
 
-    get(gameHistory)
-      .slice(-MAX_HISTORY)
-      .forEach((game) => {
-        const values = game.split('');
-        const opacityValue = wasWin(values) ? 1 : 0.5;
-
-        const record = new HistoryRecord(values, assets, opacityValue);
-        record.container.position.set(0, this.container.children.length * 80);
-      });
+    this.updateHistory();
   }
 
   public update() {
+    this.updateHistory();
+  }
+
+  public rerenderRecords(orientation: 'landscape' | 'portrait') {
     this.container.removeChildren();
+    this.records.forEach((record, index) => {
+      if (orientation === 'portrait') {
+        record.container.position.set(index * 225, 0);
+      } else {
+        record.container.position.set(0, index * 80);
+      }
+      this.container.addChild(record.container);
+    });
 
-    get(gameHistory)
-      .slice(-MAX_HISTORY)
-      .forEach((game) => {
-        const values = game.split('');
-        const opacityValue = wasWin(values) ? 1 : 0.5;
+    this.lastOrientation = orientation;
+  }
+  // TODO: Solve swapping to portrait and landscape
+  private updateHistory() {
+    this.container.removeChildren();
+    this.records.length = 0;
 
-        const record = new HistoryRecord(values, this.assets, opacityValue);
-        record.container.position.set(0, this.container.children.length * 80);
-        this.container.addChild(record.container);
-      });
+    const games = get(gameHistory).slice(-MAX_HISTORY);
+
+    games.forEach((game, index) => {
+      const values = game.split('');
+      const opacityValue = wasWin(values) ? 1 : 0.5;
+
+      const record = new HistoryRecord(values, this.assets, opacityValue);
+
+      if (this.lastOrientation === 'portrait') {
+        record.container.position.set(index * 225, 0);
+      } else {
+        record.container.position.set(0, index * 80);
+      }
+
+      this.container.addChild(record.container);
+      this.records.push(record);
+    });
   }
 }

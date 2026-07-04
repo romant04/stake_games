@@ -62,3 +62,34 @@ export async function animateX(
     ticker.add(update);
   });
 }
+export async function animateAlpha(
+  ticker: Ticker,
+  target: Container,
+  toAlpha: number,
+  duration = 500,
+): Promise<void> {
+  return new Promise((resolve) => {
+    const fromAlpha = target.alpha;
+    const distance = toAlpha - fromAlpha;
+    let elapsed = 0;
+
+    const update = (ticker: Ticker) => {
+      elapsed += ticker.deltaMS;
+
+      const t = Math.min(elapsed / duration, 1);
+
+      // Ease in/out
+      const eased = 1 - Math.pow(1 - t, 3);
+
+      target.alpha = fromAlpha + distance * eased;
+
+      if (t >= 1) {
+        target.alpha = toAlpha;
+        ticker.remove(update);
+        resolve();
+      }
+    };
+
+    ticker.add(update);
+  });
+}

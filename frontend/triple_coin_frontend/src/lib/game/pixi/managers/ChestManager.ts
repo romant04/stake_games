@@ -1,8 +1,9 @@
-import { Container } from 'pixi.js';
+import { Container, type Ticker } from 'pixi.js';
 import { CHEST_OPEN_STAGGER, CHEST_SPACING } from '../constants/game';
 import type { GameAssets } from '../../../../types/assets';
 import { ChestItem } from '../objects/ChestItem';
 import { Layout } from '../constants/layout';
+import { animateY } from '../../utils/animateXandY';
 
 /**
  * Manages the three bonus-round chests.
@@ -21,6 +22,7 @@ export class ChestManager {
 
   constructor(
     private readonly assets: GameAssets,
+    private readonly ticker: Ticker,
     /** Called once all three chests have been opened. */
     onBonusComplete: () => void,
   ) {
@@ -65,14 +67,17 @@ export class ChestManager {
       chest.reset();
       chest.payout = this.payouts[i];
       chest.payoutPercentage = Math.round((chest.payout / totalPayout) * 100);
-      // Don't await — fire-and-forget so the stagger is just a setTimeout gap
-      chest.container.visible = true;
     }
+
+    await this.showChest(this.chests[1], 1);
+    await this.showChest(this.chests[0], 0);
+    await this.showChest(this.chests[2], 2);
   }
 
   hide(): void {
     for (const [i, chest] of this.chests.entries()) {
       chest.reset();
+      chest.container.visible = false;
     }
     this.container.visible = false;
   }
@@ -97,6 +102,18 @@ export class ChestManager {
   destroy(): void {
     this.destroyChests();
     this.container.destroy();
+  }
+
+  private async showChest(chest: ChestItem, index: number): Promise<void> {
+    chest.container.y =
+      index === 1 ? Layout.CY + 100 + 200 : Layout.CY + 200 + 200;
+    chest.container.visible = true;
+    await animateY(
+      this.ticker,
+      chest.container,
+      index === 1 ? Layout.CY + 100 : Layout.CY + 200,
+      500,
+    );
   }
 
   // ---------------------------------------------------------------------------

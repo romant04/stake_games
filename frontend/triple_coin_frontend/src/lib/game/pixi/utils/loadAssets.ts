@@ -49,10 +49,18 @@ import hamburgerSrc from '../../../../assets/icons/hamburger.png';
 import closeSrc from '../../../../assets/icons/close.png';
 
 import chestClosedSrc from '../../../../assets/game/bonus/chest_closed.png';
-import chestOpened1Src from '../../../../assets/game/bonus/chest_opened_1.png';
-import chestOpened2Src from '../../../../assets/game/bonus/chest_opened_2.png';
-import chestOpened3Src from '../../../../assets/game/bonus/chest_opened_3.png';
-import chestOpened4Src from '../../../../assets/game/bonus/chest_opened_4.png';
+import chest1Opened1Src from '../../../../assets/game/bonus/chest_1/chest_1_opened_1.png';
+import chest1Opened2Src from '../../../../assets/game/bonus/chest_1/chest_1_opened_2.png';
+import chest1Opened3Src from '../../../../assets/game/bonus/chest_1/chest_1_opened_3.png';
+import chest2Opened1Src from '../../../../assets/game/bonus/chest_2/chest_2_opened_1.png';
+import chest2Opened2Src from '../../../../assets/game/bonus/chest_2/chest_2_opened_2.png';
+import chest2Opened3Src from '../../../../assets/game/bonus/chest_2/chest_2_opened_3.png';
+import chest3Opened1Src from '../../../../assets/game/bonus/chest_3/chest_3_opened_1.png';
+import chest3Opened2Src from '../../../../assets/game/bonus/chest_3/chest_3_opened_2.png';
+import chest3Opened3Src from '../../../../assets/game/bonus/chest_3/chest_3_opened_3.png';
+import chest4Opened1Src from '../../../../assets/game/bonus/chest_4/chest_4_opened_1.png';
+import chest4Opened2Src from '../../../../assets/game/bonus/chest_4/chest_4_opened_2.png';
+import chest4Opened3Src from '../../../../assets/game/bonus/chest_4/chest_4_opened_3.png';
 import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
 import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
 import fogSrc from '../../../../assets/game/bonus/fog.png';
@@ -134,10 +142,18 @@ export async function loadAssets(): Promise<GameAssets> {
     startAutospin,
     startAutospinHover,
     chestClosed,
-    chestOpened1,
-    chestOpened2,
-    chestOpened3,
-    chestOpened4,
+    chest1Opened1,
+    chest1Opened2,
+    chest1Opened3,
+    chest2Opened1,
+    chest2Opened2,
+    chest2Opened3,
+    chest3Opened1,
+    chest3Opened2,
+    chest3Opened3,
+    chest4Opened1,
+    chest4Opened2,
+    chest4Opened3,
     bonusHeadline,
     chestLabel,
     fog,
@@ -183,10 +199,18 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(startAutospinSrc),
     Assets.load(startAutospinHoverSrc),
     Assets.load(chestClosedSrc),
-    Assets.load(chestOpened1Src),
-    Assets.load(chestOpened2Src),
-    Assets.load(chestOpened3Src),
-    Assets.load(chestOpened4Src),
+    Assets.load(chest1Opened1Src),
+    Assets.load(chest1Opened2Src),
+    Assets.load(chest1Opened3Src),
+    Assets.load(chest2Opened1Src),
+    Assets.load(chest2Opened2Src),
+    Assets.load(chest2Opened3Src),
+    Assets.load(chest3Opened1Src),
+    Assets.load(chest3Opened2Src),
+    Assets.load(chest3Opened3Src),
+    Assets.load(chest4Opened1Src),
+    Assets.load(chest4Opened2Src),
+    Assets.load(chest4Opened3Src),
     Assets.load(bonusHeadlineSrc),
     Assets.load(chestLabelSrc),
     Assets.load(fogSrc),
@@ -246,10 +270,18 @@ export async function loadAssets(): Promise<GameAssets> {
     startAutospin,
     startAutospinHover,
     chestClosed,
-    chestOpened1,
-    chestOpened2,
-    chestOpened3,
-    chestOpened4,
+    chest1Opened1,
+    chest1Opened2,
+    chest1Opened3,
+    chest2Opened1,
+    chest2Opened2,
+    chest2Opened3,
+    chest3Opened1,
+    chest3Opened2,
+    chest3Opened3,
+    chest4Opened1,
+    chest4Opened2,
+    chest4Opened3,
     bonusHeadline,
     chestLabel,
     fog,
