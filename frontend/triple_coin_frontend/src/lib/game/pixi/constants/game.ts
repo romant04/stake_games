@@ -40,7 +40,7 @@ export const GLOW_DURATION_TURBO = 1500;
 export const CHEST_APPEAR_STAGGER = 500;
 
 /** Delay between auto-opening remaining chests in ms */
-export const CHEST_OPEN_STAGGER = 1000;
+export const CHEST_OPEN_STAGGER = 200;
 
 /** Frames for the appear scale-in animation */
 export const CHEST_APPEAR_FRAMES = 20;

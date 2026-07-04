@@ -5,10 +5,14 @@ import {
 } from '../lib/stores/game';
 import { get } from 'svelte/store';
 
-export async function startAutoplay(handleSpin: () => Promise<void>) {
+export async function startAutoplay(
+  handleSpin: () => Promise<void>,
+  reset: () => void,
+) {
   if (get(activeAutoplay)?.spins === 0 || get(autoplayShouldStop)) {
     autoplayShouldStop.set(false);
     activeAutoplay.set(null);
+    reset();
     return;
   }
 
@@ -27,5 +31,5 @@ export async function startAutoplay(handleSpin: () => Promise<void>) {
     return;
   }
 
-  await startAutoplay(handleSpin);
+  await startAutoplay(handleSpin, reset);
 }

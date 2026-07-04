@@ -16,6 +16,7 @@ export class AutoplayMenu {
   public constructor(
     private readonly assets: GameAssets,
     private readonly handleSpin: () => Promise<void>,
+    private readonly reset: () => void,
     private readonly afterAutoplayCallback: () => void,
   ) {
     this.container = new Container();
@@ -67,14 +68,10 @@ export class AutoplayMenu {
     headline.position.set(0, -235);
     menuContainer.addChild(headline);
 
-    const closeButton = new SmallButton(
-      assets,
-      { x: 465, y: -215 },
-      assets.close,
-      () => {
-        this.hide();
-      },
-    );
+    const closeButton = new SmallButton(assets, assets.close, () => {
+      this.hide();
+    });
+    closeButton.container.position.set(465, -215);
     menuContainer.addChild(closeButton.container);
 
     const turboSpinCheckbox = new Checkbox(assets, 'TURBO SPIN');
@@ -120,7 +117,7 @@ export class AutoplayMenu {
       if (isTurboSpinEnabled) {
         turboMode.set(true);
       }
-      void startAutoplay(handleSpin);
+      void startAutoplay(handleSpin, reset);
       this.hide();
       this.afterAutoplayCallback();
     });

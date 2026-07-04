@@ -6,6 +6,7 @@
     bonusGameData,
     currency,
     activeAutoplay,
+    autoplayShouldStop,
   } from '$lib/stores/game';
 
   import { CoinManager } from '$lib/game/pixi/managers/CoinManager';
@@ -88,6 +89,7 @@
       const autoplayMenu = new AutoplayMenu(
         assets,
         handleSpin,
+        resetAfterAutospins,
         initiateAutoplay,
       );
       overlay.addChild(autoplayMenu.container);
@@ -196,7 +198,7 @@
       winText.show(payout, getCurrencySymbol($currency));
     }
 
-    if (!get(bonusGameData)) {
+    if (!get(bonusGameData) && !get(activeAutoplay)) {
       uiManager.spinButton.enable();
     }
 
@@ -210,6 +212,16 @@
     if (get(activeAutoplay) === null) {
       uiManager.changeAutoplayButtonState(false);
     }
+    if (get(autoplayShouldStop)) {
+      uiManager.changeAutoplayButtonState(false);
+      uiManager.spinButton.enable();
+    }
+  }
+
+  export function resetAfterAutospins() {
+    uiManager.spinButton.enable();
+    uiManager.turboModeButton.enable();
+    uiManager.changeAutoplayButtonState(false);
   }
 
   export async function showChests(): Promise<void> {
@@ -224,7 +236,7 @@
   }
 
   export async function hideChests(): Promise<void> {
-    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+    await new Promise<void>((resolve) => setTimeout(resolve, 3000));
     chestManager.hide();
     await uiManager.hideBonusGameUI();
     await coinManager.show();
