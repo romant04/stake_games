@@ -23,7 +23,6 @@
   // ---------------------------------------------------------------------------
   // Props
   // ---------------------------------------------------------------------------
-  // TODO: When using turboSpin from autospins it gets bugged - state of the button doesnt reflect the actual state
   let {
     resetAfterBonus,
     handleSpin,
@@ -150,6 +149,7 @@
           activeOrientation = orientation;
           uiManager.onOrientationChange(orientation);
           coinManager.onOrientationChange(orientation);
+          chestManager.onOrientationChange();
         }
       };
 

@@ -11,6 +11,30 @@ import { animateY } from '../../utils/animateXandY';
  * Owns the payout split logic and the opened-count counter that were
  * previously stored as static properties on `Chest`.
  */
+const CHEST_POSITIONS = {
+  landscape: {
+    positions: [
+      { x: Layout.CX - CHEST_SPACING, y: Layout.CY + 200, spawnOffsetY: 200 },
+      { x: Layout.CX, y: Layout.CY + 100, spawnOffsetY: 200 },
+      { x: Layout.CX + CHEST_SPACING, y: Layout.CY + 200, spawnOffsetY: 200 },
+    ],
+    animationOrder: [1, 0, 2],
+  },
+
+  portrait: {
+    positions: [
+      { x: 250, y: Layout.CY + 500, spawnOffsetY: 500 },
+      { x: 600, y: Layout.CY + 900, spawnOffsetY: 900 },
+      { x: 800, y: Layout.CY + 300, spawnOffsetY: 300 },
+    ],
+    animationOrder: [1, 0, 2],
+  },
+} as const;
+function getChestLayout() {
+  const orientation = Layout.getOrientation();
+  return CHEST_POSITIONS[orientation];
+}
+
 export class ChestManager {
   readonly container: Container;
 
@@ -35,16 +59,16 @@ export class ChestManager {
   // ---------------------------------------------------------------------------
 
   create(): void {
-    // this.destroyChests();
+    const layout = getChestLayout();
 
     for (let i = 0; i < 3; i++) {
       const chest = new ChestItem(this.assets, (event) =>
         this.handleChestOpen(event),
       );
-      chest.container.position.set(
-        Layout.CX + (i - 1) * CHEST_SPACING,
-        i === 1 ? Layout.CY + 100 : Layout.CY + 200,
-      );
+
+      const pos = layout.positions[i];
+      chest.container.position.set(pos.x, pos.y);
+
       chest.container.visible = false;
       this.container.addChild(chest.container);
       this.chests.push(chest);
@@ -69,9 +93,11 @@ export class ChestManager {
       chest.payoutPercentage = Math.round((chest.payout / totalPayout) * 100);
     }
 
-    await this.showChest(this.chests[1], 1);
-    await this.showChest(this.chests[0], 0);
-    await this.showChest(this.chests[2], 2);
+    const layout = getChestLayout();
+
+    for (const index of layout.animationOrder) {
+      await this.showChest(this.chests[index], index);
+    }
   }
 
   hide(): void {
@@ -104,21 +130,32 @@ export class ChestManager {
     this.container.destroy();
   }
 
-  private async showChest(chest: ChestItem, index: number): Promise<void> {
-    chest.container.y =
-      index === 1 ? Layout.CY + 100 + 200 : Layout.CY + 200 + 200;
-    chest.container.visible = true;
-    await animateY(
-      this.ticker,
-      chest.container,
-      index === 1 ? Layout.CY + 100 : Layout.CY + 200,
-      500,
-    );
+  public onOrientationChange() {
+    const layout = getChestLayout();
+
+    for (const [i, chest] of this.chests.entries()) {
+      const pos = layout.positions[i];
+      chest.container.position.set(pos.x, pos.y);
+    }
   }
 
   // ---------------------------------------------------------------------------
   // Private
   // ---------------------------------------------------------------------------
+
+  private async showChest(chest: ChestItem, index: number): Promise<void> {
+    const layout = getChestLayout();
+    const target = layout.positions[index];
+
+    chest.container.position.set(
+      target.x,
+      target.y + layout.positions[index].spawnOffsetY,
+    );
+
+    chest.container.visible = true;
+
+    await animateY(this.ticker, chest.container, target.y, 500);
+  }
 
   private handleChestOpen({
     payout,

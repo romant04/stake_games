@@ -60,7 +60,7 @@ export class GameHistory {
 
     this.lastOrientation = orientation;
   }
-  // TODO: Solve swapping to portrait and landscape
+
   private updateHistory() {
     this.container.removeChildren();
     this.records.length = 0;

@@ -30,4 +30,7 @@ export class Layout {
   public static setOrientation(orientation: 'landscape' | 'portrait'): void {
     Layout.orientation = orientation;
   }
+  public static getOrientation(): 'landscape' | 'portrait' {
+    return Layout.orientation;
+  }
 }

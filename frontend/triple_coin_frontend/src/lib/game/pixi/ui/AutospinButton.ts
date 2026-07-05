@@ -41,7 +41,7 @@ export class AutospinButton {
       style: new TextStyle({
         fontFamily: 'Merriweather',
         fontSize: 24,
-        fill: 0xffffff,
+        fill: 0xece7c4,
         fontWeight: 'bold',
       }),
     });

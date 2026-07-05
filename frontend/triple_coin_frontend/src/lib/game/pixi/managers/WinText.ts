@@ -47,7 +47,7 @@ export class WinText {
     this.cancelAnimation();
 
     this.text.text = label ? `+${amount}${label} ` : `+${amount}`;
-    const yOffset = 140;
+    const yOffset = Layout.getOrientation() === 'landscape' ? 140 : -120;
     this.text.position.set(Layout.CX, Layout.CY + yOffset);
     this.text.alpha = 0;
     this.text.scale.set(0.5);

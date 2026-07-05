@@ -121,11 +121,18 @@ export class CoinManager {
 
     this.coinsContainer.y = -Layout.CY;
     this.winTable.x = -Layout.VIRTUAL_WIDTH * 0.175 - 80;
-    void animateY(this.ticker, this.coinsContainer, Layout.CY, 1000);
+    void animateY(
+      this.ticker,
+      this.coinsContainer,
+      Layout.getOrientation() === 'landscape' ? Layout.CY : 675,
+      1000,
+    );
     await animateX(
       this.ticker,
       this.winTable,
-      Layout.VIRTUAL_WIDTH * 0.175,
+      Layout.getOrientation() === 'landscape'
+        ? Layout.VIRTUAL_WIDTH * 0.175
+        : Layout.VIRTUAL_WIDTH * 0.275,
       1000,
     );
   }

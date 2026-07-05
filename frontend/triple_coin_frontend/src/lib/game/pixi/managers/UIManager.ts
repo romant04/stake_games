@@ -230,6 +230,7 @@ export class UIManager {
       Layout.VIRTUAL_WIDTH * 0.025,
       Layout.VIRTUAL_HEIGHT * 0.05,
     );
+    this.bonusHeadline.rerenderToPortrait();
   }
 
   private rerenderToLandscape() {
@@ -271,5 +272,6 @@ export class UIManager {
       Layout.VIRTUAL_WIDTH * 0.9,
       Layout.VIRTUAL_HEIGHT * 0.05,
     );
+    this.bonusHeadline.rerenderToLandscape();
   }
 }

@@ -5,23 +5,35 @@ import { Layout } from '../constants/layout';
 export class BonusHeadline {
   readonly container: Container;
 
+  private readonly logo: Sprite;
+  private readonly bonusHeadline: Sprite;
+
   public constructor(private readonly assets: GameAssets) {
     this.container = new Container();
 
-    const logo = new Sprite(assets.logo);
-    logo.anchor.set(0.5);
-    logo.position.set(Layout.CX, Layout.CY - 270);
-    logo.width = 630;
-    logo.height = 360;
-    this.container.addChild(logo);
+    this.logo = new Sprite(assets.logo);
+    this.logo.anchor.set(0.5);
+    this.logo.position.set(Layout.CX, Layout.CY - 270);
+    this.logo.width = 630;
+    this.logo.height = 360;
+    this.container.addChild(this.logo);
 
-    const bonusHeadline = new Sprite(assets.bonusHeadline);
-    bonusHeadline.anchor.set(0.5);
-    bonusHeadline.position.set(Layout.CX + 10, Layout.CY - 100);
-    bonusHeadline.width = 400;
-    bonusHeadline.height = 120;
-    this.container.addChild(bonusHeadline);
+    this.bonusHeadline = new Sprite(assets.bonusHeadline);
+    this.bonusHeadline.anchor.set(0.5);
+    this.bonusHeadline.position.set(Layout.CX + 10, Layout.CY - 100);
+    this.bonusHeadline.width = 400;
+    this.bonusHeadline.height = 120;
+    this.container.addChild(this.bonusHeadline);
 
     this.container.visible = false;
+  }
+
+  public rerenderToPortrait() {
+    this.logo.position.set(Layout.CX, 375);
+    this.bonusHeadline.position.set(Layout.CX + 10, 545);
+  }
+  public rerenderToLandscape() {
+    this.logo.position.set(Layout.CX, Layout.CY - 270);
+    this.bonusHeadline.position.set(Layout.CX + 10, Layout.CY - 100);
   }
 }
