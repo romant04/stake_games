@@ -25,7 +25,7 @@ const CHEST_POSITIONS = {
     positions: [
       { x: 250, y: Layout.CY + 500, spawnOffsetY: 500 },
       { x: 600, y: Layout.CY + 900, spawnOffsetY: 900 },
-      { x: 800, y: Layout.CY + 300, spawnOffsetY: 300 },
+      { x: 750, y: Layout.CY + 300, spawnOffsetY: 300 },
     ],
     animationOrder: [1, 0, 2],
   },
