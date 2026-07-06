@@ -110,8 +110,8 @@
     balance.set(updatedBalance.balance?.amount);
     coinScene.rerenderHistory();
 
-    if ($activeAutoplay?.spins !== 0) {
-      await startAutoplay(handleSpin);
+    if ($activeAutoplay && $activeAutoplay.spins !== 0) {
+      await startAutoplay(handleSpin, coinScene.resetAfterAutospins);
     }
   }
   async function handleSpin() {

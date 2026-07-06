@@ -237,12 +237,13 @@
   }
 
   export async function hideChests(): Promise<void> {
+    uiManager.spinButton.disable();
     await new Promise<void>((resolve) => setTimeout(resolve, 3000));
     chestManager.hide();
     await uiManager.hideBonusGameUI();
     await coinManager.show();
-    uiManager.spinButton.enable();
     uiManager.updateSpinButtonText(false);
+    uiManager.spinButton.enable();
   }
 
   export function openChests(): void {

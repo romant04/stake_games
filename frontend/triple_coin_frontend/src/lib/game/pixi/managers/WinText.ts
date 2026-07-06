@@ -34,7 +34,7 @@ export class WinText {
     this.container.addChild(this.text);
     this.hide();
   }
-
+  // TODO? When playing bonus game normally it then forces one game to be played after
   // ---------------------------------------------------------------------------
   // Public API
   // ---------------------------------------------------------------------------

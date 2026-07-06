@@ -29,7 +29,7 @@ export class SmallButton {
     this.icon.anchor.set(0.5);
     this.icon.width = 40;
     this.icon.height = 40;
-    this.icon.position.set(0, 0);
+    this.icon.position.set(0, -1);
 
     this.button.addChild(this.bg, this.icon);
     this.container.addChild(this.button);

@@ -25,7 +25,11 @@
     class="flex flex-col gap-12 overflow-auto pointer-events-auto py-5 items-center fixed top-0 left-0 w-full z-50 h-full bg-[#26140D]/65 backdrop-blur-sm"
   >
     <div class="relative">
-      <img src={logo} alt="logo" class="max-h-[500px] md:h-[400px] w-auto" />
+      <img
+        src={logo}
+        alt="logo"
+        class="max-h-[500px] h-[250px] xl:h-[300px] 2xl:h-[360px] w-auto"
+      />
       <img
         class="absolute -bottom-8 w-1/2 left-1/2 -translate-x-1/2"
         src={infoHeadline}
@@ -33,16 +37,22 @@
       />
     </div>
 
-    <div class="flex w-full items-start gap-8 px-8">
+    <div
+      class="flex flex-col lg:flex-row w-full items-center lg:items-start gap-8 px-8"
+    >
       <Paytable />
 
-      <div class="flex flex-col mt-2 gap-2 max-w-1/2">
+      <div
+        class="flex flex-col mt-2 gap-2 lg:max-w-1/2 text-center lg:text-left"
+      >
         <h4
           class="text-3xl font-[900] font-merriweather text-[#EEC53A] text-stroke"
         >
           RTP: 96.46%
         </h4>
-        <p class="text-md font-merriweather text-justify text-[#ECE7C4]">
+        <p
+          class="text-sm lg:text-base xl:text-md font-merriweather text-center lg:text-justify text-[#ECE7C4]"
+        >
           Malfunction voids all wins and plays. A consistent internet connection
           is required. In the event of a disconnection, reload the game to
           finish any uncompleted rounds. The expected return is calculated over

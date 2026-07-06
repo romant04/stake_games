@@ -115,6 +115,8 @@ export class UIManager {
 
       e.preventDefault();
 
+      if (this.spinButton.button.eventMode === 'none') return; // disabled
+
       this.spinButton.button.scale.set(0.95);
       this.spinButton.press();
     });

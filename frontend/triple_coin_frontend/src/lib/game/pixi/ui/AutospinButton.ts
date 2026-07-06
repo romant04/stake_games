@@ -34,7 +34,6 @@ export class AutospinButton {
     this.icon.anchor.set(0.5);
     this.icon.width = 40;
     this.icon.height = 40;
-    this.icon.position.set(label.length > 10 ? -100 : -80, 0);
 
     this.text = new Text({
       text: label,
@@ -45,8 +44,15 @@ export class AutospinButton {
         fontWeight: 'bold',
       }),
     });
-    this.text.anchor.set(0, 0.5);
-    this.text.position.set(label.length > 10 ? -75 : -45, 0);
+    this.text.anchor.set(0, 0.5); // left-aligned, vertically centered
+
+    // --- Center the icon+text group as a whole ---
+    const gap = 12; // space between icon and text
+    const totalWidth = this.icon.width + gap + this.text.width;
+    const leftEdge = -totalWidth / 2;
+
+    this.icon.position.set(leftEdge + this.icon.width / 2, 0);
+    this.text.position.set(leftEdge + this.icon.width + gap, 0);
 
     textIconContainer.addChild(this.icon, this.text);
     this.button.addChild(this.bg, textIconContainer);

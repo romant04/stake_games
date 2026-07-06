@@ -16,8 +16,8 @@ export const CHEST_SPACING = 380;
 export const SPIN_SPEED_NORMAL = 16;
 export const SPIN_SPEED_TURBO = 24;
 
-export const SPIN_DURATION_NORMAL = 1000;
-export const SPIN_DURATION_TURBO = 400;
+export const SPIN_DURATION_NORMAL = 600;
+export const SPIN_DURATION_TURBO = 100;
 
 export const STOP_DELAY_NORMAL = 750;
 export const STOP_DELAY_TURBO = 400;

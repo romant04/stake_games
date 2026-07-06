@@ -2,7 +2,6 @@ import { Container, Sprite } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 import { replayMode } from '../../../stores/game';
 import { get } from 'svelte/store';
-import { Layout } from '../constants/layout';
 
 export class SpinButton {
   readonly container: Container;

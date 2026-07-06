@@ -11,7 +11,7 @@
   ];
 </script>
 
-<div class="flex flex-col items-center w-1/2">
+<div class="flex flex-col items-center w-full lg:w-1/2">
   <div class="flex flex-col gap-2 gap-4 w-full">
     {#each PAYTABLE as row}
       <div class="flex items-center justify-between gap-3 w-full">
