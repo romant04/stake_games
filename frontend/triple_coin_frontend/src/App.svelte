@@ -27,7 +27,6 @@
   } from 'stake-engine-client';
   import type { Currency } from 'stake-engine';
   import type { Replay } from './types/replay';
-  import AutoplayModal from './components/autoplay-modal.svelte';
   import { startAutoplay } from './utils/startAutoplay';
   import InfoModal from './components/info-modal.svelte';
 
@@ -219,7 +218,6 @@
   {/if}
 
   <div class="absolute inset-0 z-10 pointer-events-none">
-    <AutoplayModal {handleSpin} />
     <InfoModal />
   </div>
 </div>
