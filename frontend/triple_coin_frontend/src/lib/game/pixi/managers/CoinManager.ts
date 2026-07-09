@@ -131,7 +131,7 @@ export class CoinManager {
       this.ticker,
       this.winTable,
       Layout.getOrientation() === 'landscape'
-        ? Layout.VIRTUAL_WIDTH * 0.175
+        ? Layout.VIRTUAL_WIDTH * 0.165
         : Layout.VIRTUAL_WIDTH * 0.275,
       1000,
     );
