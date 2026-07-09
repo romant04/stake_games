@@ -211,11 +211,11 @@ export class UIManager {
       Layout.VIRTUAL_HEIGHT * 0.96,
     );
     this.burgerMenu.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.025,
+      Layout.VIRTUAL_WIDTH * 0.045,
       Layout.VIRTUAL_HEIGHT * 0.96,
     );
     this.betSelector.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.138,
+      Layout.VIRTUAL_WIDTH * 0.158,
       Layout.VIRTUAL_HEIGHT * 0.9,
     );
 
@@ -229,7 +229,7 @@ export class UIManager {
     );
 
     this.gameHistory.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.025,
+      Layout.VIRTUAL_WIDTH * 0.04,
       Layout.VIRTUAL_HEIGHT * 0.05,
     );
     this.bonusHeadline.rerenderToPortrait();

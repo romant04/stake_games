@@ -51,7 +51,7 @@ export class GameHistory {
     this.container.removeChildren();
     this.records.forEach((record, index) => {
       if (orientation === 'portrait') {
-        record.container.position.set(index * 225, 0);
+        record.container.position.set(index * 212, 0);
       } else {
         record.container.position.set(0, index * 80);
       }
@@ -74,7 +74,7 @@ export class GameHistory {
       const record = new HistoryRecord(values, this.assets, opacityValue);
 
       if (this.lastOrientation === 'portrait') {
-        record.container.position.set(index * 225, 0);
+        record.container.position.set(index * 212, 0);
       } else {
         record.container.position.set(0, index * 80);
       }
