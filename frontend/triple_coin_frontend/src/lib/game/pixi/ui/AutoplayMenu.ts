@@ -107,7 +107,7 @@ export class AutoplayMenu {
     submitButton.on('pointertap', () => {
       const selectedAutospins = numberOfAutospinsSelector.selectedOption;
       const isTurboSpinEnabled = turboSpinCheckbox.checked;
-      const isAutoSpinBonusEnabled = stopOnBonusCheckbox.checked!;
+      const isAutoSpinBonusEnabled = !stopOnBonusCheckbox.checked;
 
       activeAutoplay.set({
         spins: selectedAutospins,
