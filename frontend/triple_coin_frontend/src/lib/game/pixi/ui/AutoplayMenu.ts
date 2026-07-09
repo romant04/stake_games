@@ -75,12 +75,12 @@ export class AutoplayMenu {
     menuContainer.addChild(closeButton.container);
 
     const turboSpinCheckbox = new Checkbox(assets, 'TURBO SPIN');
-    turboSpinCheckbox.container.position.set(-300, -100);
+    turboSpinCheckbox.container.position.set(-280, -100);
     menuContainer.addChild(turboSpinCheckbox.container);
 
-    const autoSpinBonusCheckbox = new Checkbox(assets, 'AUTOSPIN BONUS');
-    autoSpinBonusCheckbox.container.position.set(50, -100);
-    menuContainer.addChild(autoSpinBonusCheckbox.container);
+    const stopOnBonusCheckbox = new Checkbox(assets, 'STOP ON BONUS');
+    stopOnBonusCheckbox.container.position.set(60, -100);
+    menuContainer.addChild(stopOnBonusCheckbox.container);
 
     const numberOfAutospinsSelector = new AutospinCountSelector(assets);
     numberOfAutospinsSelector.container.position.set(0, 180);
@@ -107,7 +107,7 @@ export class AutoplayMenu {
     submitButton.on('pointertap', () => {
       const selectedAutospins = numberOfAutospinsSelector.selectedOption;
       const isTurboSpinEnabled = turboSpinCheckbox.checked;
-      const isAutoSpinBonusEnabled = autoSpinBonusCheckbox.checked;
+      const isAutoSpinBonusEnabled = stopOnBonusCheckbox.checked!;
 
       activeAutoplay.set({
         spins: selectedAutospins,
