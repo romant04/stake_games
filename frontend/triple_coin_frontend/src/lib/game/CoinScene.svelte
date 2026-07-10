@@ -19,6 +19,7 @@
   import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
   import { AutoplayMenu } from '$lib/game/pixi/ui/AutoplayMenu';
   import { get } from 'svelte/store';
+  import { InfoOverlay } from '$lib/game/pixi/ui/InfoOverlay';
 
   // ---------------------------------------------------------------------------
   // Props
@@ -92,6 +93,8 @@
         initiateAutoplay,
       );
       overlay.addChild(autoplayMenu.container);
+      const infoOverlay = new InfoOverlay(assets);
+      overlay.addChild(infoOverlay.container);
 
       // -- Managers -------------------------------------------------------------
       uiManager = new UIManager(
@@ -137,6 +140,7 @@
           background,
           uiManager.fog,
           autoplayMenu,
+          infoOverlay,
         );
 
         if (orientation === 'landscape') {
@@ -149,6 +153,7 @@
           activeOrientation = orientation;
           uiManager.onOrientationChange(orientation);
           coinManager.onOrientationChange(orientation);
+          infoOverlay.onOrientationChange(orientation);
           chestManager.onOrientationChange();
         }
       };

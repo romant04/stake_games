@@ -87,4 +87,7 @@ export interface GameAssets {
   fog: Texture;
   bonusHeadline: Texture;
   openAll: Texture;
+
+  // Info layout
+  empty: Texture;
 }

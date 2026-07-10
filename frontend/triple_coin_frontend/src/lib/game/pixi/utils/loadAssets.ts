@@ -19,6 +19,7 @@ import spinTextSrc from '../../../../assets/ui/spin_text.png';
 import frontSrcUI from '../../../../assets/ui/front.png';
 import sideSrcUI from '../../../../assets/ui/side.png';
 import backSrcUI from '../../../../assets/ui/back.png';
+import emptySrc from '../../../../assets/ui/info_lose.png';
 
 import toggleSrc from '../../../../assets/ui/toggle.png';
 import toggleHoverSrc from '../../../../assets/ui/toggle_hover.png';
@@ -159,6 +160,7 @@ export async function loadAssets(): Promise<GameAssets> {
     fog,
     pedestal,
     openAll,
+    empty,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(bgMobileSrc),
@@ -216,6 +218,7 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(fogSrc),
     Assets.load(pedestalSrc),
     Assets.load(openAllSrc),
+    Assets.load(emptySrc),
   ]);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
@@ -287,5 +290,6 @@ export async function loadAssets(): Promise<GameAssets> {
     fog,
     pedestal,
     openAll,
+    empty,
   };
 }

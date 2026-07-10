@@ -1,6 +1,7 @@
 import type { Application, Container, Sprite } from 'pixi.js';
 import type { AutoplayMenu } from '../ui/AutoplayMenu';
 import { Layout, VIRTUAL_SIZES } from '../constants/layout';
+import type { InfoOverlay } from '../ui/InfoOverlay';
 
 /**
  * Scales `app.stage` uniformly so the virtual 1920×1080 canvas fits inside
@@ -14,6 +15,7 @@ export function fitStageToScreen(
   background?: Sprite,
   fog?: Sprite,
   autoplayMenu?: AutoplayMenu,
+  infoOverlay?: InfoOverlay,
 ): void {
   Layout.setOrientation(orientation);
   const { width: VIRTUAL_WIDTH, height: VIRTUAL_HEIGHT } =
@@ -46,6 +48,16 @@ export function fitStageToScreen(
     const startX = (VIRTUAL_WIDTH - visibleVirtualW) / 2;
     const startY = (VIRTUAL_HEIGHT - visibleVirtualH) / 2;
     autoplayMenu.dimBackground.position.set(startX - padding, startY - padding);
+  }
+  if (infoOverlay && infoOverlay.dimBackground) {
+    const padding = 64;
+
+    infoOverlay.dimBackground.width = visibleVirtualW + padding * 2;
+    infoOverlay.dimBackground.height = visibleVirtualH + padding * 2;
+
+    const startX = (VIRTUAL_WIDTH - visibleVirtualW) / 2;
+    const startY = (VIRTUAL_HEIGHT - visibleVirtualH) / 2;
+    infoOverlay.dimBackground.position.set(startX - padding, startY - padding);
   }
 
   if (fog) {
