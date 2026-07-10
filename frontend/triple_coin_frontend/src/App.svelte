@@ -28,7 +28,6 @@
   import type { Currency } from 'stake-engine';
   import type { Replay } from './types/replay';
   import { startAutoplay } from './utils/startAutoplay';
-  import InfoModal from './components/info-modal.svelte';
 
   const BONUS_GAME_THRESHOLD = 10;
 

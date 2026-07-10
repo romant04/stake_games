@@ -90,4 +90,5 @@ export interface GameAssets {
 
   // Info layout
   empty: Texture;
+  gameRules: Texture;
 }

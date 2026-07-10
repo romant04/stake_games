@@ -15,6 +15,7 @@ import spinSrc from '../../../../assets/ui/spin.png';
 import spinHoverSrc from '../../../../assets/ui/spin_hover.png';
 import spinDisabledSrc from '../../../../assets/ui/spin_disabled.png';
 import spinTextSrc from '../../../../assets/ui/spin_text.png';
+import gameRulesSrc from '../../../../assets/info_headline.png';
 
 import frontSrcUI from '../../../../assets/ui/front.png';
 import sideSrcUI from '../../../../assets/ui/side.png';
@@ -161,6 +162,7 @@ export async function loadAssets(): Promise<GameAssets> {
     pedestal,
     openAll,
     empty,
+    gameRules,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(bgMobileSrc),
@@ -219,6 +221,7 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(pedestalSrc),
     Assets.load(openAllSrc),
     Assets.load(emptySrc),
+    Assets.load(gameRulesSrc),
   ]);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
@@ -291,5 +294,6 @@ export async function loadAssets(): Promise<GameAssets> {
     pedestal,
     openAll,
     empty,
+    gameRules,
   };
 }

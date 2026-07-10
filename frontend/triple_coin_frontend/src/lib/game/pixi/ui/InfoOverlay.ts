@@ -69,7 +69,7 @@ export class InfoOverlay {
 
   private readonly unsubscribe: Unsubscriber;
 
-  private readonly logo: Sprite;
+  private readonly logo: Container;
   private readonly rtpText: Text;
   private readonly infoText: Text;
   private readonly payouts: Container;
@@ -107,12 +107,21 @@ export class InfoOverlay {
     overlay.addChild(this.dimBackground);
     this.container.addChild(overlay);
 
-    this.logo = new Sprite(assets.logo);
-    this.logo.anchor.set(0.5);
+    this.logo = new Container();
     this.logo.position.set(Layout.CX, 230);
-    this.logo.height = 370;
-    this.logo.width = 650;
+
+    const logoImg = new Sprite(assets.logo);
+    logoImg.anchor.set(0.5);
+    logoImg.height = 370;
+    logoImg.width = 650;
+    this.logo.addChild(logoImg);
     this.container.addChild(this.logo);
+    const gameRulesText = new Sprite(assets.gameRules);
+    gameRulesText.anchor.set(0.5);
+    gameRulesText.position.set(10, 180);
+    gameRulesText.width = 380;
+    gameRulesText.height = 125;
+    this.logo.addChild(gameRulesText);
 
     this.rtpText = new Text({
       text: 'RTP 96.46%',
@@ -129,7 +138,7 @@ export class InfoOverlay {
       }),
     });
     this.rtpText.anchor.set(0);
-    this.rtpText.position.set(Layout.CX + 98, 450);
+    this.rtpText.position.set(Layout.CX + 88, 450);
     this.container.addChild(this.rtpText);
 
     this.infoText = new Text({
@@ -151,7 +160,7 @@ export class InfoOverlay {
       }),
     });
     this.infoText.anchor.set(0);
-    this.infoText.position.set(Layout.CX + 100, 510);
+    this.infoText.position.set(Layout.CX + 90, 510);
     this.container.addChild(this.infoText);
 
     this.btn = new Button(assets, 'CLOSE', () => {
@@ -226,9 +235,9 @@ export class InfoOverlay {
     this.infoText.style.fontSize = 22;
     this.infoText.style.wordWrapWidth = 800;
     this.infoText.anchor.set(0);
-    this.infoText.position.set(Layout.CX + 100, 510);
+    this.infoText.position.set(Layout.CX + 90, 510);
 
-    this.rtpText.position.set(Layout.CX + 98, 450);
+    this.rtpText.position.set(Layout.CX + 88, 450);
     this.payouts.position.set(200, 500);
     this.btn.container.position.set(Layout.CX, 980);
   }
