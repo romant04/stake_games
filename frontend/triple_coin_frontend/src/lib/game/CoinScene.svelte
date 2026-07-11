@@ -224,6 +224,7 @@
     await coinManager.spin(results as CoinResult[]);
     if (payout > 0 && !bonus) {
       winText.show(payout, getCurrencySymbol($currency));
+      sound.play('win', { volume: SFX_VOLUME });
     }
 
     if (!get(bonusGameData) && !get(activeAutoplay)) {
