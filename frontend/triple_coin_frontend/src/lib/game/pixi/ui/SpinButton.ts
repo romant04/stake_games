@@ -2,6 +2,8 @@ import { Container, Sprite } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 import { replayMode } from '../../../stores/game';
 import { get } from 'svelte/store';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class SpinButton {
   readonly container: Container;
@@ -52,6 +54,7 @@ export class SpinButton {
   }
 
   public press() {
+    sound.play('primary-click', { volume: SFX_VOLUME });
     if (get(replayMode)) {
       void this.handleReplay();
     } else {

@@ -1,5 +1,7 @@
 import { Container, Sprite, Text, TextStyle } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class Button {
   public readonly container: Container;
@@ -51,6 +53,7 @@ export class Button {
     });
 
     this.button.on('pointertap', () => {
+      sound.play('click', { volume: SFX_VOLUME });
       this.press();
     });
   }

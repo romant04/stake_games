@@ -1,9 +1,14 @@
 import { Container, type Ticker } from 'pixi.js';
-import { CHEST_OPEN_STAGGER, CHEST_SPACING } from '../constants/game';
+import {
+  CHEST_OPEN_STAGGER,
+  CHEST_SPACING,
+  SFX_VOLUME,
+} from '../constants/game';
 import type { GameAssets } from '../../../../types/assets';
 import { ChestItem } from '../objects/ChestItem';
 import { Layout } from '../constants/layout';
 import { animateY } from '../../utils/animateXandY';
+import { sound } from '@pixi/sound';
 
 /**
  * Manages the three bonus-round chests.
@@ -96,6 +101,7 @@ export class ChestManager {
     const layout = getChestLayout();
 
     for (const index of layout.animationOrder) {
+      sound.play('appear', { volume: SFX_VOLUME });
       await this.showChest(this.chests[index], index);
     }
   }

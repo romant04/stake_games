@@ -46,3 +46,6 @@ export const CHEST_OPEN_STAGGER = 200;
 export const CHEST_APPEAR_FRAMES = 20;
 
 export const MAX_HISTORY = 5;
+
+export const SFX_VOLUME = 1;
+export const BGMUSIC_VOLUME = 1;

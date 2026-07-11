@@ -23,6 +23,7 @@
     "vite": "^8.0.4"
   },
   "dependencies": {
+    "@pixi/sound": "^6.0.1",
     "path": "^0.12.7",
     "pixi-filters": "^6.1.5",
     "pixi.js": "^8.18.1",

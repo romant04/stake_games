@@ -70,6 +70,17 @@ import fogSrc from '../../../../assets/game/bonus/fog.png';
 import pedestalSrc from '../../../../assets/game/bonus/pedestal.png';
 import openAllSrc from '../../../../assets/game/bonus/open_all.png';
 
+import spinSoundSrc from '../../../../assets/sounds/spin.mp3';
+import clickSoundSrc from '../../../../assets/sounds/click.mp3';
+import primaryClickSoundSrc from '../../../../assets/sounds/primary-click.mp3';
+import winSoundSrc from '../../../../assets/sounds/win.mp3';
+import bonusSoundUnlockSrc from '../../../../assets/sounds/bonus-game-unlock.mp3';
+import backgroundSoundSrc from '../../../../assets/sounds/background.mp3';
+import backgroundBonusSoundSrc from '../../../../assets/sounds/bonus/background.mp3';
+import appearSoundSrc from '../../../../assets/sounds/bonus/appear.mp3';
+import revealSoundSrc from '../../../../assets/sounds/bonus/reveal.mp3';
+
+import { sound } from '@pixi/sound';
 const frontModules = import.meta.glob(
   '../../../../assets/game/front/front_*.png',
   {
@@ -165,6 +176,15 @@ export async function loadAssets(): Promise<GameAssets> {
     empty,
     gameRules,
     win,
+    spinSound,
+    clickSound,
+    primaryClickSound,
+    winSound,
+    bonusSoundUnlock,
+    backgroundSound,
+    backgroundBonusSound,
+    appearSound,
+    revealSound,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(bgMobileSrc),
@@ -225,7 +245,25 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(emptySrc),
     Assets.load(gameRulesSrc),
     Assets.load(winSrc),
+    Assets.load(spinSoundSrc),
+    Assets.load(clickSoundSrc),
+    Assets.load(primaryClickSoundSrc),
+    Assets.load(winSoundSrc),
+    Assets.load(bonusSoundUnlockSrc),
+    Assets.load(backgroundSoundSrc),
+    Assets.load(backgroundBonusSoundSrc),
+    Assets.load(appearSoundSrc),
+    Assets.load(revealSoundSrc),
   ]);
+  sound.add('spin', spinSound);
+  sound.add('click', clickSound);
+  sound.add('primary-click', primaryClickSound);
+  sound.add('win', winSound);
+  sound.add('bonus-unlock', bonusSoundUnlock);
+  sound.add('background', backgroundSound);
+  sound.add('background-bonus', backgroundBonusSound);
+  sound.add('appear', appearSound);
+  sound.add('reveal', revealSound);
 
   const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
     await Promise.all([

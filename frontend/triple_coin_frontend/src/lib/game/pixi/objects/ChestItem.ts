@@ -10,6 +10,8 @@ import type { GameAssets } from '../../../../types/assets';
 import { Chest, type ChestOpenEvent } from './Chest';
 import { get } from 'svelte/store';
 import { currency } from '../../../stores/game';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class ChestItem {
   readonly container: Container;
@@ -112,6 +114,7 @@ export class ChestItem {
 
   public open(isLast: boolean, payout?: number): void {
     if (this.chest.isOpened) return;
+    sound.play('reveal', { volume: SFX_VOLUME });
     this.chest.isOpened = true;
     this.labelText.text =
       (payout?.toString() ?? this.payout.toString()) + ' ' + get(currency);

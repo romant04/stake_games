@@ -14,6 +14,8 @@ import { getCurrencySymbol } from '../../utils/currencySymbols';
 import { get } from 'svelte/store';
 import { currency } from '../../../stores/game';
 import { animateAlpha } from '../../utils/animateXandY';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class WinScreen {
   public readonly container: Container;
@@ -74,6 +76,7 @@ export class WinScreen {
   public async show() {
     this.container.visible = true;
     this.container.alpha = 0;
+    sound.play('win', { volume: SFX_VOLUME });
     await Promise.all([
       animateAlpha(this.ticker, this.container, 1, 500),
       this.animateWinAmount(this.winLabel),

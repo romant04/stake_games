@@ -1,6 +1,8 @@
 import { Container, Sprite, type Texture } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 import { Layout } from '../constants/layout';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class ToggleButton {
   readonly container: Container;
@@ -70,6 +72,7 @@ export class ToggleButton {
       return;
     }
 
+    sound.play('click', { volume: SFX_VOLUME });
     this.action();
 
     if (this.state === 'active') {

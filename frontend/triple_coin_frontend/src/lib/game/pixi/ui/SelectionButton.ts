@@ -1,5 +1,7 @@
 import { Container, Sprite, Text, TextStyle } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class SelectionButton {
   readonly container: Container;
@@ -62,6 +64,7 @@ export class SelectionButton {
       this.container.scale.set(1);
     });
     this.container.on('pointertap', () => {
+      sound.play('click', { volume: SFX_VOLUME });
       this.onSelect(value);
     });
   }

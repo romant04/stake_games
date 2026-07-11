@@ -23,6 +23,8 @@
   import { Layout } from '$lib/game/pixi/constants/layout';
   import type { GameAssets } from '../../types/assets';
   import { WinScreen } from '$lib/game/pixi/ui/WinScreen';
+  import { sound } from '@pixi/sound';
+  import { SFX_VOLUME } from '$lib/game/pixi/constants/game';
 
   // ---------------------------------------------------------------------------
   // Props
@@ -84,6 +86,8 @@
       app.stage.addChild(UILayer);
 
       assets = await loadAssets();
+      sound.volumeAll = 1.5;
+      sound.play('background', { loop: true, volume: 1 });
 
       // -- Managers -------------------------------------------------------------
       uiManager = new UIManager(
@@ -208,6 +212,11 @@
     payout: number,
     bonus: boolean,
   ): Promise<void> {
+    sound.play('spin', {
+      volume: SFX_VOLUME,
+      loop: true,
+      speed: get(turboMode) ? 1 : 0.75,
+    });
     uiManager.spinButton.disable();
     uiManager.turboModeButton.disable();
     uiManager.balance.updateBalance();
@@ -221,6 +230,11 @@
     }
 
     uiManager.turboModeButton.enable();
+    sound.stop('spin');
+
+    if (results.filter((r) => r === 'S').length >= 3) {
+      sound.play('bonus-unlock', { volume: SFX_VOLUME });
+    }
   }
   export function rerenderHistory() {
     uiManager.gameHistory.update();
@@ -245,6 +259,8 @@
   export async function showChests(): Promise<void> {
     uiManager.spinButton.disable();
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+    sound.volume('background', 0.3);
+    sound.play('background-bonus', { volume: 1, loop: true });
     await coinManager.hide();
     await uiManager.showBonusGameUI();
     chestManager.show2();
@@ -255,13 +271,14 @@
 
   export async function hideChests(): Promise<void> {
     uiManager.spinButton.disable();
-    console.log($bonusGameData);
     winScreen.setWinLabel($bonusGameData?.payout ?? 0);
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     void winScreen.show();
     await new Promise<void>((resolve) => setTimeout(resolve, 2500));
     await winScreen.hide();
     chestManager.hide();
+    sound.stop('background-bonus');
+    sound.volume('background', 1);
     await uiManager.hideBonusGameUI();
     await coinManager.show();
     uiManager.updateSpinButtonText(false);

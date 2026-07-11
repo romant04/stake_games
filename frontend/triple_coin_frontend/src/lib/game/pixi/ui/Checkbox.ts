@@ -1,5 +1,7 @@
 import { Container, Sprite, Text, TextStyle } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
+import { sound } from '@pixi/sound';
+import { SFX_VOLUME } from '../constants/game';
 
 export class Checkbox {
   readonly container: Container;
@@ -61,6 +63,7 @@ export class Checkbox {
       label.scale.set(1);
     });
     this.container.on('pointertap', () => {
+      sound.play('click', { volume: SFX_VOLUME });
       this.checked = !this.checked;
       if (this.checked) {
         checkbox.texture = assets.checkboxActive;
