@@ -91,4 +91,7 @@ export interface GameAssets {
   // Info layout
   empty: Texture;
   gameRules: Texture;
+
+  // Win screen
+  win: Texture;
 }

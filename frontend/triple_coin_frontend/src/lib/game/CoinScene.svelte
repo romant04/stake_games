@@ -20,6 +20,9 @@
   import { AutoplayMenu } from '$lib/game/pixi/ui/AutoplayMenu';
   import { get } from 'svelte/store';
   import { InfoOverlay } from '$lib/game/pixi/ui/InfoOverlay';
+  import { Layout } from '$lib/game/pixi/constants/layout';
+  import type { GameAssets } from '../../types/assets';
+  import { WinScreen } from '$lib/game/pixi/ui/WinScreen';
 
   // ---------------------------------------------------------------------------
   // Props
@@ -43,6 +46,11 @@
   let uiManager: UIManager;
   let chestManager: ChestManager;
   let winText: WinText;
+
+  let assets: GameAssets;
+  let overlay: Container;
+
+  let winScreen: WinScreen;
 
   // ---------------------------------------------------------------------------
   // Mount
@@ -69,32 +77,13 @@
       const backgroundLayer = new Container();
       const gameLayer = new Container();
       const UILayer = new Container();
-      const overlay = new Container();
+      overlay = new Container();
 
       app.stage.addChild(backgroundLayer);
       app.stage.addChild(gameLayer);
       app.stage.addChild(UILayer);
-      app.stage.addChild(overlay);
 
-      const assets = await loadAssets();
-
-      // -- Background (virtual coords) ------------------------------------------
-      const background = new Sprite(assets.bg);
-      background.anchor.set(0.5);
-      background.position.set(1920 / 2, 1080 / 2);
-      background.width = 1920;
-      background.height = 1080;
-      backgroundLayer.addChild(background);
-
-      const autoplayMenu = new AutoplayMenu(
-        assets,
-        handleSpin,
-        resetAfterAutospins,
-        initiateAutoplay,
-      );
-      overlay.addChild(autoplayMenu.container);
-      const infoOverlay = new InfoOverlay(assets);
-      overlay.addChild(infoOverlay.container);
+      assets = await loadAssets();
 
       // -- Managers -------------------------------------------------------------
       uiManager = new UIManager(
@@ -118,6 +107,29 @@
 
       winText = new WinText();
       app.stage.addChild(winText.container);
+
+      // Add overlays as last
+      app.stage.addChild(overlay);
+
+      // -- Background (virtual coords) ------------------------------------------
+      const background = new Sprite(assets.bg);
+      background.anchor.set(0.5);
+      background.position.set(1920 / 2, 1080 / 2);
+      background.width = 1920;
+      background.height = 1080;
+      backgroundLayer.addChild(background);
+
+      const autoplayMenu = new AutoplayMenu(
+        assets,
+        handleSpin,
+        resetAfterAutospins,
+        initiateAutoplay,
+      );
+      overlay.addChild(autoplayMenu.container);
+      const infoOverlay = new InfoOverlay(assets);
+      overlay.addChild(infoOverlay.container);
+      winScreen = new WinScreen(assets, app.ticker, 0);
+      overlay.addChild(winScreen.container);
 
       // -- Turbo store subscription ---------------------------------------------
       // Subscribe once and push the value into managers — no per-frame store reads
@@ -243,7 +255,12 @@
 
   export async function hideChests(): Promise<void> {
     uiManager.spinButton.disable();
-    await new Promise<void>((resolve) => setTimeout(resolve, 3000));
+    console.log($bonusGameData);
+    winScreen.setWinLabel($bonusGameData?.payout ?? 0);
+    await new Promise<void>((resolve) => setTimeout(resolve, 1000));
+    void winScreen.show();
+    await new Promise<void>((resolve) => setTimeout(resolve, 2500));
+    await winScreen.hide();
     chestManager.hide();
     await uiManager.hideBonusGameUI();
     await coinManager.show();

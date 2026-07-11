@@ -33,7 +33,7 @@ class CoinGroup {
 
       const coinSprite = new Sprite(texture);
       coinSprite.anchor.set(0.5);
-      coinSprite.width = coinType === 'S' ? 10 : coinSize;
+      coinSprite.width = coinType === 'S' ? 8 : coinSize;
       coinSprite.height = coinSize;
       coinSprite.position.set(startX, 0);
 
@@ -138,7 +138,7 @@ export class InfoOverlay {
       }),
     });
     this.rtpText.anchor.set(0);
-    this.rtpText.position.set(Layout.CX + 88, 450);
+    this.rtpText.position.set(Layout.CX + 88, 480);
     this.container.addChild(this.rtpText);
 
     this.infoText = new Text({
@@ -160,7 +160,7 @@ export class InfoOverlay {
       }),
     });
     this.infoText.anchor.set(0);
-    this.infoText.position.set(Layout.CX + 90, 510);
+    this.infoText.position.set(Layout.CX + 90, 540);
     this.container.addChild(this.infoText);
 
     this.btn = new Button(assets, 'CLOSE', () => {
@@ -170,7 +170,7 @@ export class InfoOverlay {
     this.container.addChild(this.btn.container);
 
     this.payouts = new Container();
-    this.payouts.position.set(200, 500);
+    this.payouts.position.set(200, 520);
     this.container.addChild(this.payouts);
 
     const one = new CoinGroup(assets, ['T', 'T', 'H'], '0.5x');
@@ -235,10 +235,10 @@ export class InfoOverlay {
     this.infoText.style.fontSize = 22;
     this.infoText.style.wordWrapWidth = 800;
     this.infoText.anchor.set(0);
-    this.infoText.position.set(Layout.CX + 90, 510);
+    this.infoText.position.set(Layout.CX + 90, 540);
 
-    this.rtpText.position.set(Layout.CX + 88, 450);
-    this.payouts.position.set(200, 500);
+    this.rtpText.position.set(Layout.CX + 88, 480);
+    this.payouts.position.set(200, 520);
     this.btn.container.position.set(Layout.CX, 980);
   }
 }
