@@ -171,6 +171,7 @@
           coinManager.onOrientationChange(orientation);
           infoOverlay.onOrientationChange(orientation);
           chestManager.onOrientationChange();
+          winScreen.onOrientationChange(orientation);
         }
       };
 

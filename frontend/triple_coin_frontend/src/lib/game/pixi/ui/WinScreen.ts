@@ -27,6 +27,7 @@ export class WinScreen {
     private winLabel: number,
   ) {
     this.container = new Container();
+    this.container.position.set(Layout.CX, Layout.CY);
 
     const gradient = new FillGradient({
       type: 'radial',
@@ -37,14 +38,13 @@ export class WinScreen {
     });
 
     const graphics = new Graphics().circle(0, 0, 100).fill(gradient);
-    graphics.position.set(Layout.CX, Layout.CY);
     graphics.width = 1000;
     graphics.height = 1000;
     this.container.addChild(graphics);
 
     const win = new Sprite(assets.win);
     win.anchor.set(0.5);
-    win.position.set(Layout.CX, Layout.CY - 50);
+    win.position.set(0, -50);
     win.width = 628;
     win.height = 326;
     this.container.addChild(win);
@@ -67,7 +67,7 @@ export class WinScreen {
       }),
     });
     this.winText.anchor.set(0.5);
-    this.winText.position.set(Layout.CX + 20, Layout.CY + 50);
+    this.winText.position.set(20, 50);
     this.container.addChild(this.winText);
 
     this.container.visible = false;
@@ -88,6 +88,14 @@ export class WinScreen {
   }
   public setWinLabel(winLabel: number) {
     this.winLabel = winLabel;
+  }
+
+  public onOrientationChange(orientation: 'portrait' | 'landscape') {
+    if (orientation === 'portrait') {
+      this.rerenderToPortrait();
+    } else {
+      this.rerenderToLandscape();
+    }
   }
 
   private async animateWinAmount(target: number) {
@@ -117,5 +125,15 @@ export class WinScreen {
 
       this.ticker.add(update);
     });
+  }
+
+  private rerenderToPortrait() {
+    this.container.position.set(Layout.CX, Layout.CY + 200);
+    this.container.scale.set(1.25);
+  }
+
+  private rerenderToLandscape() {
+    this.container.position.set(Layout.CX, Layout.CY);
+    this.container.scale.set(1);
   }
 }
