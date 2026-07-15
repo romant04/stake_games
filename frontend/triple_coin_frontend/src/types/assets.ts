@@ -64,23 +64,9 @@ export interface GameAssets {
   startAutospinHover: Texture;
 
   // Bonus game assets
-  chestClosed: Texture;
-
-  chest1Opened1: Texture;
-  chest1Opened2: Texture;
-  chest1Opened3: Texture;
-
-  chest2Opened1: Texture;
-  chest2Opened2: Texture;
-  chest2Opened3: Texture;
-
-  chest3Opened1: Texture;
-  chest3Opened2: Texture;
-  chest3Opened3: Texture;
-
-  chest4Opened1: Texture;
-  chest4Opened2: Texture;
-  chest4Opened3: Texture;
+  chest1: Texture[];
+  chest2: Texture[];
+  chest3: Texture[];
 
   chestLabel: Texture;
   pedestal: Texture;
@@ -93,5 +79,5 @@ export interface GameAssets {
   gameRules: Texture;
 
   // Win screen
-  win: Texture;
+  win: Texture[];
 }

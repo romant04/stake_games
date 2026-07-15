@@ -16,7 +16,6 @@ import spinHoverSrc from '../../../../assets/ui/spin_hover.png';
 import spinDisabledSrc from '../../../../assets/ui/spin_disabled.png';
 import spinTextSrc from '../../../../assets/ui/spin_text.png';
 import gameRulesSrc from '../../../../assets/info_headline.png';
-import winSrc from '../../../../assets/win.png';
 
 import frontSrcUI from '../../../../assets/ui/front.png';
 import sideSrcUI from '../../../../assets/ui/side.png';
@@ -51,19 +50,6 @@ import minusSrc from '../../../../assets/icons/minus.png';
 import hamburgerSrc from '../../../../assets/icons/hamburger.png';
 import closeSrc from '../../../../assets/icons/close.png';
 
-import chestClosedSrc from '../../../../assets/game/bonus/chest_closed.png';
-import chest1Opened1Src from '../../../../assets/game/bonus/chest_1/chest_1_opened_1.png';
-import chest1Opened2Src from '../../../../assets/game/bonus/chest_1/chest_1_opened_2.png';
-import chest1Opened3Src from '../../../../assets/game/bonus/chest_1/chest_1_opened_3.png';
-import chest2Opened1Src from '../../../../assets/game/bonus/chest_2/chest_2_opened_1.png';
-import chest2Opened2Src from '../../../../assets/game/bonus/chest_2/chest_2_opened_2.png';
-import chest2Opened3Src from '../../../../assets/game/bonus/chest_2/chest_2_opened_3.png';
-import chest3Opened1Src from '../../../../assets/game/bonus/chest_3/chest_3_opened_1.png';
-import chest3Opened2Src from '../../../../assets/game/bonus/chest_3/chest_3_opened_2.png';
-import chest3Opened3Src from '../../../../assets/game/bonus/chest_3/chest_3_opened_3.png';
-import chest4Opened1Src from '../../../../assets/game/bonus/chest_4/chest_4_opened_1.png';
-import chest4Opened2Src from '../../../../assets/game/bonus/chest_4/chest_4_opened_2.png';
-import chest4Opened3Src from '../../../../assets/game/bonus/chest_4/chest_4_opened_3.png';
 import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
 import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
 import fogSrc from '../../../../assets/game/bonus/fog.png';
@@ -79,6 +65,7 @@ import backgroundSoundSrc from '../../../../assets/sounds/background.mp3';
 import backgroundBonusSoundSrc from '../../../../assets/sounds/bonus/background.mp3';
 import appearSoundSrc from '../../../../assets/sounds/bonus/appear.mp3';
 import revealSoundSrc from '../../../../assets/sounds/bonus/reveal.mp3';
+import bonusWinSoundSrc from '../../../../assets/sounds/bonus/bonus_win.mp3';
 
 import { sound } from '@pixi/sound';
 const frontModules = import.meta.glob(
@@ -103,6 +90,22 @@ const backModulesFlopped = import.meta.glob(
   '../../../../assets/game/back/mirrored/back_*.png',
   { eager: true, import: 'default' },
 );
+const chest1OpenedModules = import.meta.glob(
+  '../../../../assets/game/bonus/chest_1/*.png',
+  { eager: true, import: 'default' },
+);
+const chest2OpenedModules = import.meta.glob(
+  '../../../../assets/game/bonus/chest_2/*.png',
+  { eager: true, import: 'default' },
+);
+const chest3OpenedModules = import.meta.glob(
+  '../../../../assets/game/bonus/chest_3/*.png',
+  { eager: true, import: 'default' },
+);
+const win = import.meta.glob('../../../../assets/game/bonus/win_screen/*.png', {
+  eager: true,
+  import: 'default',
+});
 
 const sortedEntries = (modules: Record<string, unknown>) =>
   Object.entries(modules)
@@ -113,6 +116,20 @@ const frontImages = sortedEntries(frontModules);
 const frontImagesFlopped = sortedEntries(frontModulesFlopped);
 const backImages = sortedEntries(backModules);
 const backImagesFlopped = sortedEntries(backModulesFlopped);
+
+const chest1Images = sortedEntries(chest1OpenedModules);
+const chest2Images = sortedEntries(chest2OpenedModules);
+const chest3Images = sortedEntries(chest3OpenedModules);
+const winImages = sortedEntries(win);
+
+const soundsLoaded = new Set<string>();
+function addSound(alias: string, src: any) {
+  if (soundsLoaded.has(alias)) return;
+  if (sound.exists(alias)) return;
+
+  sound.add(alias, src);
+  soundsLoaded.add(alias);
+}
 
 // utils/loadAssets.ts
 export async function loadAssets(): Promise<GameAssets> {
@@ -155,19 +172,6 @@ export async function loadAssets(): Promise<GameAssets> {
     selectionButtonActiveHover,
     startAutospin,
     startAutospinHover,
-    chestClosed,
-    chest1Opened1,
-    chest1Opened2,
-    chest1Opened3,
-    chest2Opened1,
-    chest2Opened2,
-    chest2Opened3,
-    chest3Opened1,
-    chest3Opened2,
-    chest3Opened3,
-    chest4Opened1,
-    chest4Opened2,
-    chest4Opened3,
     bonusHeadline,
     chestLabel,
     fog,
@@ -175,7 +179,6 @@ export async function loadAssets(): Promise<GameAssets> {
     openAll,
     empty,
     gameRules,
-    win,
     spinSound,
     clickSound,
     primaryClickSound,
@@ -185,6 +188,7 @@ export async function loadAssets(): Promise<GameAssets> {
     backgroundBonusSound,
     appearSound,
     revealSound,
+    bonusWinSound,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(bgMobileSrc),
@@ -224,19 +228,6 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(selectionButtonActiveHoverSrc),
     Assets.load(startAutospinSrc),
     Assets.load(startAutospinHoverSrc),
-    Assets.load(chestClosedSrc),
-    Assets.load(chest1Opened1Src),
-    Assets.load(chest1Opened2Src),
-    Assets.load(chest1Opened3Src),
-    Assets.load(chest2Opened1Src),
-    Assets.load(chest2Opened2Src),
-    Assets.load(chest2Opened3Src),
-    Assets.load(chest3Opened1Src),
-    Assets.load(chest3Opened2Src),
-    Assets.load(chest3Opened3Src),
-    Assets.load(chest4Opened1Src),
-    Assets.load(chest4Opened2Src),
-    Assets.load(chest4Opened3Src),
     Assets.load(bonusHeadlineSrc),
     Assets.load(chestLabelSrc),
     Assets.load(fogSrc),
@@ -244,7 +235,6 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(openAllSrc),
     Assets.load(emptySrc),
     Assets.load(gameRulesSrc),
-    Assets.load(winSrc),
     Assets.load(spinSoundSrc),
     Assets.load(clickSoundSrc),
     Assets.load(primaryClickSoundSrc),
@@ -254,24 +244,38 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(backgroundBonusSoundSrc),
     Assets.load(appearSoundSrc),
     Assets.load(revealSoundSrc),
+    Assets.load(bonusWinSoundSrc),
   ]);
-  sound.add('spin', spinSound);
-  sound.add('click', clickSound);
-  sound.add('primary-click', primaryClickSound);
-  sound.add('win', winSound);
-  sound.add('bonus-unlock', bonusSoundUnlock);
-  sound.add('background', backgroundSound);
-  sound.add('background-bonus', backgroundBonusSound);
-  sound.add('appear', appearSound);
-  sound.add('reveal', revealSound);
+  addSound('spin', spinSound);
+  addSound('click', clickSound);
+  addSound('primary-click', primaryClickSound);
+  addSound('win', winSound);
+  addSound('bonus-unlock', bonusSoundUnlock);
+  addSound('background', backgroundSound);
+  addSound('background-bonus', backgroundBonusSound);
+  addSound('appear', appearSound);
+  addSound('reveal', revealSound);
+  addSound('bonus-win', bonusWinSound);
 
-  const [coinFront, coinFrontFlopped, coinBack, coinBackFlopped] =
-    await Promise.all([
-      Promise.all(frontImages.map((s) => Assets.load(s))),
-      Promise.all(frontImagesFlopped.map((s) => Assets.load(s))),
-      Promise.all(backImages.map((s) => Assets.load(s))),
-      Promise.all(backImagesFlopped.map((s) => Assets.load(s))),
-    ]);
+  const [
+    coinFront,
+    coinFrontFlopped,
+    coinBack,
+    coinBackFlopped,
+    chest1,
+    chest2,
+    chest3,
+    win,
+  ] = await Promise.all([
+    Promise.all(frontImages.map((s) => Assets.load(s))),
+    Promise.all(frontImagesFlopped.map((s) => Assets.load(s))),
+    Promise.all(backImages.map((s) => Assets.load(s))),
+    Promise.all(backImagesFlopped.map((s) => Assets.load(s))),
+    Promise.all(chest1Images.map((s) => Assets.load(s))),
+    Promise.all(chest2Images.map((s) => Assets.load(s))),
+    Promise.all(chest3Images.map((s) => Assets.load(s))),
+    Promise.all(winImages.map((s) => Assets.load(s))),
+  ]);
 
   return {
     bg,
@@ -316,19 +320,6 @@ export async function loadAssets(): Promise<GameAssets> {
     selectionButtonActiveHover,
     startAutospin,
     startAutospinHover,
-    chestClosed,
-    chest1Opened1,
-    chest1Opened2,
-    chest1Opened3,
-    chest2Opened1,
-    chest2Opened2,
-    chest2Opened3,
-    chest3Opened1,
-    chest3Opened2,
-    chest3Opened3,
-    chest4Opened1,
-    chest4Opened2,
-    chest4Opened3,
     bonusHeadline,
     chestLabel,
     fog,
@@ -336,6 +327,9 @@ export async function loadAssets(): Promise<GameAssets> {
     openAll,
     empty,
     gameRules,
+    chest1,
+    chest2,
+    chest3,
     win,
   };
 }

@@ -76,6 +76,10 @@
       });
       wrapper.appendChild(app.canvas);
 
+      assets = await loadAssets();
+      sound.volumeAll = 1.5;
+      sound.play('background', { loop: true, volume: 1 });
+
       const backgroundLayer = new Container();
       const gameLayer = new Container();
       const UILayer = new Container();
@@ -83,11 +87,12 @@
 
       app.stage.addChild(backgroundLayer);
       app.stage.addChild(gameLayer);
-      app.stage.addChild(UILayer);
 
-      assets = await loadAssets();
-      sound.volumeAll = 1.5;
-      sound.play('background', { loop: true, volume: 1 });
+      chestManager = new ChestManager(assets, app.ticker, resetAfterBonus);
+      chestManager.create();
+      app.stage.addChild(chestManager.container);
+
+      app.stage.addChild(UILayer);
 
       // -- Managers -------------------------------------------------------------
       uiManager = new UIManager(
@@ -104,10 +109,6 @@
       coinManager = new CoinManager(assets, app.ticker);
       coinManager.create();
       gameLayer.addChild(coinManager.container);
-
-      chestManager = new ChestManager(assets, app.ticker, resetAfterBonus);
-      chestManager.create();
-      app.stage.addChild(chestManager.container);
 
       winText = new WinText();
       app.stage.addChild(winText.container);
@@ -154,9 +155,10 @@
           app,
           orientation,
           background,
-          uiManager.fog,
+          chestManager.fog,
           autoplayMenu,
           infoOverlay,
+          winScreen,
         );
 
         if (orientation === 'landscape') {
@@ -265,6 +267,7 @@
     sound.play('background-bonus', { volume: 1, loop: true });
     await coinManager.hide();
     await uiManager.showBonusGameUI();
+    await chestManager.showFog();
     chestManager.show2();
     await chestManager.show($bonusGameData?.payout ?? 0);
     uiManager.spinButton.enable();
@@ -278,10 +281,11 @@
     void winScreen.show();
     await new Promise<void>((resolve) => setTimeout(resolve, 2500));
     await winScreen.hide();
-    chestManager.hide();
+    await chestManager.hide();
     sound.stop('background-bonus');
     sound.volume('background', 1);
     await uiManager.hideBonusGameUI();
+    await chestManager.hideFog();
     await coinManager.show();
     uiManager.updateSpinButtonText(false);
     uiManager.spinButton.enable();

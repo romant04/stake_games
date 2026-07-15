@@ -1,10 +1,13 @@
 import {
+  AnimatedSprite,
+  BlurFilter,
   Container,
   FillGradient,
   Graphics,
   Sprite,
   Text,
   TextStyle,
+  Texture,
   type Ticker,
 } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
@@ -16,10 +19,14 @@ import { currency } from '../../../stores/game';
 import { animateAlpha } from '../../utils/animateXandY';
 import { sound } from '@pixi/sound';
 import { SFX_VOLUME } from '../constants/game';
+import { wait } from '../utils/wait';
 
 export class WinScreen {
   public readonly container: Container;
+  public readonly dimBackground: Sprite;
   private readonly winText: Text;
+  private readonly win: AnimatedSprite;
+  private readonly content: Container;
 
   public constructor(
     private readonly assets: GameAssets,
@@ -27,27 +34,37 @@ export class WinScreen {
     private winLabel: number,
   ) {
     this.container = new Container();
-    this.container.position.set(Layout.CX, Layout.CY);
 
-    const gradient = new FillGradient({
-      type: 'radial',
-      colorStops: [
-        { offset: 0.15, color: '#26140DFF' },
-        { offset: 1, color: '#26140D00' },
-      ],
-    });
+    // blurred background
+    const overlay = new Container();
 
-    const graphics = new Graphics().circle(0, 0, 100).fill(gradient);
-    graphics.width = 1000;
-    graphics.height = 1000;
-    this.container.addChild(graphics);
+    const padding = 64;
+    const blur = new BlurFilter({ strength: 25 });
+    blur.padding = padding;
 
-    const win = new Sprite(assets.win);
-    win.anchor.set(0.5);
-    win.position.set(0, -50);
-    win.width = 628;
-    win.height = 326;
-    this.container.addChild(win);
+    overlay.filters = [blur];
+    // Replace this.dimBackground = new Graphics() inside AutoplayMenu with:
+    this.dimBackground = new Sprite(Texture.WHITE);
+    this.dimBackground.tint = '#26140da6'; // Or color choice
+    this.dimBackground.alpha = 0.75;
+    this.dimBackground.eventMode = 'static';
+    this.dimBackground.cursor = 'default';
+
+    overlay.addChild(this.dimBackground);
+    this.container.addChild(overlay);
+
+    this.content = new Container();
+    this.content.position.set(Layout.CX, Layout.CY);
+    this.container.addChild(this.content);
+
+    this.win = new AnimatedSprite(assets.win);
+    this.win.anchor.set(0.5);
+    this.win.position.set(0, 0);
+    this.win.width = 1080;
+    this.win.height = 1080;
+    this.win.loop = false;
+    this.win.animationSpeed = 0.75;
+    this.content.addChild(this.win);
 
     this.winText = new Text({
       text:
@@ -56,7 +73,7 @@ export class WinScreen {
         getCurrencySymbol(get(currency) as string),
       style: new TextStyle({
         fontFamily: 'Merriweather',
-        fontSize: 75,
+        fontSize: 64,
         fill: 0xeec53a,
         fontWeight: 'bold',
 
@@ -67,18 +84,18 @@ export class WinScreen {
       }),
     });
     this.winText.anchor.set(0.5);
-    this.winText.position.set(20, 50);
-    this.container.addChild(this.winText);
+    this.winText.position.set(10, 75);
+    this.content.addChild(this.winText);
 
     this.container.visible = false;
   }
 
   public async show() {
     this.container.visible = true;
-    this.container.alpha = 0;
-    sound.play('win', { volume: SFX_VOLUME });
+    this.container.alpha = 1;
+    sound.play('bonus-win', { volume: SFX_VOLUME });
     await Promise.all([
-      animateAlpha(this.ticker, this.container, 1, 500),
+      this.win.gotoAndPlay(0),
       this.animateWinAmount(this.winLabel),
     ]);
   }
@@ -128,12 +145,10 @@ export class WinScreen {
   }
 
   private rerenderToPortrait() {
-    this.container.position.set(Layout.CX, Layout.CY + 200);
-    this.container.scale.set(1.25);
+    this.content.position.set(Layout.CX, Layout.CY);
   }
 
   private rerenderToLandscape() {
-    this.container.position.set(Layout.CX, Layout.CY);
-    this.container.scale.set(1);
+    this.content.position.set(Layout.CX, Layout.CY);
   }
 }

@@ -16,7 +16,6 @@ import { AutospinButton } from '../ui/AutospinButton';
 import { LastWin } from '../ui/LastWin';
 import { BonusHeadline } from '../ui/BonusHeadline';
 import { Layout } from '../constants/layout';
-import { animateAlpha } from '../../utils/animateXandY';
 
 export class UIManager {
   readonly container: Container;
@@ -26,7 +25,6 @@ export class UIManager {
   public readonly turboModeButton: ToggleButton;
   public readonly balance: BalanceText;
   public readonly lastWin: LastWin;
-  public readonly fog: Sprite;
   private readonly autospinButton: AutospinButton;
   private readonly stopAutospinButton: AutospinButton;
   private readonly bonusHeadline: BonusHeadline;
@@ -41,10 +39,6 @@ export class UIManager {
     private readonly showAutoplayMenu: () => void,
   ) {
     this.container = new Container();
-
-    this.fog = new Sprite(assets.fog);
-    this.fog.visible = false;
-    this.container.addChild(this.fog);
 
     this.balance = new BalanceText();
     this.balance.container.position.set(
@@ -165,15 +159,9 @@ export class UIManager {
 
   public async showBonusGameUI() {
     this.bonusHeadline.container.visible = true;
-    this.fog.visible = true;
-    this.fog.alpha = 0;
-    await animateAlpha(this.ticker, this.fog, 1, 500);
   }
   public async hideBonusGameUI() {
     this.bonusHeadline.container.visible = false;
-
-    await animateAlpha(this.ticker, this.fog, 0, 500);
-    this.fog.visible = false;
   }
 
   public updateSpinButtonText(isBonus: boolean) {

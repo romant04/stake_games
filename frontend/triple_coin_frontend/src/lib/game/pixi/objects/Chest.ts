@@ -26,7 +26,7 @@ export class Chest {
   ) {
     this.onOpen = onOpen;
 
-    this.sprite = new AnimatedSprite([assets.chestClosed]);
+    this.sprite = new AnimatedSprite([assets.chest1[0]]);
     this.sprite.anchor.set(0.5);
   }
 

@@ -1,4 +1,4 @@
-import { Container, type Ticker } from 'pixi.js';
+import { Container, Sprite, type Ticker } from 'pixi.js';
 import {
   CHEST_OPEN_STAGGER,
   CHEST_SPACING,
@@ -7,7 +7,7 @@ import {
 import type { GameAssets } from '../../../../types/assets';
 import { ChestItem } from '../objects/ChestItem';
 import { Layout } from '../constants/layout';
-import { animateY } from '../../utils/animateXandY';
+import { animateAlpha, animateY } from '../../utils/animateXandY';
 import { sound } from '@pixi/sound';
 
 /**
@@ -19,9 +19,9 @@ import { sound } from '@pixi/sound';
 const CHEST_POSITIONS = {
   landscape: {
     positions: [
-      { x: Layout.CX - CHEST_SPACING, y: Layout.CY + 200, spawnOffsetY: 200 },
-      { x: Layout.CX, y: Layout.CY + 100, spawnOffsetY: 200 },
-      { x: Layout.CX + CHEST_SPACING, y: Layout.CY + 200, spawnOffsetY: 200 },
+      { x: Layout.CX - CHEST_SPACING, y: Layout.CY + 240, spawnOffsetY: 200 },
+      { x: Layout.CX, y: Layout.CY + 120, spawnOffsetY: 200 },
+      { x: Layout.CX + CHEST_SPACING, y: Layout.CY + 240, spawnOffsetY: 200 },
     ],
     animationOrder: [1, 0, 2],
   },
@@ -42,11 +42,10 @@ function getChestLayout() {
 
 export class ChestManager {
   readonly container: Container;
-
+  public readonly fog: Sprite;
   private chests: ChestItem[] = [];
   private payouts: number[] = [];
   private openedCount = 0;
-
   private readonly onBonusComplete: () => void;
 
   constructor(
@@ -57,6 +56,10 @@ export class ChestManager {
   ) {
     this.container = new Container();
     this.onBonusComplete = onBonusComplete;
+
+    this.fog = new Sprite(assets.fog);
+    this.fog.visible = false;
+    this.container.addChild(this.fog);
   }
 
   // ---------------------------------------------------------------------------
@@ -106,12 +109,16 @@ export class ChestManager {
     }
   }
 
-  hide(): void {
+  async hide() {
+    await Promise.all(
+      this.chests.map((c) => animateAlpha(this.ticker, c.container, 0, 500)),
+    );
+
     for (const [i, chest] of this.chests.entries()) {
       chest.reset();
       chest.container.visible = false;
+      chest.container.alpha = 1; // Reset alpha for next time
     }
-    this.container.visible = false;
   }
 
   show2(): void {
@@ -149,6 +156,18 @@ export class ChestManager {
   // Private
   // ---------------------------------------------------------------------------
 
+  public async showFog() {
+    this.fog.visible = true;
+    this.fog.alpha = 0;
+    await animateAlpha(this.ticker, this.fog, 1, 500);
+  }
+
+  public async hideFog() {
+    await animateAlpha(this.ticker, this.fog, 0, 500);
+    this.fog.visible = false;
+    this.container.visible = false; // Hide the entire container after the fog fades out
+  }
+
   private async showChest(chest: ChestItem, index: number): Promise<void> {
     const layout = getChestLayout();
     const target = layout.positions[index];
@@ -181,22 +200,18 @@ export class ChestManager {
    * of the total, and all three sum exactly to `total`.
    */
   private splitPayout(total: number): number[] {
-    const min = Math.floor(0);
+    const min = Math.max(1, Math.floor(total * 0.1));
     const max = Math.floor(total * 0.8);
 
-    let a = min + Math.floor(Math.random() * (max - min));
-    let b = min + Math.floor(Math.random() * (max - min));
-    let c = total - a - b;
+    // Ensure enough room for b and c
+    const aMax = Math.min(max, total - 2 * min);
+    const a = min + Math.floor(Math.random() * (aMax - min + 1));
 
-    if (c < min) {
-      const diff = min - c;
-      c += diff;
-      a -= diff;
-    } else if (c > max) {
-      const diff = c - max;
-      c -= diff;
-      a += diff;
-    }
+    // Ensure enough room for c
+    const bMax = Math.min(max, total - a - min);
+    const b = min + Math.floor(Math.random() * (bMax - min + 1));
+
+    const c = total - a - b;
 
     return [a, b, c];
   }
