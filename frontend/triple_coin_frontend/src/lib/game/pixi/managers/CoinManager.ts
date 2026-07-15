@@ -2,6 +2,7 @@ import { Container, Sprite, Texture, type Ticker } from 'pixi.js';
 import { Coin, type CoinResult } from '../objects/Coin';
 import {
   COIN_SPACING,
+  SFX_VOLUME,
   SPIN_DURATION_NORMAL,
   SPIN_DURATION_TURBO,
   SPIN_SPEED_NORMAL,
@@ -13,6 +14,9 @@ import { wait } from '../utils/wait';
 import type { GameAssets } from '../../../../types/assets';
 import { Layout } from '../constants/layout';
 import { animateX, animateY } from '../../utils/animateXandY';
+import { sound } from '@pixi/sound';
+import { get } from 'svelte/store';
+import { turboMode } from '../../../stores/game';
 
 /**
  * Manages the three spinning coins.
@@ -97,14 +101,17 @@ export class CoinManager {
     this.coins.forEach((c) => c.setTurbo(enabled));
   }
 
-  async spin(results: CoinResult[]): Promise<void> {
+  startSpin(): void {
     const speed = this.turbo ? SPIN_SPEED_TURBO : SPIN_SPEED_NORMAL;
-    const duration = this.turbo ? SPIN_DURATION_TURBO : SPIN_DURATION_NORMAL;
-    const stopDelay = this.turbo ? STOP_DELAY_TURBO : STOP_DELAY_NORMAL;
-
     this.coins.forEach((coin) => coin.startSpin(speed));
-
-    await wait(duration);
+    sound.play('spin', {
+      volume: SFX_VOLUME,
+      loop: true,
+      speed: get(turboMode) ? 1 : 0.75,
+    });
+  }
+  async stopSpin(results: CoinResult[]): Promise<void> {
+    const stopDelay = this.turbo ? STOP_DELAY_TURBO : STOP_DELAY_NORMAL;
 
     for (const [i, coin] of this.coins.entries()) {
       coin.stopSpin(results[i] as CoinResult);
@@ -114,6 +121,7 @@ export class CoinManager {
     while (this.coins.some((c) => c.isSpinning)) {
       await wait(16);
     }
+    sound.stop('spin');
   }
 
   async show(): Promise<void> {

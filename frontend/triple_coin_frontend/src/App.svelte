@@ -61,11 +61,12 @@
     }
 
     isPlaying.set(true);
+    coinScene.startSpin();
 
     try {
       const results = $replayMode?.state[0].coins.map((x) => x.side);
       const payout = $replayMode?.payoutMultiplier * $betAmount;
-      await coinScene.playRound(
+      await coinScene.stopSpin(
         results,
         payout,
         $replayMode?.payoutMultiplier >= BONUS_GAME_THRESHOLD,
@@ -126,6 +127,7 @@
     }
 
     isPlaying.set(true);
+    coinScene.startSpin();
 
     try {
       const res = await play({
@@ -138,7 +140,7 @@
       const results = state[0].coins.map((c) => c.side);
 
       const payout = res.round.payout / API_MULTIPLIER;
-      await coinScene.playRound(
+      await coinScene.stopSpin(
         results,
         payout,
         state[0].multiplier >= BONUS_GAME_THRESHOLD,

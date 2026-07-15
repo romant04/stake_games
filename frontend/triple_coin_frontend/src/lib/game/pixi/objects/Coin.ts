@@ -52,6 +52,10 @@ export class Coin {
   // Bound so we can pass it to ticker.add / ticker.remove
   private readonly tickerHandler: (ticker: Ticker) => void;
 
+  // ---------------------------------------------------------------------------
+  // Public API
+  // ---------------------------------------------------------------------------
+
   constructor(
     frontFrames: Texture[],
     frontFlopped: Texture[],
@@ -91,10 +95,6 @@ export class Coin {
     this.ticker.add(this.tickerHandler);
   }
 
-  // ---------------------------------------------------------------------------
-  // Public API
-  // ---------------------------------------------------------------------------
-
   setPosition(x: number, y: number): void {
     this.sprite.position.set(x, y);
   }
@@ -108,14 +108,21 @@ export class Coin {
     this.cancelGlow();
 
     this.spinSpeed = speed;
+    this.elapsed = 0;
     this.isSpinning = true;
     this.stopRequested = false;
   }
 
   stopSpin(result: CoinResult): void {
+    if (!this.isSpinning || this.stopRequested) return;
+
     this.result = result;
     this.stopRequested = true;
   }
+
+  // ---------------------------------------------------------------------------
+  // Private — glow helpers
+  // ---------------------------------------------------------------------------
 
   /** Remove the ticker listener. Call before destroying the sprite. */
   destroy(): void {
@@ -123,10 +130,6 @@ export class Coin {
     this.ticker.remove(this.tickerHandler);
     this.sprite.destroy();
   }
-
-  // ---------------------------------------------------------------------------
-  // Private — glow helpers
-  // ---------------------------------------------------------------------------
 
   private turnOnGlow(): void {
     this.cancelGlow();
@@ -145,6 +148,10 @@ export class Coin {
     this.glowTimeoutId = null;
   }
 
+  // ---------------------------------------------------------------------------
+  // Private — per-frame update
+  // ---------------------------------------------------------------------------
+
   private cancelGlow(): void {
     if (this.glowTimeoutId !== null) {
       clearTimeout(this.glowTimeoutId);
@@ -156,10 +163,6 @@ export class Coin {
     this.currentScale = this.baseScale;
     this.sprite.scale.set(this.baseScale);
   }
-
-  // ---------------------------------------------------------------------------
-  // Private — per-frame update
-  // ---------------------------------------------------------------------------
 
   private update(deltaMS: number): void {
     const dt = deltaMS / 16.66;

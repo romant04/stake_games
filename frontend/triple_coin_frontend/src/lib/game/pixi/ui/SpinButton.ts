@@ -12,7 +12,7 @@ export class SpinButton {
   public readonly text: Sprite;
   private readonly bg: Sprite;
 
-  private unsubscribePlaying: Unsubscriber;
+  private readonly unsubscribePlaying: Unsubscriber;
 
   public constructor(
     private readonly assets: GameAssets,
@@ -64,12 +64,11 @@ export class SpinButton {
   }
 
   public press() {
-    sound.play('primary-click', { volume: SFX_VOLUME });
-    console.log('Spin button pressed. Is playing:', get(isPlaying));
     if (get(replayMode)) {
       void this.handleReplay();
     } else {
       void this.handleSpin();
+      sound.play('primary-click', { volume: SFX_VOLUME });
     }
   }
 

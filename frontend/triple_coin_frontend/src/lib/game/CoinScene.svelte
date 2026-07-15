@@ -210,25 +210,23 @@
   // ---------------------------------------------------------------------------
   // Exported API (called by parent)
   // ---------------------------------------------------------------------------
-  export async function playRound(
+  export function startSpin() {
+    uiManager.turboModeButton.disable();
+    uiManager.balance.updateBalance(); // TODO: Will this work??
+    coinManager.startSpin();
+  }
+  export async function stopSpin(
     results: string[],
     payout: number,
     bonus: boolean,
   ): Promise<void> {
-    sound.play('spin', {
-      volume: SFX_VOLUME,
-      loop: true,
-      speed: get(turboMode) ? 1 : 0.75,
-    });
-    uiManager.turboModeButton.disable();
-    uiManager.balance.updateBalance();
-    await coinManager.spin(results as CoinResult[]);
+    // uiManager.balance.updateBalance(); -> uncomment if the one from startSpin doesn't work
+    await coinManager.stopSpin(results as CoinResult[]);
+
     if (payout > 0 && !bonus) {
       winText.show(payout, getCurrencySymbol($currency));
       sound.play('win', { volume: SFX_VOLUME });
     }
-
-    sound.stop('spin');
 
     if (results.filter((r) => r === 'S').length >= 3) {
       sound.play('bonus-unlock', { volume: SFX_VOLUME });
