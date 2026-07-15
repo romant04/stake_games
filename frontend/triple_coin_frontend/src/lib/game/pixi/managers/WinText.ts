@@ -78,6 +78,41 @@ export class WinText {
     Ticker.shared.add(handler);
   }
 
+  showNotEnoughBalance(): void {
+    this.cancelAnimation();
+
+    this.text.text = 'Not enough balance';
+    const yOffset = Layout.getOrientation() === 'landscape' ? 140 : -120;
+    this.text.position.set(Layout.CX, Layout.CY + yOffset);
+    this.text.alpha = 0;
+    this.text.scale.set(0.5);
+
+    let elapsed = 0;
+
+    const handler = (ticker: Ticker) => {
+      elapsed += ticker.deltaMS;
+
+      if (elapsed < 400) {
+        const t = elapsed / 400;
+        this.text.alpha = t;
+        this.text.y = Layout.CY + yOffset - (1 - t) * 30;
+        this.text.scale.set(0.5 + t * 0.5);
+      } else if (elapsed < 700) {
+        this.text.alpha = 1;
+        this.text.scale.set(1);
+      } else if (elapsed < 1000) {
+        const t = (elapsed - 700) / 300;
+        this.text.alpha = 1 - t;
+      } else {
+        this.hide();
+        this.cancelAnimation();
+      }
+    };
+
+    this.activeHandler = handler;
+    Ticker.shared.add(handler);
+  }
+
   // ---------------------------------------------------------------------------
   // Private
   // ---------------------------------------------------------------------------

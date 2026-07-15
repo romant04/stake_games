@@ -129,6 +129,11 @@
       await endRound();
     }
 
+    if ($betAmount > $balance / API_MULTIPLIER) {
+      coinScene.notEnoughBalance();
+      return;
+    }
+
     isPlaying.set(true);
     coinScene.startSpin();
 

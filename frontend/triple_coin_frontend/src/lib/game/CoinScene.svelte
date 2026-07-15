@@ -295,6 +295,10 @@
     uiManager.spinButton.disable();
     chestManager.openAll();
   }
+
+  export function notEnoughBalance(): void {
+    winText.showNotEnoughBalance();
+  }
 </script>
 
 <div bind:this={wrapper} class="pixi-wrapper"></div>
