@@ -30,11 +30,12 @@
   import type { Replay } from './types/replay';
   import { startAutoplay } from './utils/startAutoplay';
   import { wait } from '$lib/game/pixi/utils/wait';
+  import loadingLogo from './assets/loading_logo.webp';
 
   const BONUS_GAME_THRESHOLD = 10;
 
   let coinScene: CoinScene;
-  let ready = $state(false);
+  let loading = $state(true);
 
   let chestsVisible = $state(false);
   let chestsOpening = $state(false);
@@ -183,49 +184,109 @@
     }
   }
 
-  onMount(async () => {
-    await document.fonts.ready;
-    ready = true;
+  let progress = $state(0);
+  onMount(() => {
+    const interval = setInterval(() => {
+      const max = loading ? 99 : 100;
 
-    if (isReplayMode()) {
-      const params = getReplayUrlParams();
-      // Get currency from URL params
-      const extraParams = new URLSearchParams(window.location.search);
-      const currencyFromParams = extraParams.get('currency') as Currency;
-      $betAmount = Number(extraParams.get('amount')) / API_MULTIPLIER;
-      currency.set(currencyFromParams ?? 'USD');
-      const r = (await replay({ ...params })) as Replay;
-      replayMode.set({ ...r, event: params.event });
-      return;
-    }
+      const increment = loading
+        ? progress < 50
+          ? Math.random() * 10
+          : progress < 80
+            ? Math.random() * 5
+            : progress < 95
+              ? Math.random() * 3
+              : Math.random() * 2
+        : 50; // Constant speed to 100%
 
-    // Initial Auth to get player data/balance
-    try {
-      const res = await authenticate();
-      roundActive.set(res.round?.active || false);
-      currency.set(res.balance?.currency as Currency);
-      balance.set(res.balance?.amount || 0);
-      const betLevels = [0.5, 1, 2, 5, 10, 20, 30, 40, 50]; // Desired bet levels
-      $allowedBets = res.config.betLevels
-        .map((level) => level / API_MULTIPLIER)
-        .filter(
-          (x) => betLevels.includes(x) || x > betLevels[betLevels.length - 1],
-        );
-    } catch (err) {
-      alert('Auth failed: ' + err);
-    }
+      progress = Math.min(progress + increment, max);
+
+      if (!loading && progress >= 100) {
+        clearInterval(interval);
+        // Hide loader here if needed
+      }
+    }, 100);
+
+    (async () => {
+      if (isReplayMode()) {
+        const params = getReplayUrlParams();
+
+        const extraParams = new URLSearchParams(window.location.search);
+        const currencyFromParams = extraParams.get('currency') as Currency;
+
+        $betAmount = Number(extraParams.get('amount')) / API_MULTIPLIER;
+        currency.set(currencyFromParams ?? 'USD');
+
+        const r = (await replay({ ...params })) as Replay;
+        replayMode.set({ ...r, event: params.event });
+
+        return;
+      }
+
+      try {
+        const res = await authenticate();
+
+        roundActive.set(res.round?.active || false);
+        currency.set(res.balance?.currency as Currency);
+        balance.set(res.balance?.amount || 0);
+
+        const betLevels = [0.5, 1, 2, 5, 10, 20, 30, 40, 50];
+
+        $allowedBets = res.config.betLevels
+          .map((level) => level / API_MULTIPLIER)
+          .filter(
+            (x) => betLevels.includes(x) || x > betLevels[betLevels.length - 1],
+          );
+      } catch (err) {
+        alert('Auth failed: ' + err);
+      }
+    })();
+
+    return () => {
+      clearInterval(interval);
+    };
   });
 </script>
 
 <div class="relative w-screen h-dvh overflow-hidden">
-  {#if ready}
-    <div class="absolute inset-0">
-      <CoinScene
-        bind:this={coinScene}
-        {handleSpin}
-        {handleReplay}
-        {resetAfterBonus}
-      />
+  {#if loading || progress < 100}
+    <div
+      class="absolute inset-0 flex flex-col gap-8 items-center justify-center bg-black bg-opacity-50 z-50"
+    >
+      <img src={loadingLogo} alt="" class="w-64 h-64" />
+      <div class="flex flex-col gap-4 items-center">
+        <div class="loader">
+          <div class="fill" style={`transform: scaleX(${progress / 100})`} />
+        </div>
+        <div class="text-sm uppercase text-gray-300">loading</div>
+      </div>
     </div>
   {/if}
+  <div class="absolute inset-0">
+    <CoinScene
+      bind:loading
+      bind:this={coinScene}
+      {handleReplay}
+      {handleSpin}
+      {resetAfterBonus}
+    />
+  </div>
 </div>
+
+<style>
+  .loader {
+    width: 400px;
+    height: 7px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .fill {
+    width: 100%;
+    height: 100%;
+    transform-origin: left;
+    transition: transform 120ms linear;
+    background: linear-gradient(90deg, #ffcc33, #ffd966, #ffcc33);
+  }
+</style>

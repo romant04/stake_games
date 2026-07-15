@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { Application, Container, Sprite } from 'pixi.js';
+  import { Application, Assets, Container, Sprite } from 'pixi.js';
   import {
     turboMode,
     bonusGameData,
@@ -14,7 +14,10 @@
   import { WinText } from '$lib/game/pixi/managers/WinText';
   import { fitStageToScreen } from '$lib/game/pixi/utils/fitStage';
   import type { CoinResult } from '$lib/game/pixi/objects/Coin';
-  import { loadAssets } from '$lib/game/pixi/utils/loadAssets';
+  import {
+    loadCoreAssets,
+    loadBonusAssets,
+  } from '$lib/game/pixi/utils/loadAssets';
   import { UIManager } from '$lib/game/pixi/managers/UIManager';
   import { getCurrencySymbol } from '$lib/game/utils/currencySymbols';
   import { AutoplayMenu } from '$lib/game/pixi/ui/AutoplayMenu';
@@ -33,10 +36,14 @@
     resetAfterBonus,
     handleSpin,
     handleReplay,
+    loading = $bindable(true),
+    bonusLoading = $bindable(true),
   }: {
     resetAfterBonus: () => void;
     handleSpin: () => Promise<void>;
     handleReplay: () => Promise<void>;
+    loading?: boolean;
+    bonusLoading?: boolean;
   } = $props();
 
   // ---------------------------------------------------------------------------
@@ -46,15 +53,23 @@
   let wrapper: HTMLDivElement;
   let coinManager: CoinManager;
   let uiManager: UIManager;
-  let chestManager: ChestManager;
+  // ChestManager and WinScreen both need bonus-only textures (chest1/2/3, win)
+  // that assets.win/chest* only get once loadBonusAssets() resolves — see
+  // loadBonusAssets().then(...) below. Neither exists until then.
+  let chestManager: ChestManager | undefined;
+  let winScreen: WinScreen | undefined;
   let winText: WinText;
   let autoplayMenu: AutoplayMenu;
   let uiGradient: UiGradient;
 
+  // Populated in two steps: core fields first, chest1/chest2/chest3/win merged in later.
+  // Cast is safe because every consumer of the bonus-only fields waits on bonusAssetsReady.
   let assets: GameAssets;
   let overlay: Container;
 
-  let winScreen: WinScreen;
+  // Resolves once bonus assets are loaded AND chestManager has been constructed.
+  // showChests() awaits this so it never touches chestManager before it exists.
+  let bonusAssetsReady: Promise<void>;
 
   // ---------------------------------------------------------------------------
   // Mount
@@ -65,20 +80,27 @@
 
     (async () => {
       // -- App ------------------------------------------------------------------
-      await document.fonts.load('700 28px Merriweather');
-      await document.fonts.load('700 24px Merriweather');
-      await document.fonts.load('700 20px Merriweather');
+      await Assets.load({
+        alias: 'Merriweather',
+        src: 'https://fonts.gstatic.com/s/merriweather/v30/u-4n0qyriQwlOrhSvowK_l52xwNZWMf6hPvhPQ.woff2', // Direct woff2 link
+        data: {
+          family: 'Merriweather',
+        },
+      });
 
       const app = new Application();
       await app.init({
-        antialias: true,
+        antialias: false,
         backgroundAlpha: 0,
         autoDensity: true,
         resolution: window.devicePixelRatio,
       });
       wrapper.appendChild(app.canvas);
+      app.stage.sortableChildren = true;
 
-      assets = await loadAssets();
+      // Only what's needed to render the scene and take the first spin.
+      // Bonus (chest/win) assets stream in separately, below.
+      assets = (await loadCoreAssets()) as GameAssets;
       sound.volumeAll = 1.5;
       sound.play('background', { loop: true, volume: 1 });
 
@@ -87,14 +109,19 @@
       const UILayer = new Container();
       overlay = new Container();
 
+      // Explicit zIndex so stacking order is correct regardless of when each
+      // layer/container is actually added to the stage (chestManager and
+      // winScreen get added later, asynchronously, once bonus assets arrive).
+      backgroundLayer.zIndex = 0;
+      gameLayer.zIndex = 1;
+      // chestManager.container gets zIndex 2 when it's created, below
+      UILayer.zIndex = 3;
+      overlay.zIndex = 4;
+
       app.stage.addChild(backgroundLayer);
       app.stage.addChild(gameLayer);
-
-      chestManager = new ChestManager(assets, app.ticker, resetAfterBonus);
-      chestManager.create();
-      app.stage.addChild(chestManager.container);
-
       app.stage.addChild(UILayer);
+
       uiGradient = new UiGradient();
       UILayer.addChild(uiGradient.container);
 
@@ -137,11 +164,10 @@
       overlay.addChild(autoplayMenu.container);
       const infoOverlay = new InfoOverlay(assets);
       overlay.addChild(infoOverlay.container);
-      winScreen = new WinScreen(assets, app.ticker, 0);
-      overlay.addChild(winScreen.container);
+      // winScreen is constructed later, once bonus assets (assets.win) arrive —
+      // see the loadBonusAssets().then(...) block below.
 
       // -- Turbo store subscription ---------------------------------------------
-      // Subscribe once and push the value into managers — no per-frame store reads
       const unsubTurbo = turboMode.subscribe((val) => {
         coinManager?.setTurbo(val);
       });
@@ -159,10 +185,10 @@
           app,
           orientation,
           background,
-          chestManager.fog,
+          chestManager?.fog, // undefined until bonus assets arrive — fitStageToScreen must tolerate this
           autoplayMenu,
           infoOverlay,
-          winScreen,
+          winScreen, // also undefined until bonus assets arrive — same requirement
           uiGradient,
         );
 
@@ -177,8 +203,8 @@
           uiManager.onOrientationChange(orientation);
           coinManager.onOrientationChange(orientation);
           infoOverlay.onOrientationChange(orientation);
-          chestManager.onOrientationChange();
-          winScreen.onOrientationChange(orientation);
+          chestManager?.onOrientationChange();
+          winScreen?.onOrientationChange(orientation);
           autoplayMenu.onOrientationChange(orientation);
         }
       };
@@ -186,7 +212,29 @@
       const ro = new ResizeObserver(resize);
       ro.observe(wrapper);
       window.addEventListener('resize', resize);
-      resize();
+      resize(); // scene is playable now — first spin doesn't depend on bonus assets
+      loading = false;
+
+      // -- Stream in bonus-only assets in the background -------------------------
+      // Fires immediately after core assets resolve, but isn't awaited here, so
+      // it never blocks the first render or the first spin.
+      bonusAssetsReady = loadBonusAssets().then((bonus) => {
+        Object.assign(assets, bonus);
+
+        chestManager = new ChestManager(assets, app.ticker, resetAfterBonus);
+        chestManager.create();
+        chestManager.container.zIndex = 2; // sits between gameLayer(1) and UILayer(3)
+        app.stage.addChild(chestManager.container);
+        chestManager.onOrientationChange();
+
+        // WinScreen also needs assets.win (bonus-only), so it's built here too.
+        winScreen = new WinScreen(assets, app.ticker, 0);
+        overlay.addChild(winScreen.container); // overlay already has zIndex 4
+        winScreen.onOrientationChange(activeOrientation);
+
+        resize(); // re-run once so fog/chest/win layout gets sized correctly
+        bonusLoading = false;
+      });
 
       // -- Cleanup --------------------------------------------------------------
       cleanup = () => {
@@ -194,7 +242,7 @@
         ro.disconnect();
         window.removeEventListener('resize', resize);
         coinManager.destroy();
-        chestManager.destroy();
+        chestManager?.destroy();
         app.destroy(true);
       };
     })();
@@ -261,31 +309,39 @@
   }
 
   export async function showChests(): Promise<void> {
+    // Guarantees chestManager exists even if a player somehow reaches a bonus
+    // round before bonus assets finish streaming in. In practice this resolves
+    // instantly, since it starts loading right after core assets and a player
+    // needs at least one spin (plus payout resolution) before triggering bonus.
+    await bonusAssetsReady;
+
     uiManager.spinButton.disable();
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
     sound.volume('background', 0.3);
     sound.play('background-bonus', { volume: 1, loop: true });
     await coinManager.hide();
     await uiManager.showBonusGameUI();
-    await chestManager.showFog();
-    chestManager.show2();
-    await chestManager.show($bonusGameData?.payout ?? 0);
+    await chestManager!.showFog();
+    chestManager!.show2();
+    await chestManager!.show($bonusGameData?.payout ?? 0);
     uiManager.spinButton.enable();
     uiManager.updateSpinButtonText(true);
   }
 
   export async function hideChests(): Promise<void> {
+    await bonusAssetsReady; // guarantees winScreen/chestManager exist
+
     uiManager.spinButton.disable();
-    winScreen.setWinLabel($bonusGameData?.payout ?? 0);
+    winScreen!.setWinLabel($bonusGameData?.payout ?? 0);
     await new Promise<void>((resolve) => setTimeout(resolve, 1000));
-    void winScreen.show();
+    void winScreen!.show();
     await new Promise<void>((resolve) => setTimeout(resolve, 2500));
-    await winScreen.hide();
-    await chestManager.hide();
+    await winScreen!.hide();
+    await chestManager!.hide();
     sound.stop('background-bonus');
     sound.volume('background', 1);
     await uiManager.hideBonusGameUI();
-    await chestManager.hideFog();
+    await chestManager!.hideFog();
     await coinManager.show();
     uiManager.updateSpinButtonText(false);
     uiManager.spinButton.enable();
@@ -293,7 +349,7 @@
 
   export function openChests(): void {
     uiManager.spinButton.disable();
-    chestManager.openAll();
+    chestManager!.openAll();
   }
 
   export function notEnoughBalance(): void {

@@ -47,5 +47,5 @@ export const CHEST_APPEAR_FRAMES = 20;
 
 export const MAX_HISTORY = 5;
 
-export const SFX_VOLUME = 0.85;
+export const SFX_VOLUME = 0.3;
 export const BGMUSIC_VOLUME = 1;

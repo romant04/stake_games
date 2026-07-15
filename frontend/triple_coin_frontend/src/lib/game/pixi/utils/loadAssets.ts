@@ -1,21 +1,22 @@
 import type { GameAssets } from '../../../../types/assets';
 import { Assets } from 'pixi.js';
+import { sound } from '@pixi/sound';
 
 // ---------------------------------------------------------------------------
 // Asset imports
 // ---------------------------------------------------------------------------
 
-import bgSrc from '../../../../assets/bg.png';
-import bgMobileSrc from '../../../../assets/bg_mobile.png';
+import bgSrc from '../../../../assets/bg.webp';
+import bgMobileSrc from '../../../../assets/bg_mobile.webp';
 import sideSrc from '../../../../assets/game/side.png';
-import coinsBgSrc from '../../../../assets/game/coins_bg.png';
-import logoSrc from '../../../../assets/logo.png';
-import winTableSrc from '../../../../assets/win_table.png';
+import coinsBgSrc from '../../../../assets/game/coins_bg.webp';
+import logoSrc from '../../../../assets/logo.webp';
+import winTableSrc from '../../../../assets/win_table.webp';
 import spinSrc from '../../../../assets/ui/spin.png';
 import spinHoverSrc from '../../../../assets/ui/spin_hover.png';
 import spinDisabledSrc from '../../../../assets/ui/spin_disabled.png';
 import spinTextSrc from '../../../../assets/ui/spin_text.png';
-import gameRulesSrc from '../../../../assets/info_headline.png';
+import gameRulesSrc from '../../../../assets/info_headline.webp';
 
 import frontSrcUI from '../../../../assets/ui/front.png';
 import sideSrcUI from '../../../../assets/ui/side.png';
@@ -54,7 +55,7 @@ import pauseSrc from '../../../../assets/icons/pause.png';
 
 import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
 import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
-import fogSrc from '../../../../assets/game/bonus/fog.png';
+import fogSrc from '../../../../assets/game/bonus/fog.webp';
 import pedestalSrc from '../../../../assets/game/bonus/pedestal.png';
 import openAllSrc from '../../../../assets/game/bonus/open_all.png';
 
@@ -69,13 +70,15 @@ import appearSoundSrc from '../../../../assets/sounds/bonus/appear.mp3';
 import revealSoundSrc from '../../../../assets/sounds/bonus/reveal.mp3';
 import bonusWinSoundSrc from '../../../../assets/sounds/bonus/bonus_win.mp3';
 
-import { sound } from '@pixi/sound';
+// ---------------------------------------------------------------------------
+// Glob-loaded sequences
+// NOTE: these are still `eager: true` so Vite resolves the URLs at build time
+// (cheap, no network cost) — actual fetching happens later via Assets.load().
+// ---------------------------------------------------------------------------
+
 const frontModules = import.meta.glob(
   '../../../../assets/game/front/front_*.png',
-  {
-    eager: true,
-    import: 'default',
-  },
+  { eager: true, import: 'default' },
 );
 const frontModulesFlopped = import.meta.glob(
   '../../../../assets/game/front/mirrored/front_*.png',
@@ -83,10 +86,7 @@ const frontModulesFlopped = import.meta.glob(
 );
 const backModules = import.meta.glob(
   '../../../../assets/game/back/back_*.png',
-  {
-    eager: true,
-    import: 'default',
-  },
+  { eager: true, import: 'default' },
 );
 const backModulesFlopped = import.meta.glob(
   '../../../../assets/game/back/mirrored/back_*.png',
@@ -104,184 +104,177 @@ const chest3OpenedModules = import.meta.glob(
   '../../../../assets/game/bonus/chest_3/*.png',
   { eager: true, import: 'default' },
 );
-const win = import.meta.glob('../../../../assets/game/bonus/win_screen/*.png', {
-  eager: true,
-  import: 'default',
-});
+const winModules = import.meta.glob(
+  '../../../../assets/game/bonus/win_screen/*.png',
+  { eager: true, import: 'default' },
+);
 
 const sortedEntries = (modules: Record<string, unknown>) =>
   Object.entries(modules)
     .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
     .map(([, src]) => src as string);
 
+// Needed for the very first spin
 const frontImages = sortedEntries(frontModules);
 const frontImagesFlopped = sortedEntries(frontModulesFlopped);
 const backImages = sortedEntries(backModules);
 const backImagesFlopped = sortedEntries(backModulesFlopped);
 
+// Only needed once a bonus round is actually triggered
 const chest1Images = sortedEntries(chest1OpenedModules);
 const chest2Images = sortedEntries(chest2OpenedModules);
 const chest3Images = sortedEntries(chest3OpenedModules);
-const winImages = sortedEntries(win);
+const winImages = sortedEntries(winModules);
+
+// ---------------------------------------------------------------------------
+// Sound helper
+// ---------------------------------------------------------------------------
 
 const soundsLoaded = new Set<string>();
 function addSound(alias: string, src: any) {
   if (soundsLoaded.has(alias)) return;
   if (sound.exists(alias)) return;
-
   sound.add(alias, src);
   soundsLoaded.add(alias);
 }
 
-// utils/loadAssets.ts
-export async function loadAssets(): Promise<GameAssets> {
+// ---------------------------------------------------------------------------
+// Core assets: everything required to render the scene and take a first spin.
+// Nothing bonus-round-specific lives here.
+// ---------------------------------------------------------------------------
+
+type CoreAssets = Omit<GameAssets, 'chest1' | 'chest2' | 'chest3' | 'win'>;
+
+export async function loadCoreAssets(): Promise<CoreAssets> {
   const [
-    bg,
-    bgMobile,
-    coinsBg,
-    coinSide,
-    logo,
-    winTable,
-    spin,
-    spinHover,
-    spinDisabled,
-    spinText,
-    front,
-    side,
-    back,
-    toggle,
-    toggleHover,
-    toggleDisabled,
-    toggleActive,
-    toggleActiveHover,
-    bolt,
-    boltFilled,
-    button,
-    buttonHover,
-    buttonDisabled,
-    plus,
-    minus,
-    hamburger,
-    autospinModalBg,
-    close,
-    checkbox,
-    checkboxHover,
-    checkboxActive,
-    checkboxActiveHover,
-    selectionButton,
-    selectionButtonHover,
-    selectionButtonActive,
-    selectionButtonActiveHover,
-    startAutospin,
-    startAutospinHover,
-    bonusHeadline,
-    chestLabel,
-    fog,
-    pedestal,
-    openAll,
-    empty,
-    gameRules,
-    spinSound,
-    clickSound,
-    primaryClickSound,
-    winSound,
-    bonusSoundUnlock,
-    backgroundSound,
-    backgroundBonusSound,
-    appearSound,
-    revealSound,
-    bonusWinSound,
-    autospin,
-    pause,
+    [
+      bg,
+      bgMobile,
+      coinsBg,
+      coinSide,
+      logo,
+      winTable,
+      spin,
+      spinHover,
+      spinDisabled,
+      spinText,
+      front,
+      side,
+      back,
+      toggle,
+      toggleHover,
+      toggleDisabled,
+      toggleActive,
+      toggleActiveHover,
+      bolt,
+      boltFilled,
+      button,
+      buttonHover,
+      buttonDisabled,
+      plus,
+      minus,
+      hamburger,
+      autospinModalBg,
+      close,
+      checkbox,
+      checkboxHover,
+      checkboxActive,
+      checkboxActiveHover,
+      selectionButton,
+      selectionButtonHover,
+      selectionButtonActive,
+      selectionButtonActiveHover,
+      startAutospin,
+      startAutospinHover,
+      bonusHeadline,
+      chestLabel,
+      fog,
+      pedestal,
+      openAll,
+      empty,
+      gameRules,
+      spinSound,
+      clickSound,
+      primaryClickSound,
+      winSound,
+      bonusSoundUnlock,
+      backgroundSound,
+      autospin,
+      pause,
+    ],
+    [coinFront, coinFrontFlopped, coinBack, coinBackFlopped],
   ] = await Promise.all([
-    Assets.load(bgSrc),
-    Assets.load(bgMobileSrc),
-    Assets.load(coinsBgSrc),
-    Assets.load(sideSrc),
-    Assets.load(logoSrc),
-    Assets.load(winTableSrc),
-    Assets.load(spinSrc),
-    Assets.load(spinHoverSrc),
-    Assets.load(spinDisabledSrc),
-    Assets.load(spinTextSrc),
-    Assets.load(frontSrcUI),
-    Assets.load(sideSrcUI),
-    Assets.load(backSrcUI),
-    Assets.load(toggleSrc),
-    Assets.load(toggleHoverSrc),
-    Assets.load(toggleDisabledSrc),
-    Assets.load(toggleActiveSrc),
-    Assets.load(toggleActiveHoverSrc),
-    Assets.load(boltSrc),
-    Assets.load(boltFilledSrc),
-    Assets.load(buttonSrc),
-    Assets.load(buttonHoverSrc),
-    Assets.load(buttonDisabledSrc),
-    Assets.load(plusSrc),
-    Assets.load(minusSrc),
-    Assets.load(hamburgerSrc),
-    Assets.load(autospinModalBgSrc),
-    Assets.load(closeSrc),
-    Assets.load(checkboxSrc),
-    Assets.load(checkboxHoverSrc),
-    Assets.load(checkboxActiveSrc),
-    Assets.load(checkboxActiveHoverSrc),
-    Assets.load(selectionButtonSrc),
-    Assets.load(selectionButtonHoverSrc),
-    Assets.load(selectionButtonActiveSrc),
-    Assets.load(selectionButtonActiveHoverSrc),
-    Assets.load(startAutospinSrc),
-    Assets.load(startAutospinHoverSrc),
-    Assets.load(bonusHeadlineSrc),
-    Assets.load(chestLabelSrc),
-    Assets.load(fogSrc),
-    Assets.load(pedestalSrc),
-    Assets.load(openAllSrc),
-    Assets.load(emptySrc),
-    Assets.load(gameRulesSrc),
-    Assets.load(spinSoundSrc),
-    Assets.load(clickSoundSrc),
-    Assets.load(primaryClickSoundSrc),
-    Assets.load(winSoundSrc),
-    Assets.load(bonusSoundUnlockSrc),
-    Assets.load(backgroundSoundSrc),
-    Assets.load(backgroundBonusSoundSrc),
-    Assets.load(appearSoundSrc),
-    Assets.load(revealSoundSrc),
-    Assets.load(bonusWinSoundSrc),
-    Assets.load(autospinSrc),
-    Assets.load(pauseSrc),
+    // Batch 1: single-file UI/background/icon assets
+    Promise.all([
+      Assets.load(bgSrc),
+      Assets.load(bgMobileSrc),
+      Assets.load(coinsBgSrc),
+      Assets.load(sideSrc),
+      Assets.load(logoSrc),
+      Assets.load(winTableSrc),
+      Assets.load(spinSrc),
+      Assets.load(spinHoverSrc),
+      Assets.load(spinDisabledSrc),
+      Assets.load(spinTextSrc),
+      Assets.load(frontSrcUI),
+      Assets.load(sideSrcUI),
+      Assets.load(backSrcUI),
+      Assets.load(toggleSrc),
+      Assets.load(toggleHoverSrc),
+      Assets.load(toggleDisabledSrc),
+      Assets.load(toggleActiveSrc),
+      Assets.load(toggleActiveHoverSrc),
+      Assets.load(boltSrc),
+      Assets.load(boltFilledSrc),
+      Assets.load(buttonSrc),
+      Assets.load(buttonHoverSrc),
+      Assets.load(buttonDisabledSrc),
+      Assets.load(plusSrc),
+      Assets.load(minusSrc),
+      Assets.load(hamburgerSrc),
+      Assets.load(autospinModalBgSrc),
+      Assets.load(closeSrc),
+      Assets.load(checkboxSrc),
+      Assets.load(checkboxHoverSrc),
+      Assets.load(checkboxActiveSrc),
+      Assets.load(checkboxActiveHoverSrc),
+      Assets.load(selectionButtonSrc),
+      Assets.load(selectionButtonHoverSrc),
+      Assets.load(selectionButtonActiveSrc),
+      Assets.load(selectionButtonActiveHoverSrc),
+      Assets.load(startAutospinSrc),
+      Assets.load(startAutospinHoverSrc),
+      Assets.load(bonusHeadlineSrc),
+      Assets.load(chestLabelSrc),
+      Assets.load(fogSrc),
+      Assets.load(pedestalSrc),
+      Assets.load(openAllSrc),
+      Assets.load(emptySrc),
+      Assets.load(gameRulesSrc),
+      Assets.load(spinSoundSrc),
+      Assets.load(clickSoundSrc),
+      Assets.load(primaryClickSoundSrc),
+      Assets.load(winSoundSrc),
+      Assets.load(bonusSoundUnlockSrc),
+      Assets.load(backgroundSoundSrc),
+      Assets.load(autospinSrc),
+      Assets.load(pauseSrc),
+    ]),
+    // Batch 2: coin face sequences, running concurrently with batch 1
+    Promise.all([
+      Promise.all(frontImages.map((s) => Assets.load(s))),
+      Promise.all(frontImagesFlopped.map((s) => Assets.load(s))),
+      Promise.all(backImages.map((s) => Assets.load(s))),
+      Promise.all(backImagesFlopped.map((s) => Assets.load(s))),
+    ]),
   ]);
+
   addSound('spin', spinSound);
   addSound('click', clickSound);
   addSound('primary-click', primaryClickSound);
   addSound('win', winSound);
   addSound('bonus-unlock', bonusSoundUnlock);
   addSound('background', backgroundSound);
-  addSound('background-bonus', backgroundBonusSound);
-  addSound('appear', appearSound);
-  addSound('reveal', revealSound);
-  addSound('bonus-win', bonusWinSound);
-
-  const [
-    coinFront,
-    coinFrontFlopped,
-    coinBack,
-    coinBackFlopped,
-    chest1,
-    chest2,
-    chest3,
-    win,
-  ] = await Promise.all([
-    Promise.all(frontImages.map((s) => Assets.load(s))),
-    Promise.all(frontImagesFlopped.map((s) => Assets.load(s))),
-    Promise.all(backImages.map((s) => Assets.load(s))),
-    Promise.all(backImagesFlopped.map((s) => Assets.load(s))),
-    Promise.all(chest1Images.map((s) => Assets.load(s))),
-    Promise.all(chest2Images.map((s) => Assets.load(s))),
-    Promise.all(chest3Images.map((s) => Assets.load(s))),
-    Promise.all(winImages.map((s) => Assets.load(s))),
-  ]);
 
   return {
     bg,
@@ -333,11 +326,61 @@ export async function loadAssets(): Promise<GameAssets> {
     openAll,
     empty,
     gameRules,
+    autospin,
+    pause,
+  } as CoreAssets;
+}
+
+// ---------------------------------------------------------------------------
+// Bonus assets: chest/win image sequences + bonus-only audio.
+// Call this right after loadCoreAssets() resolves (fire-and-forget, so it
+// streams in while the player takes their first spin), or lazily the first
+// time a bonus round is triggered if you'd rather not spend the bandwidth
+// on players who never hit bonus.
+// ---------------------------------------------------------------------------
+
+type BonusAssets = Pick<GameAssets, 'chest1' | 'chest2' | 'chest3' | 'win'>;
+
+export async function loadBonusAssets(): Promise<BonusAssets> {
+  const [
+    [backgroundBonusSound, appearSound, revealSound, bonusWinSound],
     chest1,
     chest2,
     chest3,
     win,
-    autospin,
-    pause,
-  };
+  ] = await Promise.all([
+    Promise.all([
+      Assets.load(backgroundBonusSoundSrc),
+      Assets.load(appearSoundSrc),
+      Assets.load(revealSoundSrc),
+      Assets.load(bonusWinSoundSrc),
+    ]),
+    Promise.all(chest1Images.map((s) => Assets.load(s))),
+    Promise.all(chest2Images.map((s) => Assets.load(s))),
+    Promise.all(chest3Images.map((s) => Assets.load(s))),
+    Promise.all(winImages.map((s) => Assets.load(s))),
+  ]);
+
+  addSound('background-bonus', backgroundBonusSound);
+  addSound('appear', appearSound);
+  addSound('reveal', revealSound);
+  addSound('bonus-win', bonusWinSound);
+
+  return { chest1, chest2, chest3, win };
+}
+
+// ---------------------------------------------------------------------------
+// Backward-compatible entry point: runs core + bonus in parallel and merges
+// the result, matching the original loadAssets() signature. Existing callers
+// don't need to change anything, but see the note above if you want the
+// bigger win of not blocking on bonus assets at all.
+// ---------------------------------------------------------------------------
+
+export async function loadAssets(): Promise<GameAssets> {
+  const [core, bonus] = await Promise.all([
+    loadCoreAssets(),
+    loadBonusAssets(),
+  ]);
+
+  return { ...core, ...bonus } as GameAssets;
 }
