@@ -220,7 +220,6 @@
       loop: true,
       speed: get(turboMode) ? 1 : 0.75,
     });
-    uiManager.spinButton.disable();
     uiManager.turboModeButton.disable();
     uiManager.balance.updateBalance();
     await coinManager.spin(results as CoinResult[]);
@@ -229,16 +228,13 @@
       sound.play('win', { volume: SFX_VOLUME });
     }
 
-    if (!get(bonusGameData) && !get(activeAutoplay)) {
-      uiManager.spinButton.enable();
-    }
-
-    uiManager.turboModeButton.enable();
     sound.stop('spin');
 
     if (results.filter((r) => r === 'S').length >= 3) {
       sound.play('bonus-unlock', { volume: SFX_VOLUME });
     }
+
+    uiManager.turboModeButton.enable();
   }
   export function rerenderHistory() {
     uiManager.gameHistory.update();

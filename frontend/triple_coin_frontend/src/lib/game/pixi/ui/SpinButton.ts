@@ -1,7 +1,7 @@
 import { Container, Sprite } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
-import { replayMode } from '../../../stores/game';
-import { get } from 'svelte/store';
+import { isPlaying, replayMode } from '../../../stores/game';
+import { get, type Unsubscriber } from 'svelte/store';
 import { sound } from '@pixi/sound';
 import { SFX_VOLUME } from '../constants/game';
 
@@ -11,6 +11,8 @@ export class SpinButton {
   public button: Container;
   public readonly text: Sprite;
   private readonly bg: Sprite;
+
+  private unsubscribePlaying: Unsubscriber;
 
   public constructor(
     private readonly assets: GameAssets,
@@ -35,6 +37,14 @@ export class SpinButton {
     this.button.addChild(this.bg, this.text);
     this.container.addChild(this.button);
 
+    this.unsubscribePlaying = isPlaying.subscribe((playing) => {
+      if (playing) {
+        this.disable();
+      } else {
+        this.enable();
+      }
+    });
+
     this.button.on('pointerdown', () => {
       this.button.scale.set(0.95);
     });
@@ -55,6 +65,7 @@ export class SpinButton {
 
   public press() {
     sound.play('primary-click', { volume: SFX_VOLUME });
+    console.log('Spin button pressed. Is playing:', get(isPlaying));
     if (get(replayMode)) {
       void this.handleReplay();
     } else {
@@ -71,5 +82,11 @@ export class SpinButton {
     this.button.eventMode = 'static';
     this.bg.texture = this.assets.spin;
     this.text.alpha = 1;
+  }
+
+  public destroy() {
+    this.unsubscribePlaying();
+    this.button.removeAllListeners();
+    this.container.destroy({ children: true });
   }
 }
