@@ -12,6 +12,7 @@
     lastWin,
     replayMode,
     roundActive,
+    turboMode,
   } from '$lib/stores/game';
   import { allowedBets } from '$lib/stores/game';
   import { API_MULTIPLIER } from './constants/api';
@@ -28,6 +29,7 @@
   import type { Currency } from 'stake-engine';
   import type { Replay } from './types/replay';
   import { startAutoplay } from './utils/startAutoplay';
+  import { wait } from '$lib/game/pixi/utils/wait';
 
   const BONUS_GAME_THRESHOLD = 10;
 
@@ -66,6 +68,7 @@
     try {
       const results = $replayMode?.state[0].coins.map((x) => x.side);
       const payout = $replayMode?.payoutMultiplier * $betAmount;
+      await wait($turboMode ? 500 : 1000);
       await coinScene.stopSpin(
         results,
         payout,
@@ -130,10 +133,13 @@
     coinScene.startSpin();
 
     try {
-      const res = await play({
-        amount: $betAmount,
-        mode: 'base',
-      });
+      const [res] = await Promise.all([
+        play({
+          amount: $betAmount,
+          mode: 'base',
+        }),
+        wait($turboMode ? 400 : 800),
+      ]);
       balance.set(res.balance?.amount);
       const state = res.round.state as PlayResponseState;
 
