@@ -20,11 +20,11 @@
   import { AutoplayMenu } from '$lib/game/pixi/ui/AutoplayMenu';
   import { get } from 'svelte/store';
   import { InfoOverlay } from '$lib/game/pixi/ui/InfoOverlay';
-  import { Layout } from '$lib/game/pixi/constants/layout';
   import type { GameAssets } from '../../types/assets';
   import { WinScreen } from '$lib/game/pixi/ui/WinScreen';
   import { sound } from '@pixi/sound';
   import { SFX_VOLUME } from '$lib/game/pixi/constants/game';
+  import { UiGradient } from '$lib/game/pixi/ui/UiGradient';
 
   // ---------------------------------------------------------------------------
   // Props
@@ -48,6 +48,8 @@
   let uiManager: UIManager;
   let chestManager: ChestManager;
   let winText: WinText;
+  let autoplayMenu: AutoplayMenu;
+  let uiGradient: UiGradient;
 
   let assets: GameAssets;
   let overlay: Container;
@@ -93,6 +95,8 @@
       app.stage.addChild(chestManager.container);
 
       app.stage.addChild(UILayer);
+      uiGradient = new UiGradient();
+      UILayer.addChild(uiGradient.container);
 
       // -- Managers -------------------------------------------------------------
       uiManager = new UIManager(
@@ -124,7 +128,7 @@
       background.height = 1080;
       backgroundLayer.addChild(background);
 
-      const autoplayMenu = new AutoplayMenu(
+      autoplayMenu = new AutoplayMenu(
         assets,
         handleSpin,
         resetAfterAutospins,
@@ -159,6 +163,7 @@
           autoplayMenu,
           infoOverlay,
           winScreen,
+          uiGradient,
         );
 
         if (orientation === 'landscape') {
@@ -174,6 +179,7 @@
           infoOverlay.onOrientationChange(orientation);
           chestManager.onOrientationChange();
           winScreen.onOrientationChange(orientation);
+          autoplayMenu.onOrientationChange(orientation);
         }
       };
 

@@ -44,6 +44,8 @@ export interface GameAssets {
   minus: Texture;
   hamburger: Texture;
   close: Texture;
+  autospin: Texture;
+  pause: Texture;
 
   // Button
   button: Texture;

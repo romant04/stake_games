@@ -49,6 +49,8 @@ import plusSrc from '../../../../assets/icons/plus.png';
 import minusSrc from '../../../../assets/icons/minus.png';
 import hamburgerSrc from '../../../../assets/icons/hamburger.png';
 import closeSrc from '../../../../assets/icons/close.png';
+import autospinSrc from '../../../../assets/icons/autospin.png';
+import pauseSrc from '../../../../assets/icons/pause.png';
 
 import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
 import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
@@ -189,6 +191,8 @@ export async function loadAssets(): Promise<GameAssets> {
     appearSound,
     revealSound,
     bonusWinSound,
+    autospin,
+    pause,
   ] = await Promise.all([
     Assets.load(bgSrc),
     Assets.load(bgMobileSrc),
@@ -245,6 +249,8 @@ export async function loadAssets(): Promise<GameAssets> {
     Assets.load(appearSoundSrc),
     Assets.load(revealSoundSrc),
     Assets.load(bonusWinSoundSrc),
+    Assets.load(autospinSrc),
+    Assets.load(pauseSrc),
   ]);
   addSound('spin', spinSound);
   addSound('click', clickSound);
@@ -331,5 +337,7 @@ export async function loadAssets(): Promise<GameAssets> {
     chest2,
     chest3,
     win,
+    autospin,
+    pause,
   };
 }

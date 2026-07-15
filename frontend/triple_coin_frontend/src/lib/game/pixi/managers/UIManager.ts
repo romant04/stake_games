@@ -1,4 +1,12 @@
-import { Container, Sprite, type Ticker } from 'pixi.js';
+import {
+  BlurFilter,
+  Container,
+  FillGradient,
+  Graphics,
+  Sprite,
+  Texture,
+  type Ticker,
+} from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 import { GameHistory } from '../ui/GameHistory';
 import { SpinButton } from '../ui/SpinButton';
@@ -71,7 +79,7 @@ export class UIManager {
 
     this.autospinButton = new AutospinButton(
       assets,
-      assets.hamburger,
+      assets.autospin,
       'AUTOSPIN',
       () => {
         this.showAutoplayMenu();
@@ -84,7 +92,7 @@ export class UIManager {
     this.container.addChild(this.autospinButton.container);
     this.stopAutospinButton = new AutospinButton(
       assets,
-      assets.close,
+      assets.pause,
       'STOP AUTOSPIN',
       () => {
         autoplayShouldStop.set(true);
@@ -184,37 +192,33 @@ export class UIManager {
   private rerenderToPortrait() {
     this.spinButton.container.position.set(
       Layout.CX,
-      Layout.VIRTUAL_HEIGHT * 0.9,
+      Layout.VIRTUAL_HEIGHT * 0.875,
     );
     this.balance.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.275,
-      Layout.VIRTUAL_HEIGHT * 0.96,
+      Layout.VIRTUAL_WIDTH * 0.2,
+      Layout.VIRTUAL_HEIGHT * 0.95,
     );
     this.lastWin.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.725,
-      Layout.VIRTUAL_HEIGHT * 0.96,
+      Layout.VIRTUAL_WIDTH * 0.785,
+      Layout.VIRTUAL_HEIGHT * 0.95,
     );
     this.turboModeButton.container.position.set(
       Layout.VIRTUAL_WIDTH * 0.95,
-      Layout.VIRTUAL_HEIGHT * 0.96,
+      Layout.VIRTUAL_HEIGHT * 0.95,
     );
     this.burgerMenu.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.045,
-      Layout.VIRTUAL_HEIGHT * 0.96,
+      Layout.VIRTUAL_WIDTH * 0.05,
+      Layout.VIRTUAL_HEIGHT * 0.95,
     );
     this.betSelector.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.158,
-      Layout.VIRTUAL_HEIGHT * 0.9,
+      Layout.CX,
+      Layout.VIRTUAL_HEIGHT * 0.95,
     );
 
-    this.stopAutospinButton.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.85,
-      Layout.VIRTUAL_HEIGHT * 0.9,
-    );
-    this.autospinButton.container.position.set(
-      Layout.VIRTUAL_WIDTH * 0.85,
-      Layout.VIRTUAL_HEIGHT * 0.9,
-    );
+    const autospinX = Layout.VIRTUAL_WIDTH * 0.85;
+    const autospinY = Layout.VIRTUAL_HEIGHT * 0.875;
+    this.stopAutospinButton.container.position.set(autospinX, autospinY);
+    this.autospinButton.container.position.set(autospinX, autospinY);
 
     this.gameHistory.container.position.set(
       Layout.VIRTUAL_WIDTH * 0.04,

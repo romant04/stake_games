@@ -12,6 +12,7 @@ export class AutoplayMenu {
   readonly container: Container;
 
   public dimBackground: Sprite;
+  private menuContainer: Container;
 
   public constructor(
     private readonly assets: GameAssets,
@@ -40,15 +41,15 @@ export class AutoplayMenu {
     overlay.addChild(this.dimBackground);
     this.container.addChild(overlay);
 
-    const menuContainer = new Container();
-    menuContainer.position.set(Layout.CX, Layout.CY);
-    this.container.addChild(menuContainer);
+    this.menuContainer = new Container();
+    this.menuContainer.position.set(Layout.CX, Layout.CY);
+    this.container.addChild(this.menuContainer);
 
     const menuBackground = new Sprite(assets.autospinModalBg);
     menuBackground.anchor.set(0.5);
     menuBackground.width = 1000;
     menuBackground.height = 684;
-    menuContainer.addChild(menuBackground);
+    this.menuContainer.addChild(menuBackground);
 
     const headline = new Text({
       text: 'AUTOSPIN SETTINGS',
@@ -66,25 +67,25 @@ export class AutoplayMenu {
     });
     headline.anchor.set(0.5);
     headline.position.set(0, -235);
-    menuContainer.addChild(headline);
+    this.menuContainer.addChild(headline);
 
     const closeButton = new SmallButton(assets, assets.close, () => {
       this.hide();
     });
     closeButton.container.position.set(465, -215);
-    menuContainer.addChild(closeButton.container);
+    this.menuContainer.addChild(closeButton.container);
 
     const turboSpinCheckbox = new Checkbox(assets, 'TURBO SPIN');
     turboSpinCheckbox.container.position.set(-280, -100);
-    menuContainer.addChild(turboSpinCheckbox.container);
+    this.menuContainer.addChild(turboSpinCheckbox.container);
 
     const stopOnBonusCheckbox = new Checkbox(assets, 'STOP ON BONUS');
     stopOnBonusCheckbox.container.position.set(60, -100);
-    menuContainer.addChild(stopOnBonusCheckbox.container);
+    this.menuContainer.addChild(stopOnBonusCheckbox.container);
 
     const numberOfAutospinsSelector = new AutospinCountSelector(assets);
     numberOfAutospinsSelector.container.position.set(0, 180);
-    menuContainer.addChild(numberOfAutospinsSelector.container);
+    this.menuContainer.addChild(numberOfAutospinsSelector.container);
 
     const submitButton = new Sprite(assets.startAutospin);
     submitButton.anchor.set(0.5);
@@ -121,13 +122,29 @@ export class AutoplayMenu {
       this.hide();
       this.afterAutoplayCallback();
     });
-    menuContainer.addChild(submitButton);
+    this.menuContainer.addChild(submitButton);
   }
 
   public hide() {
     this.container.visible = false;
   }
+
   public show() {
     this.container.visible = true;
+  }
+
+  public onOrientationChange(orientation: 'landscape' | 'portrait') {
+    if (orientation === 'portrait') {
+      this.rerenderToPortrait();
+    } else {
+      this.rerenderToLandscape();
+    }
+  }
+
+  private rerenderToPortrait() {
+    this.menuContainer.position.set(Layout.CX, Layout.CY);
+  }
+  private rerenderToLandscape() {
+    this.menuContainer.position.set(Layout.CX, Layout.CY);
   }
 }

@@ -3,6 +3,7 @@ import type { AutoplayMenu } from '../ui/AutoplayMenu';
 import { Layout, VIRTUAL_SIZES } from '../constants/layout';
 import type { InfoOverlay } from '../ui/InfoOverlay';
 import type { WinScreen } from '../ui/WinScreen';
+import type { UiGradient } from '../ui/UiGradient';
 
 /**
  * Scales `app.stage` uniformly so the virtual 1920×1080 canvas fits inside
@@ -18,6 +19,7 @@ export function fitStageToScreen(
   autoplayMenu?: AutoplayMenu,
   infoOverlay?: InfoOverlay,
   winScreen?: WinScreen,
+  uiGradient?: UiGradient,
 ): void {
   Layout.setOrientation(orientation);
   const { width: VIRTUAL_WIDTH, height: VIRTUAL_HEIGHT } =
@@ -70,6 +72,14 @@ export function fitStageToScreen(
     const startX = (VIRTUAL_WIDTH - visibleVirtualW) / 2;
     const startY = (VIRTUAL_HEIGHT - visibleVirtualH) / 2;
     winScreen.dimBackground.position.set(startX - padding, startY - padding);
+  }
+  if (uiGradient) {
+    uiGradient.resize(visibleVirtualW, visibleVirtualH * 0.2);
+    const startX = (VIRTUAL_WIDTH - visibleVirtualW) / 2;
+    uiGradient.container.position.set(
+      startX,
+      visibleVirtualH - uiGradient.overlay.height,
+    );
   }
 
   if (fog) {
