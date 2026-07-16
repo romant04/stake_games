@@ -15,8 +15,8 @@ import type { GameAssets } from '../../../../types/assets';
 import { Layout } from '../constants/layout';
 import { animateX, animateY } from '../../utils/animateXandY';
 import { sound } from '@pixi/sound';
-import { get } from 'svelte/store';
-import { turboMode } from '../../../stores/game';
+import { get, type Unsubscriber } from 'svelte/store';
+import { isPlaying, turboMode } from '../../../stores/game';
 
 /**
  * Manages the three spinning coins.
@@ -32,6 +32,8 @@ export class CoinManager {
   private readonly coinsContainer: Container;
   private readonly winTable: Sprite;
   private readonly logo: Sprite;
+
+  private readonly unsubscriber: Unsubscriber;
 
   constructor(
     private readonly assets: GameAssets,
@@ -62,6 +64,12 @@ export class CoinManager {
     this.logo.width = 630;
     this.logo.height = 360;
     this.container.addChild(this.logo);
+
+    this.unsubscriber = isPlaying.subscribe((playing) => {
+      if (!playing) {
+        sound.stop('spin');
+      }
+    });
   }
 
   // ---------------------------------------------------------------------------
@@ -118,7 +126,12 @@ export class CoinManager {
       await wait(stopDelay);
     }
 
-    while (this.coins.some((c) => c.isSpinning)) {
+    const start = performance.now();
+    const MAX_WAIT = 5000; // safety cap
+    while (
+      this.coins.some((c) => c.isSpinning) &&
+      performance.now() - start < MAX_WAIT
+    ) {
       await wait(16);
     }
     sound.stop('spin');
@@ -159,6 +172,7 @@ export class CoinManager {
 
   /** Clean up all coins (removes ticker listeners). */
   destroy(): void {
+    this.unsubscriber();
     this.destroyCoins();
     this.container.destroy();
   }

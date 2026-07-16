@@ -102,6 +102,7 @@
       // Bonus (chest/win) assets stream in separately, below.
       assets = (await loadCoreAssets()) as GameAssets;
       sound.volumeAll = 1.5;
+      sound.disableAutoPause = true;
       sound.play('background', { loop: true, volume: 1 });
 
       const backgroundLayer = new Container();

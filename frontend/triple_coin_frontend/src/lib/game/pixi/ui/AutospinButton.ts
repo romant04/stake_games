@@ -49,7 +49,7 @@ export class AutospinButton {
     this.text.anchor.set(0, 0.5); // left-aligned, vertically centered
 
     // --- Center the icon+text group as a whole ---
-    const gap = 12; // space between icon and text
+    const gap = label.length > 10 ? 4 : 12; // space between icon and text
     const totalWidth = this.icon.width + gap + this.text.width;
     const leftEdge = -totalWidth / 2;
 
