@@ -1,12 +1,4 @@
-import {
-  BlurFilter,
-  Container,
-  FillGradient,
-  Graphics,
-  Sprite,
-  Texture,
-  type Ticker,
-} from 'pixi.js';
+import { Container, type Ticker } from 'pixi.js';
 import type { GameAssets } from '../../../../types/assets';
 import { GameHistory } from '../ui/GameHistory';
 import { SpinButton } from '../ui/SpinButton';
@@ -19,11 +11,11 @@ import {
 import { get } from 'svelte/store';
 import { BalanceText } from '../ui/BalanceText';
 import { BetAmountSelector } from '../ui/BetAmountSelector';
-import { SmallButton } from '../ui/SmallButton';
 import { AutospinButton } from '../ui/AutospinButton';
 import { LastWin } from '../ui/LastWin';
 import { BonusHeadline } from '../ui/BonusHeadline';
 import { Layout } from '../constants/layout';
+import { BurgerMenu } from '../ui/BurgerMenu';
 
 export class UIManager {
   readonly container: Container;
@@ -36,7 +28,7 @@ export class UIManager {
   private readonly autospinButton: AutospinButton;
   private readonly stopAutospinButton: AutospinButton;
   private readonly bonusHeadline: BonusHeadline;
-  private readonly burgerMenu: SmallButton;
+  private readonly burgerMenu: BurgerMenu;
   private readonly betSelector: BetAmountSelector;
 
   constructor(
@@ -61,9 +53,7 @@ export class UIManager {
     );
     this.container.addChild(this.lastWin.container);
 
-    this.burgerMenu = new SmallButton(assets, assets.hamburger, () => {
-      isGameInfoOpen.set(!get(isGameInfoOpen));
-    });
+    this.burgerMenu = new BurgerMenu(assets, this.ticker);
     this.burgerMenu.container.position.set(
       Layout.VIRTUAL_WIDTH * 0.045,
       Layout.VIRTUAL_HEIGHT * 0.9,

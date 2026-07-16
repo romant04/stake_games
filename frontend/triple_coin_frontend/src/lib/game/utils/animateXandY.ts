@@ -93,3 +93,37 @@ export async function animateAlpha(
     ticker.add(update);
   });
 }
+
+export async function animateScale(
+  ticker: Ticker,
+  target: Container,
+  toScale: number,
+  duration = 300,
+): Promise<void> {
+  return new Promise((resolve) => {
+    const fromScale = target.scale.x;
+    const distance = toScale - fromScale;
+    let elapsed = 0;
+
+    const update = (ticker: Ticker) => {
+      elapsed += ticker.deltaMS;
+
+      const t = Math.min(elapsed / duration, 1);
+
+      // Back out
+      const eased = 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2);
+
+      const value = fromScale + distance * eased;
+
+      target.scale.set(value);
+
+      if (t >= 1) {
+        target.scale.set(toScale);
+        ticker.remove(update);
+        resolve();
+      }
+    };
+
+    ticker.add(update);
+  });
+}

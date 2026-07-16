@@ -46,6 +46,9 @@ export interface GameAssets {
   close: Texture;
   autospin: Texture;
   pause: Texture;
+  sound: Texture;
+  mute: Texture;
+  info: Texture;
 
   // Button
   button: Texture;

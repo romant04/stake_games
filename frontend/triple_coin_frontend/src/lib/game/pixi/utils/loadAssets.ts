@@ -52,6 +52,9 @@ import hamburgerSrc from '../../../../assets/icons/hamburger.png';
 import closeSrc from '../../../../assets/icons/close.png';
 import autospinSrc from '../../../../assets/icons/autospin.png';
 import pauseSrc from '../../../../assets/icons/pause.png';
+import soundSrc from '../../../../assets/icons/sound.png';
+import muteSrc from '../../../../assets/icons/mute.png';
+import infoSrc from '../../../../assets/icons/info.png';
 
 import bonusHeadlineSrc from '../../../../assets/game/bonus/bonus_headline.png';
 import chestLabelSrc from '../../../../assets/game/bonus/chest_label.png';
@@ -201,6 +204,9 @@ export async function loadCoreAssets(): Promise<CoreAssets> {
       backgroundSound,
       autospin,
       pause,
+      sound,
+      mute,
+      info,
     ],
     [coinFront, coinFrontFlopped, coinBack, coinBackFlopped],
   ] = await Promise.all([
@@ -259,6 +265,9 @@ export async function loadCoreAssets(): Promise<CoreAssets> {
       Assets.load(backgroundSoundSrc),
       Assets.load(autospinSrc),
       Assets.load(pauseSrc),
+      Assets.load(soundSrc),
+      Assets.load(muteSrc),
+      Assets.load(infoSrc),
     ]),
     // Batch 2: coin face sequences, running concurrently with batch 1
     Promise.all([
@@ -328,6 +337,9 @@ export async function loadCoreAssets(): Promise<CoreAssets> {
     gameRules,
     autospin,
     pause,
+    sound,
+    mute,
+    info,
   } as CoreAssets;
 }
 

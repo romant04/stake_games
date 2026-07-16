@@ -8,7 +8,7 @@ export class SmallButton {
   readonly container: Container;
 
   public button: Container;
-  private readonly icon: Sprite;
+  public readonly icon: Sprite;
   private readonly bg: Sprite;
 
   public constructor(

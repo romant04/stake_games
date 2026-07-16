@@ -262,7 +262,7 @@
       </div>
     </div>
   {/if}
-  <div class="absolute inset-0">
+  <div class="absolute inset-0" style="touch-action: manipulation">
     <CoinScene
       bind:loading
       bind:this={coinScene}
