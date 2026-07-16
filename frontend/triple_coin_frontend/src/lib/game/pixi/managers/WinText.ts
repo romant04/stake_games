@@ -32,9 +32,9 @@ export class WinText {
 
     this.text.anchor.set(0.5);
     this.container.addChild(this.text);
-    this.hide();
+    // this.hide();
   }
-  // TODO? When playing bonus game normally it then forces one game to be played after
+  //
   // ---------------------------------------------------------------------------
   // Public API
   // ---------------------------------------------------------------------------
@@ -56,6 +56,7 @@ export class WinText {
 
     const handler = (ticker: Ticker) => {
       elapsed += ticker.deltaMS;
+      console.log(this.text.alpha);
 
       if (elapsed < 400) {
         const t = elapsed / 400;

@@ -136,6 +136,7 @@
     }
 
     isPlaying.set(true);
+    balance.set($balance - $betAmount * API_MULTIPLIER);
     coinScene.startSpin();
 
     try {
@@ -146,7 +147,6 @@
         }),
         wait($turboMode ? 400 : 800),
       ]);
-      balance.set(res.balance?.amount);
       const state = res.round.state as PlayResponseState;
 
       const results = state[0].coins.map((c) => c.side);

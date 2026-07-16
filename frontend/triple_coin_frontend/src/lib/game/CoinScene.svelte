@@ -142,11 +142,10 @@
       coinManager.create();
       gameLayer.addChild(coinManager.container);
 
-      winText = new WinText();
-      app.stage.addChild(winText.container);
-
       // Add overlays as last
       app.stage.addChild(overlay);
+      winText = new WinText();
+      overlay.addChild(winText.container);
 
       // -- Background (virtual coords) ------------------------------------------
       const background = new Sprite(assets.bg);
@@ -267,7 +266,7 @@
   // ---------------------------------------------------------------------------
   export function startSpin() {
     uiManager.turboModeButton.disable();
-    uiManager.balance.updateBalance(); // TODO: Will this work??
+    uiManager.balance.updateBalance();
     coinManager.startSpin();
   }
   export async function stopSpin(
@@ -275,7 +274,6 @@
     payout: number,
     bonus: boolean,
   ): Promise<void> {
-    // uiManager.balance.updateBalance(); -> uncomment if the one from startSpin doesn't work
     await coinManager.stopSpin(results as CoinResult[]);
 
     if (payout > 0 && !bonus) {
